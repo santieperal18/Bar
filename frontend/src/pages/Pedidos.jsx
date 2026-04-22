@@ -74,7 +74,7 @@ const Pedidos = () => {
     if(!window.confirm("¿Marcar entregado?")) return;
     try {
       await pedidosService.actualizarEstado(id, 'entregado');
-      setPedidos(peds => peds.map(p => p.id === id ? {...p, estado: 'entregado'} : p));
+      setPedidos(peds => peds?.map(p => p.id === id ? {...p, estado: 'entregado'} : p));
     } catch(e) { alert("Error al actualizar"); }
   };
 
@@ -151,7 +151,7 @@ const Pedidos = () => {
             {pedidos.length === 0 ? (
                 <tr><td colSpan="9" className="text-center py-4">No hay pedidos en este rango de fechas.</td></tr>
             ) : (
-                pedidos.map(p => (
+                pedidos?.map(p => (
                 <tr key={p.id}>
                     <td>{p.id}</td>
                     <td>{new Date(p.fecha).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</td>
@@ -160,7 +160,7 @@ const Pedidos = () => {
                     {/* LISTA DE PRODUCTOS EN LA TABLA */}
                     <td>
                       <ul className="list-unstyled mb-0 small text-muted">
-                        {p.productos && p.productos.map(prod => (
+                        {p.productos && p.productos?.map(prod => (
                           <li key={prod.id}>
                              <strong>{prod.PedidoProducto?.cantidad || prod.cantidad}x</strong> {prod.nombre}
                           </li>
