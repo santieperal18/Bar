@@ -6,7 +6,7 @@ import ModalDetallesPedido from "../components/ModalDetallesPedido";
 
 const Pedidos = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
+  const [pedidoSeleccionado, setPedidoSeleccionado] = useState([]);
   const [pedidos, setPedidos] = useState([]);
   const [clientes, setClientes] = useState([]);
   
@@ -100,7 +100,7 @@ const Pedidos = () => {
            <div className="col-md-3">
              <select className="form-select" value={filtros.cliente} onChange={e => setFiltros({...filtros, cliente: e.target.value})}>
                <option value="">Todos los Clientes</option>
-               {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
+               {clientes?.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
              </select>
            </div>
            <div className="col-md-2">
