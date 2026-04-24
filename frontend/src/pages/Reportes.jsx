@@ -30,24 +30,26 @@ const Reportes = ({ clienteId }) => {
       const hoy = new Date().toISOString().split('T')[0];
 
       const clientesData = await clientesService.obtenerTodos();
-      setClientes(clientesData);
+      // ESCUDO 1
+      setClientes(Array.isArray(clientesData) ? clientesData : []);
 
       const reporteHoy = await reportesService.obtenerVentasDiarias(hoy);
       setResumenHoy({
-        total: reporteHoy.totalVentas || 0,
-        cantidad: reporteHoy.cantidadPedidos || 0
+        total: reporteHoy?.totalVentas || 0,
+        cantidad: reporteHoy?.cantidadPedidos || 0
       });
 
-      // Productos de HOY (inicio=hoy, fin=hoy)
       const topProd = await reportesService.obtenerProductosMasVendidos(hoy, hoy, 5);
-      setProductosTopHoy(topProd);
+      setProductosTopHoy(Array.isArray(topProd) ? topProd : []);
 
-      // Repartidores de HOY
       const topRepartidores = await reportesService.obtenerDesempenoRepartidores(hoy);
-      setDesempenoRepartidores(topRepartidores);
+      setDesempenoRepartidores(Array.isArray(topRepartidores) ? topRepartidores : []);
 
     } catch (error) {
       console.error("Error dashboard:", error);
+      setClientes([]);
+      setProductosTopHoy([]);
+      setDesempenoRepartidores([]);
     } finally {
       setCargando(false);
     }
@@ -99,7 +101,8 @@ const Reportes = ({ clienteId }) => {
             </div>
             <div className="card-body p-0">
               <ul className="list-group list-group-flush">
-                {productosTopHoy.length > 0 ? productosTopHoy.map((p, i) => (
+                {/* ESCUDO 2 */}
+                {(Array.isArray(productosTopHoy) && productosTopHoy.length > 0) ? productosTopHoy.map((p, i) => (
                   <li key={i} className="list-group-item d-flex justify-content-between align-items-center">
                     <div><span className="badge bg-secondary me-2">#{i+1}</span>{p.nombre}</div>
                     <span className="fw-bold">{p.total_vendido} un.</span>
@@ -117,7 +120,7 @@ const Reportes = ({ clienteId }) => {
             </div>
             <div className="card-body p-0">
               <ul className="list-group list-group-flush">
-                {desempenoRepartidores.length > 0 ? desempenoRepartidores.map((r, i) => (
+                {(Array.isArray(desempenoRepartidores) && desempenoRepartidores.length > 0) ? desempenoRepartidores.map((r, i) => (
                   <li key={i} className="list-group-item d-flex justify-content-between align-items-center">
                     <div><i className="fas fa-helmet-safety me-2 text-muted"></i>{r.nombre} {r.apellido}</div>
                     <span className="badge bg-primary rounded-pill">{r.cantidad_entregas} envíos</span>
@@ -138,7 +141,7 @@ const Reportes = ({ clienteId }) => {
                   if(e.target.value) abrirModalReporte('cliente', { idCliente: e.target.value });
               }}>
                 <option value="">-- Buscar Cliente --</option>
-                {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
+                {Array.isArray(clientes) && clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
               </select>
             </div>
           </div>
