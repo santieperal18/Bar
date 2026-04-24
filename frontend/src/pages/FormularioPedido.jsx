@@ -23,33 +23,40 @@ const FormularioPedido = () => {
 
   useEffect(() => {
     const init = async () => {
-      const [cli, prod, rep] = await Promise.all([
-          clientesService.obtenerTodos(), 
-          productosService.obtenerTodos(),
-          repartidoresService.obtenerTodos() 
-      ]);
-      
-      setClientes(cli);
-      setProductos(prod);
-      setRepartidores(rep);
-      
-      if (id) { 
-        const pedido = await pedidosService.obtenerPorId(id);
-        setValue("idCliente", pedido.idCliente);
-        setValue("tipoEntrega", pedido.tipoEntrega);
-        setValue("estado", pedido.estado);
-        setValue("observaciones", pedido.observaciones);
-        setValue("direccionEntrega", pedido.direccionEntrega);
-        setValue("idRepartidor", pedido.idRepartidor); 
+      try {
+        const [cli, prod, rep] = await Promise.all([
+            clientesService.obtenerTodos(), 
+            productosService.obtenerTodos(),
+            repartidoresService.obtenerTodos() 
+        ]);
         
-        if (pedido.productos) {
-            setCarrito(pedido.productos.map(p => ({
-                id: p.id,
-                nombre: p.nombre,
-                precio: parseFloat(p.PedidoProducto?.precioUnitario || p.precio),
-                cantidad: p.PedidoProducto?.cantidad || 1
-            })));
+        // ESCUDOS PARA COMBOS
+        setClientes(Array.isArray(cli) ? cli : []);
+        setProductos(Array.isArray(prod) ? prod : []);
+        setRepartidores(Array.isArray(rep) ? rep : []);
+        
+        if (id) { 
+          const pedido = await pedidosService.obtenerPorId(id);
+          if (pedido) {
+            setValue("idCliente", pedido.idCliente);
+            setValue("tipoEntrega", pedido.tipoEntrega);
+            setValue("estado", pedido.estado);
+            setValue("observaciones", pedido.observaciones);
+            setValue("direccionEntrega", pedido.direccionEntrega);
+            setValue("idRepartidor", pedido.idRepartidor); 
+            
+            if (Array.isArray(pedido.productos)) {
+                setCarrito(pedido.productos.map(p => ({
+                    id: p.id,
+                    nombre: p.nombre,
+                    precio: parseFloat(p.PedidoProducto?.precioUnitario || p.precio),
+                    cantidad: p.PedidoProducto?.cantidad || 1
+                })));
+            }
+          }
         }
+      } catch (error) {
+        console.error("Error al inicializar formulario:", error);
       }
     };
     init();
@@ -65,7 +72,7 @@ const FormularioPedido = () => {
   };
 
   const quitar = (id) => setCarrito(carrito.filter(i => i.id !== id));
-  const total = carrito.reduce((acc, i) => acc + (i.precio * i.cantidad), 0);
+  const total = Array.isArray(carrito) ? carrito.reduce((acc, i) => acc + ((i.precio || 0) * (i.cantidad || 1)), 0) : 0;
 
   const onSubmit = async (data) => {
     if(carrito.length === 0) return alert("Agrega productos");
@@ -74,13 +81,11 @@ const FormularioPedido = () => {
         data.idRepartidor = null;
     }
 
-    // CORRECCIÓN CLAVE: Enviamos la fecha de AHORA explícitamente desde el cliente
-    // Esto asegura que si son las 23:00 en tu PC, se guarde como las 23:00 de HOY para el filtro.
     const fechaActual = new Date(); 
 
     const payload = { 
         ...data, 
-        fecha: fechaActual, // Forzamos fecha cliente
+        fecha: fechaActual, 
         productos: carrito.map(i => ({ id: i.id, cantidad: i.cantidad, precio: i.precio })) 
     };
     
@@ -88,8 +93,16 @@ const FormularioPedido = () => {
         setCargando(true);
         id ? await pedidosService.actualizar(id, payload) : await pedidosService.crear(payload);
         navigate("/pedidos");
-    } catch(e) { alert("Error al guardar"); } finally { setCargando(false); }
+    } catch(e) { 
+      alert("Error al guardar"); 
+    } finally { 
+      setCargando(false); 
+    }
   };
+
+  const prodSeguros = Array.isArray(productos) ? productos : [];
+  const cliSeguros = Array.isArray(clientes) ? clientes : [];
+  const repSeguros = Array.isArray(repartidores) ? repartidores : [];
 
   return (
     <div className="container py-4">
@@ -104,7 +117,7 @@ const FormularioPedido = () => {
                         <label className="form-label">Cliente</label>
                         <select className="form-select" {...register("idCliente", {required: true})}>
                             <option value="">Seleccionar...</option>
-                            {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
+                            {cliSeguros.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
                         </select>
                     </div>
                     
@@ -121,7 +134,7 @@ const FormularioPedido = () => {
                             <label className="form-label text-primary fw-bold">Asignar Repartidor</label>
                             <select className="form-select border-primary" {...register("idRepartidor")}>
                                 <option value="">Sin asignar...</option>
-                                {repartidores.map(r => (
+                                {repSeguros.map(r => (
                                     <option key={r.id} value={r.id}>
                                         {r.nombre} {r.apellido} 
                                     </option>
@@ -154,9 +167,9 @@ const FormularioPedido = () => {
                 <div className="row">
                     <div className="col-md-6" style={{maxHeight: '300px', overflowY: 'auto'}}>
                         <h5>Productos</h5>
-                        {productos.map(p => (
+                        {prodSeguros.map(p => (
                             <div key={p.id} className="d-flex justify-content-between border-bottom p-2">
-                                <span>{p.nombre} (${p.precio})</span>
+                                <span>{p.nombre} (${parseFloat(p.precio || 0).toFixed(2)})</span>
                                 <button type="button" className="btn btn-sm btn-outline-primary" onClick={() => agregar(p)}>+</button>
                             </div>
                         ))}
@@ -164,7 +177,7 @@ const FormularioPedido = () => {
                     <div className="col-md-6">
                         <h5>Carrito (Total: ${total.toFixed(2)})</h5>
                         <ul className="list-group">
-                            {carrito.map(item => (
+                            {Array.isArray(carrito) && carrito.map(item => (
                                 <li key={item.id} className="list-group-item d-flex justify-content-between">
                                     {item.nombre} x {item.cantidad}
                                     <button type="button" className="btn btn-sm btn-danger" onClick={() => quitar(item.id)}>X</button>
