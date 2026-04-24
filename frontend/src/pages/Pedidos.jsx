@@ -6,12 +6,12 @@ import ModalDetallesPedido from "../components/ModalDetallesPedido";
 
 const Pedidos = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [pedidoSeleccionado, setPedidoSeleccionado] = useState([]);
+  // 1. CORRECCIÓN: Inicializar en null, no en array vacío
+  const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null); 
   const [pedidos, setPedidos] = useState([]);
   const [clientes, setClientes] = useState([]);
   
   // OBTENER FECHA LOCAL CORRECTA (YYYY-MM-DD)
-  // Esto evita que por diferencia horaria te ponga la fecha de ayer o mañana
   const obtenerFechaLocal = () => {
     const ahora = new Date();
     const year = ahora.getFullYear();
@@ -49,8 +49,14 @@ const Pedidos = () => {
   }, []);
 
   const cargarClientes = async () => {
-    const data = await clientesService.obtenerTodos();
-    setClientes(data);
+    try {
+      const data = await clientesService.obtenerTodos();
+      // Asegurarnos de que siempre guarde un array
+      setClientes(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error cargando clientes:", error);
+      setClientes([]);
+    }
   };
 
   const buscar = async () => {
@@ -62,11 +68,12 @@ const Pedidos = () => {
     if (filtros.fechaHasta) params.fechaHasta = filtros.fechaHasta;
     
     try {
-        // Usamos buscarFiltrado para todo, así siempre respeta las fechas
         const data = await pedidosService.buscarFiltrado(params);
-        setPedidos(data);
+        // Asegurarnos de que si viene algo raro, guarde un array vacío
+        setPedidos(Array.isArray(data) ? data : []);
     } catch (error) {
         console.error("Error buscando:", error);
+        setPedidos([]);
     }
   };
 
@@ -74,7 +81,7 @@ const Pedidos = () => {
     if(!window.confirm("¿Marcar entregado?")) return;
     try {
       await pedidosService.actualizarEstado(id, 'entregado');
-      setPedidos(peds => peds?.map(p => p.id === id ? {...p, estado: 'entregado'} : p));
+      setPedidos(peds => Array.isArray(peds) ? peds.map(p => p.id === id ? {...p, estado: 'entregado'} : p) : []);
     } catch(e) { alert("Error al actualizar"); }
   };
 
@@ -82,7 +89,7 @@ const Pedidos = () => {
     if(!window.confirm("¿Seguro de ELIMINAR este pedido?")) return;
     try {
       await pedidosService.eliminar(id);
-      setPedidos(peds => peds.filter(p => p.id !== id));
+      setPedidos(peds => Array.isArray(peds) ? peds.filter(p => p.id !== id) : []);
     } catch (error) {
       alert("No se pudo eliminar.");
     }
@@ -100,7 +107,7 @@ const Pedidos = () => {
            <div className="col-md-3">
              <select className="form-select" value={filtros.cliente} onChange={e => setFiltros({...filtros, cliente: e.target.value})}>
                <option value="">Todos los Clientes</option>
-               {clientes?.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
+               {Array.isArray(clientes) && clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
              </select>
            </div>
            <div className="col-md-2">
@@ -138,7 +145,6 @@ const Pedidos = () => {
               <th>#</th>
               <th>Hora</th>
               <th>Cliente</th>
-              {/* NUEVA COLUMNA */}
               <th style={{minWidth: '200px'}}>Productos</th>
               <th>Entrega</th>
               <th>Repartidor</th> 
@@ -148,19 +154,20 @@ const Pedidos = () => {
             </tr>
           </thead>
           <tbody>
-            {pedidos.length === 0 ? (
+            {/* 2. CORRECCIÓN: Validación robusta antes de mapear */}
+            {(!Array.isArray(pedidos) || pedidos.length === 0) ? (
                 <tr><td colSpan="9" className="text-center py-4">No hay pedidos en este rango de fechas.</td></tr>
             ) : (
-                pedidos?.map(p => (
+                pedidos.map(p => (
                 <tr key={p.id}>
                     <td>{p.id}</td>
                     <td>{new Date(p.fecha).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</td>
                     <td>{p.cliente ? `${p.cliente.nombre} ${p.cliente.apellido}` : 'Final'}</td>
                     
-                    {/* LISTA DE PRODUCTOS EN LA TABLA */}
                     <td>
                       <ul className="list-unstyled mb-0 small text-muted">
-                        {p.productos && p.productos?.map(prod => (
+                        {/* Validación extra para los productos anidados */}
+                        {Array.isArray(p.productos) && p.productos.map(prod => (
                           <li key={prod.id}>
                              <strong>{prod.PedidoProducto?.cantidad || prod.cantidad}x</strong> {prod.nombre}
                           </li>
@@ -171,7 +178,7 @@ const Pedidos = () => {
                     <td>{p.tipoEntrega === 'delivery' ? <i className="fas fa-motorcycle text-primary"></i> : <i className="fas fa-store text-secondary"></i>}</td>
                     <td>{p.repartidor ? <span className="small fw-bold">{p.repartidor.nombre}</span> : '-'}</td>
                     <td><span className={`badge bg-${p.estado === 'entregado' ? 'success' : 'warning'}`}>{p.estado}</span></td>
-                    <td className="fw-bold">${parseFloat(p.total).toFixed(2)}</td>
+                    <td className="fw-bold">${parseFloat(p.total || 0).toFixed(2)}</td>
                     <td className="text-end">
                       {p.estado !== 'entregado' && p.estado !== 'cancelado' && (
                           <button className="btn btn-sm btn-success me-1" onClick={() => marcarEntregado(p.id)} title="Entregar"><i className="fas fa-check"></i></button>
@@ -187,8 +194,16 @@ const Pedidos = () => {
         </table>
       </div>
 
-      <ModalDetallesPedido pedido={pedidoSeleccionado} abierto={modalIsOpen} onCerrar={() => setModalIsOpen(false)} />
+      {/* 3. CORRECCIÓN: El modal solo se renderiza si hay un pedido seleccionado */}
+      {pedidoSeleccionado && (
+        <ModalDetallesPedido 
+          pedido={pedidoSeleccionado} 
+          abierto={modalIsOpen} 
+          onCerrar={() => setModalIsOpen(false)} 
+        />
+      )}
     </div>
   );
 };
+
 export default Pedidos;
