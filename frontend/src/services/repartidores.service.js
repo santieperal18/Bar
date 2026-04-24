@@ -2,7 +2,18 @@ import axios from "./axios.config.js";
 
 const obtenerTodos = async () => {
   const response = await axios.get("/repartidores");
-  return response.data;
+  
+  // Imprimimos la verdad en la consola (Apretá F12 para ver esto)
+  console.log("🕵️ MODO DETECTIVE - Respuesta cruda:", response);
+
+  // Escudo Triple: Buscamos el Array donde sea que se haya escondido
+  if (Array.isArray(response)) return response; // Si axios.config ya lo limpió
+  if (Array.isArray(response.data)) return response.data; // Lo estándar
+  if (Array.isArray(response.data?.data)) return response.data.data; // Si el back lo envolvió
+  if (Array.isArray(response.data?.repartidores)) return response.data.repartidores; // Si el back le puso nombre
+
+  // Si llega acá, es porque no mandó ninguna lista.
+  return []; 
 };
 
 const obtenerDisponibles = async () => {
