@@ -119,3 +119,148 @@ input:focus, select:focus {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
+
+/* =========================================
+   4. ESTILOS TPI - UX/UI (Integrados con el tema)
+   ========================================= */
+
+/* Animaciones y Transiciones */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in { animation: fadeIn 0.5s ease-out; }
+
+.smooth-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Scrollbar personalizado usando color principal */
+.custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--primary-hover); }
+
+/* Tablas y Hover State (Simplicidad y Consistencia) */
+.table-hover tbody tr { transition: background-color 0.2s ease; }
+.table-hover tbody tr:hover { 
+  background-color: rgba(37, 99, 235, 0.05) !important; 
+}
+
+/* Badges de Estado (Feedback visual) */
+.status-badge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+
+.status-pending { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+.status-preparing { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+.status-delivering { background-color: #cce5ff; color: #004085; border: 1px solid #b8daff; }
+.status-delivered { background-color: #d4edda; color: var(--success-color); border: 1px solid #c3e6cb; }
+.status-cancelled { background-color: #f8d7da; color: var(--danger-color); border: 1px solid #f5c6cb; }
+
+.price-display {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+}
+
+/* Accesibilidad y Navegación por teclado (Principio 5 TPI) */
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid var(--primary-color) !important;
+  outline-offset: 2px;
+  box-shadow: none !important;
+}
+
+/* Estados vacíos amigables */
+.empty-state {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.empty-state-icon {
+  font-size: 3.5rem;
+  color: var(--text-gray);
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+/* Tooltips */
+.custom-tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+}
+
+.custom-tooltip .tooltip-text {
+  visibility: hidden;
+  width: max-content;
+  background-color: var(--text-dark);
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 6px 12px;
+  position: absolute;
+  z-index: 10;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.8rem;
+}
+
+.custom-tooltip:hover .tooltip-text,
+.custom-tooltip:focus .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Botón Flotante de Acción Principal (Jerarquía Visual) */
+.floating-action-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-color) !important;
+  color: white;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  z-index: 1000;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.floating-action-btn:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+  background-color: var(--primary-hover) !important;
+}
+
+@keyframes pulse-primary {
+  0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5); }
+  70% { box-shadow: 0 0 0 15px rgba(37, 99, 235, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+}
+
+.floating-action-btn {
+  animation: pulse-primary 2s infinite;
+}
+
+@media (max-width: 768px) {
+  .floating-action-btn {
+    bottom: 20px;
+    right: 20px;
+    width: 55px;
+    height: 55px;
+  }
+}
