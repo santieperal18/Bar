@@ -288,6 +288,13 @@
 
 .slide-in-up { animation: slideInUp 0.45s ease-out; }
 
+/* ══ TARJETAS ESTADÍSTICAS (gradientes) ══ */
+.card-gradient-primary   { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; }
+.card-gradient-success   { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; }
+.card-gradient-accent    { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: #fff; }
+.card-gradient-secondary { background: linear-gradient(135deg, var(--secondary), var(--secondary-dark)); color: var(--text); }
+.card-gradient-dark      { background: linear-gradient(135deg, #1a0905, #3d1a0b); color: #fff; }
+
 /* ══ RESPONSIVE ═══════════════════════════ */
 @media (max-width: 768px) {
   .resto-header h1 {

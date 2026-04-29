@@ -158,22 +158,22 @@ const Productos = () => {
 
       <div className="row mb-4">
         <div className="col-md-3">
-          <div className="card text-white" style={{ background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))' }}>
+          <div className="card card-gradient-primary">
             <div className="card-body text-center"><h6 className="card-title">Total Productos</h6><h2 className="mb-0">{prodSeguros.length}</h2></div>
           </div>
         </div>
         <div className="col-md-3">
-          <div className="card text-white" style={{ background: 'linear-gradient(135deg, #22c55e, #16a34a)' }}>
+          <div className="card card-gradient-success">
             <div className="card-body text-center"><h6 className="card-title">Disponibles</h6><h2 className="mb-0">{prodSeguros.filter(p => p.disponible).length}</h2></div>
           </div>
         </div>
         <div className="col-md-3">
-          <div className="card text-white" style={{ background: 'linear-gradient(135deg, var(--accent), var(--accent-dark))' }}>
+          <div className="card card-gradient-accent">
             <div className="card-body text-center"><h6 className="card-title">Desayunos</h6><h2 className="mb-0">{prodSeguros.filter(p => getTipoCategoria(p.idCategoria) === 'desayuno').length}</h2></div>
           </div>
         </div>
         <div className="col-md-3">
-          <div className="card" style={{ background: 'linear-gradient(135deg, var(--secondary), var(--secondary-dark))' }}>
+          <div className="card card-gradient-secondary">
             <div className="card-body text-center"><h6 className="card-title">Comidas</h6><h2 className="mb-0">{prodSeguros.filter(p => getTipoCategoria(p.idCategoria) === 'comida').length}</h2></div>
           </div>
         </div>
