@@ -38,7 +38,8 @@ function Login() {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h1>🍽️ Resto Bar</h1>
+          <span className="login-logo">🍽️</span>
+          <h1>Resto Bar</h1>
           <p>Sistema de Gestión</p>
         </div>
 

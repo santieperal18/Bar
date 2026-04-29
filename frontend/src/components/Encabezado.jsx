@@ -26,21 +26,19 @@ export default function Encabezado() {
                             </p>
                         </div>
                         <div className="col-md-6 text-end">
-                            <div className="d-flex align-items-center justify-content-end gap-3">
-                                <div>
-                                    <i className="fas fa-phone text-white me-2"></i>
+                            <div className="d-flex align-items-center justify-content-end gap-2 flex-wrap">
+                                <div className="info-chip">
+                                    <i className="fas fa-phone"></i>
                                     <span>+54 351 323-7878</span>
                                 </div>
-                                <div>
-                                    <i className="fas fa-clock text-white me-2"></i>
+                                <div className="info-chip">
+                                    <i className="fas fa-clock"></i>
                                     <span>06:00 - 15:00 hs</span>
                                 </div>
                                 {usuario && (
-                                    <div className="user-info ms-3 ps-3 border-start border-white">
-                                        <span className="text-white small">
-                                            <i className="fas fa-user me-2"></i>
-                                            {usuario}
-                                        </span>
+                                    <div className="info-chip ms-1">
+                                        <i className="fas fa-user"></i>
+                                        <span>{usuario}</span>
                                     </div>
                                 )}
                                 {usuario && (

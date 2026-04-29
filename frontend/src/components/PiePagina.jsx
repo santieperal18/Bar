@@ -12,17 +12,17 @@ function PiePagina() {
               Servimos los mejores desayunos y comidas con ingredientes frescos 
               y de la más alta calidad. Tu satisfacción es nuestra prioridad.
             </p>
-            <div className="d-flex gap-3">
-              <a href="#" className="text-white" aria-label="Facebook">
+            <div className="d-flex gap-2 mt-2">
+              <a href="#" className="social-icon" aria-label="Facebook">
                 <i className="fab fa-facebook-f"></i>
               </a>
-              <a href="#" className="text-white" aria-label="Instagram">
+              <a href="#" className="social-icon" aria-label="Instagram">
                 <i className="fab fa-instagram"></i>
               </a>
-              <a href="#" className="text-white" aria-label="WhatsApp">
+              <a href="#" className="social-icon" aria-label="WhatsApp">
                 <i className="fab fa-whatsapp"></i>
               </a>
-              <a href="#" className="text-white" aria-label="Twitter">
+              <a href="#" className="social-icon" aria-label="Twitter">
                 <i className="fab fa-twitter"></i>
               </a>
             </div>

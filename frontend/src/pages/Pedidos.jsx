@@ -101,7 +101,7 @@ const Pedidos = () => {
     <div className="container-fluid py-4 fade-in">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h2 className="mb-0 fw-bold" style={{ color: '#8B4513' }}>Gestión de Pedidos</h2>
+          <h2 className="mb-0 fw-bold text-resto-primary">Gestión de Pedidos</h2>
           <p className="text-muted small mb-0">Administrá las órdenes y sus estados</p>
         </div>
       </div>
@@ -136,7 +136,7 @@ const Pedidos = () => {
                 <input type="date" className="form-control" value={filtros.fechaHasta} onChange={e => setFiltros({...filtros, fechaHasta: e.target.value})} />
              </div>
              <div className="col-md-3 col-sm-12 d-flex gap-2">
-               <button className="btn btn-primary flex-grow-1" onClick={buscar} disabled={cargando} style={{ backgroundColor: '#8B4513', borderColor: '#8B4513' }}>
+               <button className="btn btn-primary flex-grow-1" onClick={buscar} disabled={cargando}>
                  {cargando ? <span className="spinner-border spinner-border-sm"></span> : <><i className="fas fa-search me-2"></i>Filtrar</>}
                </button>
                <button className="btn btn-outline-secondary" title="Limpiar filtros a Hoy" onClick={() => {
@@ -153,7 +153,7 @@ const Pedidos = () => {
       <div className="card shadow-sm border-0 position-relative">
         {cargando && (
           <div className="loading-overlay rounded">
-             <div className="spinner-border text-primary" style={{ color: '#8B4513' }} role="status"></div>
+             <div className="spinner-border text-primary" role="status"></div>
           </div>
         )}
         <div className="table-responsive custom-scrollbar">
@@ -246,8 +246,7 @@ const Pedidos = () => {
 
       {/* Botón Flotante (Jerarquía Visual para la acción principal) */}
       <button 
-        className="floating-action-btn bg-primary text-white border-0" 
-        style={{ backgroundColor: '#8B4513' }}
+        className="floating-action-btn text-white border-0" 
         onClick={() => navigate("/pedidos/nuevo")}
         aria-label="Crear nuevo pedido"
         title="Crear Nuevo Pedido"

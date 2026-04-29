@@ -2,17 +2,57 @@
    1. VARIABLES GLOBALES (Colores y Fuentes)
    ========================================= */
 :root {
-  --primary-color: #2563eb;       /* Azul principal */
-  --primary-hover: #1d4ed8;       /* Azul oscuro para hover */
-  --success-color: #10b981;       /* Verde éxito/dinero */
-  --danger-color: #ef4444;        /* Rojo error */
-  --text-dark: #1f2937;           /* Texto casi negro */
-  --text-gray: #6b7280;           /* Texto gris secundario */
-  --bg-color: #f3f4f6;            /* Fondo gris clarito de la app */
-  --card-bg: #ffffff;             /* Fondo blanco de tarjetas */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --radius: 12px;                 /* Redondeado estándar */
+  /* ── Paleta principal ── */
+  --text:            #160a03;
+  --background:      #fdf7f3;
+  --primary:         #e17330;
+  --secondary:       #81d1ed;
+  --accent:          #6c4fe6;
+
+  /* ── Variantes derivadas ── */
+  --primary-dark:    #c45f1e;
+  --primary-light:   #f4956a;
+  --primary-subtle:  rgba(225, 115, 48, 0.10);
+  --secondary-dark:  #5bbfe0;
+  --secondary-light: #bde8f5;
+  --accent-dark:     #5a3fd4;
+  --accent-light:    #a897f0;
+  --accent-subtle:   rgba(108, 79, 230, 0.10);
+
+  /* ── Semánticos ── */
+  --success-color:   #22c55e;
+  --danger-color:    #ef4444;
+  --warning-color:   #f59e0b;
+  --info-color:      var(--secondary);
+
+  /* ── Texto ── */
+  --text-dark:       var(--text);
+  --text-medium:     #5a3820;
+  --text-gray:       #9a7b6a;
+  --text-muted:      #b09c92;
+
+  /* ── Superficies ── */
+  --bg-color:        var(--background);
+  --card-bg:         #ffffff;
+  --surface-warm:    #fff9f5;
+  --border-color:    #e8d8cc;
+  --border-light:    #f0e6df;
+
+  /* ── Sombras ── */
+  --shadow-xs:  0 1px 3px rgba(22, 10, 3, 0.06);
+  --shadow-sm:  0 2px 8px rgba(22, 10, 3, 0.08);
+  --shadow-md:  0 6px 20px rgba(22, 10, 3, 0.10);
+  --shadow-lg:  0 16px 40px rgba(22, 10, 3, 0.12);
+  --shadow-primary: 0 6px 20px rgba(225, 115, 48, 0.30);
+
+  /* ── Forma ── */
+  --radius-sm:  6px;
+  --radius:     12px;
+  --radius-lg:  20px;
+  --radius-xl:  32px;
+
+  /* ── Transición ── */
+  --transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Reset básico */
@@ -22,6 +62,7 @@ body {
   background-color: var(--bg-color);
   color: var(--text-dark);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* =========================================
@@ -30,7 +71,7 @@ body {
 .page-container {
   padding: 2rem;
   max-width: 1200px;
-  margin: 0 auto; /* Centrar contenido */
+  margin: 0 auto;
 }
 
 .page-header {
@@ -57,7 +98,7 @@ body {
   border-radius: var(--radius);
   padding: 1.5rem;
   box-shadow: var(--shadow-md);
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid var(--border-color);
 }
 
 /* Tarjeta KPI (para números grandes) */
@@ -69,16 +110,19 @@ body {
   display: flex;
   flex-direction: column;
   border-left: 5px solid transparent;
-  transition: transform 0.2s ease;
+  transition: var(--transition);
 }
 
 .kpi-card:hover {
   transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
 }
 
-.kpi-card.blue { border-left-color: var(--primary-color); }
-.kpi-card.green { border-left-color: var(--success-color); }
-.kpi-card.red { border-left-color: var(--danger-color); }
+.kpi-card.blue    { border-left-color: var(--secondary); }
+.kpi-card.green   { border-left-color: var(--success-color); }
+.kpi-card.red     { border-left-color: var(--danger-color); }
+.kpi-card.orange  { border-left-color: var(--primary); }
+.kpi-card.purple  { border-left-color: var(--accent); }
 
 .kpi-label {
   font-size: 0.875rem;
@@ -104,80 +148,111 @@ body {
 }
 
 /* Inputs modernos */
-input[type="date"], 
-input[type="text"], 
+input[type="date"],
+input[type="text"],
 select {
   padding: 0.6rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
   font-size: 1rem;
   outline: none;
-  transition: all 0.2s;
+  background-color: var(--card-bg);
+  color: var(--text-dark);
+  transition: var(--transition);
 }
 
 input:focus, select:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-subtle);
 }
 
 /* =========================================
-   4. ESTILOS TPI - UX/UI (Integrados con el tema)
+   4. ANIMACIONES Y TRANSICIONES
    ========================================= */
-
-/* Animaciones y Transiciones */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.fade-in { animation: fadeIn 0.5s ease-out; }
-
-.smooth-transition {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Scrollbar personalizado usando color principal */
-.custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 4px; }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--primary-hover); }
+@keyframes pulse-primary {
+  0%   { box-shadow: 0 0 0 0 rgba(225, 115, 48, 0.55); }
+  70%  { box-shadow: 0 0 0 15px rgba(225, 115, 48, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(225, 115, 48, 0); }
+}
 
-/* Tablas y Hover State (Simplicidad y Consistencia) */
+.fade-in         { animation: fadeIn 0.5s ease-out; }
+.smooth-transition { transition: var(--transition); }
+
+/* =========================================
+   5. SCROLLBAR PERSONALIZADA
+   ========================================= */
+::-webkit-scrollbar              { width: 8px; height: 8px; }
+::-webkit-scrollbar-track        { background: var(--border-light); border-radius: 4px; }
+::-webkit-scrollbar-thumb        { background: var(--primary-light); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover  { background: var(--primary); }
+
+.custom-scrollbar::-webkit-scrollbar              { width: 8px; height: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track        { background: var(--border-light); border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb        { background: var(--primary); border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover  { background: var(--primary-dark); }
+
+/* =========================================
+   6. TABLA — HOVER
+   ========================================= */
 .table-hover tbody tr { transition: background-color 0.2s ease; }
-.table-hover tbody tr:hover { 
-  background-color: rgba(37, 99, 235, 0.05) !important; 
+.table-hover tbody tr:hover {
+  background-color: var(--primary-subtle) !important;
 }
 
-/* Badges de Estado (Feedback visual) */
+/* =========================================
+   7. BADGES DE ESTADO
+   ========================================= */
 .status-badge {
-  padding: 0.35rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  display: inline-block;
-}
-
-.status-pending { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-.status-preparing { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-.status-delivering { background-color: #cce5ff; color: #004085; border: 1px solid #b8daff; }
-.status-delivered { background-color: #d4edda; color: var(--success-color); border: 1px solid #c3e6cb; }
-.status-cancelled { background-color: #f8d7da; color: var(--danger-color); border: 1px solid #f5c6cb; }
-
-.price-display {
-  font-family: 'Inter', sans-serif;
+  padding: 0.35rem 0.80rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.72rem;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  display: inline-block;
+  border: none;
 }
 
-/* Accesibilidad y Navegación por teclado (Principio 5 TPI) */
-button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
-  outline: 3px solid var(--primary-color) !important;
+.status-pending   { background-color: rgba(245, 158, 11, 0.15); color: #92400e; border: 1px solid rgba(245,158,11,0.4); }
+.status-preparing { background-color: rgba(108, 79, 230, 0.12); color: var(--accent-dark); border: 1px solid rgba(108,79,230,0.3); }
+.status-delivering{ background-color: rgba(129, 209, 237, 0.20); color: #075985; border: 1px solid rgba(129,209,237,0.5); }
+.status-delivered { background-color: rgba(34, 197, 94, 0.15); color: #166534; border: 1px solid rgba(34,197,94,0.3); }
+.status-cancelled { background-color: rgba(239, 68, 68, 0.12); color: #991b1b; border: 1px solid rgba(239,68,68,0.3); }
+
+/* =========================================
+   8. PRECIO
+   ========================================= */
+.price-display {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+/* =========================================
+   9. ACCESIBILIDAD
+   ========================================= */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--primary) !important;
   outline-offset: 2px;
   box-shadow: none !important;
 }
 
-/* Estados vacíos amigables */
+/* =========================================
+   10. EMPTY STATE
+   ========================================= */
 .empty-state {
   padding: 4rem 2rem;
   text-align: center;
@@ -185,12 +260,14 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .empty-state-icon {
   font-size: 3.5rem;
-  color: var(--text-gray);
+  color: var(--text-muted);
   margin-bottom: 1rem;
   opacity: 0.5;
 }
 
-/* Tooltips */
+/* =========================================
+   11. TOOLTIPS
+   ========================================= */
 .custom-tooltip {
   position: relative;
   display: inline-block;
@@ -203,7 +280,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   background-color: var(--text-dark);
   color: #fff;
   text-align: center;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 6px 12px;
   position: absolute;
   z-index: 10;
@@ -221,7 +298,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   opacity: 1;
 }
 
-/* Botón Flotante de Acción Principal (Jerarquía Visual) */
+/* =========================================
+   12. BOTÓN FLOTANTE DE ACCIÓN
+   ========================================= */
 .floating-action-btn {
   position: fixed;
   bottom: 30px;
@@ -232,28 +311,19 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--primary-color) !important;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
   color: white;
-  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  box-shadow: var(--shadow-primary);
   z-index: 1000;
-  transition: all 0.3s ease;
+  transition: var(--transition);
   border: none;
+  animation: pulse-primary 2.5s infinite;
 }
 
 .floating-action-btn:hover {
-  transform: translateY(-5px) scale(1.05);
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
-  background-color: var(--primary-hover) !important;
-}
-
-@keyframes pulse-primary {
-  0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5); }
-  70% { box-shadow: 0 0 0 15px rgba(37, 99, 235, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
-}
-
-.floating-action-btn {
-  animation: pulse-primary 2s infinite;
+  transform: translateY(-5px) scale(1.08);
+  box-shadow: 0 12px 30px rgba(225, 115, 48, 0.5);
+  background: linear-gradient(135deg, var(--primary-dark), #a84e16) !important;
 }
 
 @media (max-width: 768px) {
