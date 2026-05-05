@@ -16,9 +16,9 @@ import Repartidores from './pages/Repartidores';
 import FormularioRepartidor from './pages/FormularioRepartidor';
 import Reportes from './pages/Reportes';
 
-import './App.css';
-import './styles/professional.css';
-import './styles/restoBar.css';
+import './index.css'; // (O App.css, el que hayamos usado como global)
+// import './styles/professional.css'; 
+// import './styles/restoBar.css';
 
 function App() {
   return (
