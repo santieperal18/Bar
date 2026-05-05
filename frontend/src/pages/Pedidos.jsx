@@ -75,7 +75,7 @@ const Pedidos = () => {
   };
 
   return (
-    <> {/* ACÁ ARRANCA EL FRAGMENTO */}
+    <>
       <div className="container-fluid py-4 fade-in overflow-hidden">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <div>
@@ -127,25 +127,28 @@ const Pedidos = () => {
           </div>
         </div>
 
-        {/* Tabla Responsive */}
+        {/* Tabla Responsive Optimizada */}
         <div className="card border-0 position-relative overflow-hidden w-100">
           {cargando && (
             <div className="position-absolute w-100 h-100 d-flex justify-content-center align-items-center bg-white" style={{zIndex: 10, opacity: 0.8}}>
                <div className="spinner-border text-primary"></div>
             </div>
           )}
-          <div className="table-responsive custom-scrollbar border-0 w-100">
+          {/* Se elimina table-responsive en celulares para evitar scroll interno */}
+          <div className="w-100">
             <table className="table table-hover table-borderless mb-0 align-middle">
               <thead className="bg-light">
                 <tr>
-                  <th className="ps-4">ID</th>
+                  <th className="ps-3 ps-md-4">ID</th>
+                  {/* Se oculta en celulares, aparece en tablets y desktop */}
                   <th className="d-none d-md-table-cell">Hora</th>
                   <th>Cliente</th>
+                  {/* Se oculta en celulares y tablets, aparece solo en desktop */}
                   <th className="d-none d-lg-table-cell" style={{minWidth: '220px'}}>Resumen</th>
-                  <th className="text-center">Tipo</th>
+                  <th className="d-none d-md-table-cell text-center">Tipo</th>
                   <th className="text-center">Estado</th>
                   <th className="text-end">Total</th>
-                  <th className="text-center pe-4">Acciones</th>
+                  <th className="text-center pe-3 pe-md-4">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -162,16 +165,17 @@ const Pedidos = () => {
                 ) : (
                     pedidos.map(p => (
                     <tr key={p.id}>
-                        <td className="ps-4 fw-bold text-muted">#{p.id}</td>
+                        <td className="ps-3 ps-md-4 fw-bold text-muted">#{p.id}</td>
                         <td className="d-none d-md-table-cell text-muted">{new Date(p.fecha).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</td>
                         <td>
                           <span className="fw-bold text-dark">{p.cliente ? `${p.cliente.nombre} ${p.cliente.apellido}` : 'Consumidor Final'}</span>
+                          {/* Info extra de repartidor solo si existe y estamos en tablet/celular para no perder el dato */}
                           {p.repartidor && <div className="small text-muted d-block d-lg-none mt-1"><i className="fas fa-motorcycle me-1"></i>{p.repartidor.nombre}</div>}
                         </td>
                         <td className="d-none d-lg-table-cell text-muted small text-truncate" style={{maxWidth: '220px'}}>
                           {p.productos?.map(prod => `${prod.PedidoProducto?.cantidad || prod.cantidad}x ${prod.nombre}`).join(', ')}
                         </td>
-                        <td className="text-center text-muted">
+                        <td className="d-none d-md-table-cell text-center text-muted">
                           {p.tipoEntrega === 'delivery' ? <i className="fas fa-motorcycle" title="Delivery"></i> : <i className="fas fa-store" title="Local"></i>}
                         </td>
                         <td className="text-center">
@@ -179,22 +183,23 @@ const Pedidos = () => {
                             {p.estado === 'entregado' && <i className="fas fa-check-circle"></i>}
                             {p.estado === 'en_camino' && <i className="fas fa-route"></i>}
                             {p.estado === 'preparando' && <i className="fas fa-fire"></i>}
-                            {p.estado}
+                            {p.estado !== 'entregado' && p.estado !== 'en_camino' && p.estado !== 'preparando' && p.estado}
                           </span>
                         </td>
                         <td className="text-end fw-bold text-dark">${parseFloat(p.total || 0).toFixed(2)}</td>
-                        <td className="text-center pe-4">
+                        <td className="text-center pe-3 pe-md-4">
                           <div className="d-flex justify-content-center gap-1">
                             {p.estado !== 'entregado' && p.estado !== 'cancelado' && (
                                 <button className="btn btn-sm btn-light text-success" onClick={() => marcarEntregado(p.id)} aria-label="Entregar">
                                   <i className="fas fa-check"></i>
                                 </button>
                             )}
-                            <button className="btn btn-sm btn-light text-primary" onClick={() => navigate(`/pedidos/editar/${p.id}`)} aria-label="Editar">
-                              <i className="fas fa-pen"></i>
-                            </button>
-                            <button className="btn btn-sm btn-light text-secondary" onClick={() => { setPedidoSeleccionado(p); setModalIsOpen(true); }} aria-label="Ver">
+                            <button className="btn btn-sm btn-light text-secondary" onClick={() => { setPedidoSeleccionado(p); setModalIsOpen(true); }} aria-label="Ver detalles">
                               <i className="fas fa-eye"></i>
+                            </button>
+                            {/* El botón de editar lo ocultamos en celulares muy chicos para ganar espacio, igual el ojo abre el detalle completo */}
+                            <button className="btn btn-sm btn-light text-primary d-none d-sm-inline-flex" onClick={() => navigate(`/pedidos/editar/${p.id}`)} aria-label="Editar">
+                              <i className="fas fa-pen"></i>
                             </button>
                           </div>
                         </td>
@@ -205,9 +210,8 @@ const Pedidos = () => {
             </table>
           </div>
         </div>
-      </div> {/* ACÁ TERMINA EL DIV ANIMADO */}
+      </div>
 
-      {/* ELEMENTOS FLOTANTES LIBERADOS DEL TRANSFORM */}
       <button className="floating-action-btn border-0" onClick={() => navigate("/pedidos/nuevo")} aria-label="Crear pedido">
         <i className="fas fa-plus fs-4"></i>
       </button>
