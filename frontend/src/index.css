@@ -191,3 +191,24 @@ body {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+/* =========================================
+   7. ESTILOS DE NAVEGACIÓN (HEADER)
+   ========================================= */
+.modern-nav-link {
+  color: var(--text-muted) !important;
+  border-radius: 50rem;
+  padding: 0.5rem 1.25rem !important;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.modern-nav-link:hover {
+  background-color: rgba(0,0,0,0.05);
+  color: var(--text-dark) !important;
+}
+
+/* Estado activo: Pinta el botón del color principal */
+.modern-nav-link.active {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
