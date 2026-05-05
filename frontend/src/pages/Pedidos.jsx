@@ -11,11 +11,7 @@ const Pedidos = () => {
   const [clientes, setClientes] = useState([]);
   const [cargando, setCargando] = useState(false);
   
-  const obtenerFechaLocal = () => {
-    const ahora = new Date();
-    return ahora.toISOString().split('T')[0];
-  };
-
+  const obtenerFechaLocal = () => new Date().toISOString().split('T')[0];
   const ObtenerFechaMañana = () => {
     const ahora = new Date();
     ahora.setDate(ahora.getDate() + 1);
@@ -23,11 +19,8 @@ const Pedidos = () => {
   };
 
   const [filtros, setFiltros] = useState({
-    cliente: "",
-    estado: "",
-    tipoEntrega: "",
-    fechaDesde: obtenerFechaLocal(),
-    fechaHasta: ObtenerFechaMañana()
+    cliente: "", estado: "", tipoEntrega: "", 
+    fechaDesde: obtenerFechaLocal(), fechaHasta: ObtenerFechaMañana()
   });
   
   const navigate = useNavigate();
@@ -41,51 +34,35 @@ const Pedidos = () => {
     try {
       const data = await clientesService.obtenerTodos();
       setClientes(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Error cargando clientes:", error);
-      setClientes([]);
-    }
+    } catch (error) { setClientes([]); }
   };
 
   const buscar = async () => {
     setCargando(true);
-    const params = {};
-    if (filtros.cliente) params.cliente = filtros.cliente;
-    if (filtros.estado) params.estado = filtros.estado;
-    if (filtros.tipoEntrega) params.tipoEntrega = filtros.tipoEntrega;
-    if (filtros.fechaDesde) params.fechaDesde = filtros.fechaDesde;
-    if (filtros.fechaHasta) params.fechaHasta = filtros.fechaHasta;
-    
+    const params = Object.fromEntries(Object.entries(filtros).filter(([_, v]) => v !== ""));
     try {
         const data = await pedidosService.buscarFiltrado(params);
         setPedidos(Array.isArray(data) ? data : []);
-    } catch (error) {
-        console.error("Error buscando:", error);
-        setPedidos([]);
-    } finally {
-        setCargando(false);
-    }
+    } catch (error) { setPedidos([]); } 
+    finally { setCargando(false); }
   };
 
   const marcarEntregado = async (id) => {
-    if(!window.confirm("¿Marcar entregado?")) return;
+    if(!window.confirm("¿Marcar el pedido como entregado?")) return;
     try {
       await pedidosService.actualizarEstado(id, 'entregado');
-      setPedidos(peds => Array.isArray(peds) ? peds.map(p => p.id === id ? {...p, estado: 'entregado'} : p) : []);
-    } catch(e) { alert("Error al actualizar"); }
+      setPedidos(peds => peds.map(p => p.id === id ? {...p, estado: 'entregado'} : p));
+    } catch(e) { alert("Error al actualizar estado"); }
   };
 
   const eliminarPedido = async (id) => {
-    if(!window.confirm("¿Seguro de ELIMINAR este pedido?")) return;
+    if(!window.confirm("Esta acción es irreversible. ¿Eliminar pedido?")) return;
     try {
       await pedidosService.eliminar(id);
-      setPedidos(peds => Array.isArray(peds) ? peds.filter(p => p.id !== id) : []);
-    } catch (error) {
-      alert("No se pudo eliminar.");
-    }
+      setPedidos(peds => peds.filter(p => p.id !== id));
+    } catch (error) { alert("Error al eliminar"); }
   };
 
-  // Mapeo consistente de clases CSS para los estados
   const getEstadoBadge = (estado) => {
     const clases = {
       'pendiente': 'status-pending',
@@ -101,24 +78,24 @@ const Pedidos = () => {
     <div className="container-fluid py-4 fade-in">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h2 className="mb-0 fw-bold text-resto-primary">Gestión de Pedidos</h2>
-          <p className="text-muted small mb-0">Administrá las órdenes y sus estados</p>
+          <h2 className="mb-0 fw-bold" style={{color: 'var(--text-dark)'}}>Pedidos</h2>
+          <p className="text-muted small mb-0">Gestión de órdenes y entregas</p>
         </div>
       </div>
 
-      {/* Tarjeta de Filtros (Simplicidad y Agrupación) */}
-      <div className="card shadow-sm mb-4 border-0">
-        <div className="card-body bg-light rounded">
+      {/* Tarjeta de Filtros Responsive */}
+      <div className="card border-0 mb-4">
+        <div className="card-body p-4">
           <div className="row g-3 align-items-end">
-             <div className="col-md-3 col-sm-6">
-               <label className="form-label small fw-bold text-muted">Cliente</label>
+             <div className="col-12 col-md-4 col-lg-3">
+               <label className="form-label">Cliente</label>
                <select className="form-select" value={filtros.cliente} onChange={e => setFiltros({...filtros, cliente: e.target.value})}>
-                 <option value="">Todos los Clientes</option>
-                 {Array.isArray(clientes) && clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
+                 <option value="">Todos los clientes</option>
+                 {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
                </select>
              </div>
-             <div className="col-md-2 col-sm-6">
-               <label className="form-label small fw-bold text-muted">Estado</label>
+             <div className="col-12 col-md-4 col-lg-2">
+               <label className="form-label">Estado</label>
                <select className="form-select" value={filtros.estado} onChange={e => setFiltros({...filtros, estado: e.target.value})}>
                  <option value="">Todos</option>
                  <option value="pendiente">Pendiente</option>
@@ -127,19 +104,19 @@ const Pedidos = () => {
                  <option value="entregado">Entregado</option>
                </select>
              </div>
-             <div className="col-md-2 col-sm-6">
-                <label className="form-label small fw-bold text-muted">Desde</label>
+             <div className="col-6 col-md-4 col-lg-2">
+                <label className="form-label">Desde</label>
                 <input type="date" className="form-control" value={filtros.fechaDesde} onChange={e => setFiltros({...filtros, fechaDesde: e.target.value})} />
              </div>
-             <div className="col-md-2 col-sm-6">
-                <label className="form-label small fw-bold text-muted">Hasta</label>
+             <div className="col-6 col-md-4 col-lg-2">
+                <label className="form-label">Hasta</label>
                 <input type="date" className="form-control" value={filtros.fechaHasta} onChange={e => setFiltros({...filtros, fechaHasta: e.target.value})} />
              </div>
-             <div className="col-md-3 col-sm-12 d-flex gap-2">
+             <div className="col-12 col-md-8 col-lg-3 d-flex gap-2">
                <button className="btn btn-primary flex-grow-1" onClick={buscar} disabled={cargando}>
-                 {cargando ? <span className="spinner-border spinner-border-sm"></span> : <><i className="fas fa-search me-2"></i>Filtrar</>}
+                 {cargando ? <span className="spinner-border spinner-border-sm me-2"></span> : <i className="fas fa-search"></i>} Buscar
                </button>
-               <button className="btn btn-outline-secondary" title="Limpiar filtros a Hoy" onClick={() => {
+               <button className="btn btn-outline-secondary" aria-label="Restablecer filtros" onClick={() => {
                   setFiltros({...filtros, cliente: "", estado: "", tipoEntrega: "", fechaDesde: obtenerFechaLocal(), fechaHasta: ObtenerFechaMañana()});
                }}>
                  <i className="fas fa-undo"></i>
@@ -149,90 +126,74 @@ const Pedidos = () => {
         </div>
       </div>
 
-      {/* Tabla de Pedidos */}
-      <div className="card shadow-sm border-0 position-relative">
+      {/* Tabla Responsive */}
+      <div className="card border-0 position-relative overflow-hidden">
         {cargando && (
-          <div className="loading-overlay rounded">
-             <div className="spinner-border text-primary" role="status"></div>
+          <div className="position-absolute w-100 h-100 d-flex justify-content-center align-items-center bg-white" style={{zIndex: 10, opacity: 0.8}}>
+             <div className="spinner-border text-primary"></div>
           </div>
         )}
-        <div className="table-responsive custom-scrollbar">
-          <table className="table table-hover mb-0 align-middle">
-            <thead className="table-light">
+        <div className="table-responsive custom-scrollbar border-0">
+          <table className="table table-hover table-borderless mb-0 align-middle">
+            <thead className="bg-light">
               <tr>
-                <th>#</th>
-                <th>Hora</th>
+                <th className="ps-4">ID</th>
+                <th className="d-none d-md-table-cell">Hora</th>
                 <th>Cliente</th>
-                <th style={{minWidth: '250px'}}>Productos</th>
+                <th className="d-none d-lg-table-cell" style={{minWidth: '220px'}}>Resumen</th>
                 <th className="text-center">Tipo</th>
-                <th>Repartidor</th> 
                 <th className="text-center">Estado</th>
                 <th className="text-end">Total</th>
-                <th className="text-center">Acciones</th>
+                <th className="text-center pe-4">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {(!Array.isArray(pedidos) || pedidos.length === 0) ? (
+              {pedidos.length === 0 ? (
                   <tr>
-                    <td colSpan="9">
-                      <div className="empty-state">
-                        <i className="fas fa-clipboard-list empty-state-icon"></i>
-                        <h5 className="mt-3 text-muted">No se encontraron pedidos</h5>
-                        <p className="text-muted small">Ajustá los filtros de búsqueda o creá un pedido nuevo.</p>
+                    <td colSpan="8" className="text-center py-5">
+                      <div className="text-muted">
+                        <i className="fas fa-inbox fs-1 mb-3 opacity-50"></i>
+                        <h5>No se encontraron resultados</h5>
+                        <p className="mb-0">Ajusta los filtros o intenta con otra búsqueda.</p>
                       </div>
                     </td>
                   </tr>
               ) : (
                   pedidos.map(p => (
-                  <tr key={p.id} className="smooth-transition">
-                      <td className="fw-bold text-muted">#{p.id}</td>
-                      <td>{new Date(p.fecha).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</td>
+                  <tr key={p.id}>
+                      <td className="ps-4 fw-bold text-muted">#{p.id}</td>
+                      <td className="d-none d-md-table-cell text-muted">{new Date(p.fecha).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</td>
                       <td>
-                        <div className="fw-bold">{p.cliente ? `${p.cliente.nombre} ${p.cliente.apellido}` : 'Consumidor Final'}</div>
+                        <span className="fw-bold text-dark">{p.cliente ? `${p.cliente.nombre} ${p.cliente.apellido}` : 'Consumidor Final'}</span>
+                        {p.repartidor && <div className="small text-muted d-block d-lg-none mt-1"><i className="fas fa-motorcycle me-1"></i>{p.repartidor.nombre}</div>}
                       </td>
-                      <td>
-                        <ul className="list-unstyled mb-0 small">
-                          {Array.isArray(p.productos) && p.productos.map(prod => (
-                            <li key={prod.id} className="text-truncate" style={{maxWidth: '250px'}}>
-                               <span className="badge bg-secondary me-1">{prod.PedidoProducto?.cantidad || prod.cantidad}x</span> 
-                               {prod.nombre}
-                            </li>
-                          ))}
-                        </ul>
+                      <td className="d-none d-lg-table-cell text-muted small text-truncate" style={{maxWidth: '220px'}}>
+                        {p.productos?.map(prod => `${prod.PedidoProducto?.cantidad || prod.cantidad}x ${prod.nombre}`).join(', ')}
                       </td>
-
+                      <td className="text-center text-muted">
+                        {p.tipoEntrega === 'delivery' ? <i className="fas fa-motorcycle" title="Delivery"></i> : <i className="fas fa-store" title="Local"></i>}
+                      </td>
                       <td className="text-center">
-                        <span className="custom-tooltip" tabIndex="0">
-                          {p.tipoEntrega === 'delivery' ? <i className="fas fa-motorcycle text-primary" style={{fontSize: '1.2rem'}}></i> : <i className="fas fa-store text-secondary" style={{fontSize: '1.2rem'}}></i>}
-                          <span className="tooltip-text">{p.tipoEntrega === 'delivery' ? 'Delivery' : 'Retiro en Local'}</span>
+                        <span className={getEstadoBadge(p.estado)}>
+                          {p.estado === 'entregado' && <i className="fas fa-check-circle"></i>}
+                          {p.estado === 'en_camino' && <i className="fas fa-route"></i>}
+                          {p.estado === 'preparando' && <i className="fas fa-fire"></i>}
+                          {p.estado}
                         </span>
                       </td>
-                      
-                      <td>{p.repartidor ? <span className="small fw-bold text-dark"><i className="fas fa-helmet-safety me-1 text-warning"></i>{p.repartidor.nombre}</span> : <span className="text-muted">-</span>}</td>
-                      
-                      <td className="text-center">
-                        <span className="status-badge" className={getEstadoBadge(p.estado)}>{p.estado}</span>
-                      </td>
-                      
-                      <td className="text-end">
-                        <span className="price-display text-success">${parseFloat(p.total || 0).toFixed(2)}</span>
-                      </td>
-                      
-                      <td>
-                        <div className="d-flex justify-content-center gap-2">
+                      <td className="text-end fw-bold text-dark">${parseFloat(p.total || 0).toFixed(2)}</td>
+                      <td className="text-center pe-4">
+                        <div className="d-flex justify-content-center gap-1">
                           {p.estado !== 'entregado' && p.estado !== 'cancelado' && (
-                              <button className="btn btn-sm btn-success" onClick={() => marcarEntregado(p.id)} title="Marcar como Entregado" aria-label={`Marcar pedido ${p.id} como entregado`}>
+                              <button className="btn btn-sm btn-light text-success" onClick={() => marcarEntregado(p.id)} aria-label="Entregar">
                                 <i className="fas fa-check"></i>
                               </button>
                           )}
-                          <button className="btn btn-sm btn-outline-primary" onClick={() => navigate(`/pedidos/editar/${p.id}`)} title="Editar Pedido" aria-label={`Editar pedido ${p.id}`}>
-                            <i className="fas fa-edit"></i>
+                          <button className="btn btn-sm btn-light text-primary" onClick={() => navigate(`/pedidos/editar/${p.id}`)} aria-label="Editar">
+                            <i className="fas fa-pen"></i>
                           </button>
-                          <button className="btn btn-sm btn-outline-info" onClick={() => { setPedidoSeleccionado(p); setModalIsOpen(true); }} title="Ver Detalles" aria-label={`Ver detalles del pedido ${p.id}`}>
+                          <button className="btn btn-sm btn-light text-secondary" onClick={() => { setPedidoSeleccionado(p); setModalIsOpen(true); }} aria-label="Ver">
                             <i className="fas fa-eye"></i>
-                          </button>
-                          <button className="btn btn-sm btn-outline-danger" onClick={() => eliminarPedido(p.id)} title="Eliminar Pedido" aria-label={`Eliminar pedido ${p.id}`}>
-                            <i className="fas fa-trash"></i>
                           </button>
                         </div>
                       </td>
@@ -244,22 +205,12 @@ const Pedidos = () => {
         </div>
       </div>
 
-      {/* Botón Flotante (Jerarquía Visual para la acción principal) */}
-      <button 
-        className="floating-action-btn text-white border-0" 
-        onClick={() => navigate("/pedidos/nuevo")}
-        aria-label="Crear nuevo pedido"
-        title="Crear Nuevo Pedido"
-      >
+      <button className="floating-action-btn border-0" onClick={() => navigate("/pedidos/nuevo")} aria-label="Crear pedido">
         <i className="fas fa-plus fs-4"></i>
       </button>
 
       {pedidoSeleccionado && (
-        <ModalDetallesPedido 
-          pedido={pedidoSeleccionado} 
-          abierto={modalIsOpen} 
-          onCerrar={() => setModalIsOpen(false)} 
-        />
+        <ModalDetallesPedido pedido={pedidoSeleccionado} abierto={modalIsOpen} onCerrar={() => setModalIsOpen(false)} />
       )}
     </div>
   );
