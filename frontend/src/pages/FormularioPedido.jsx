@@ -25,11 +25,8 @@ const FormularioPedido = () => {
     const init = async () => {
       try {
         const [cli, prod, rep] = await Promise.all([
-            clientesService.obtenerTodos(), 
-            productosService.obtenerTodos(),
-            repartidoresService.obtenerTodos() 
+            clientesService.obtenerTodos(), productosService.obtenerTodos(), repartidoresService.obtenerTodos() 
         ]);
-        
         setClientes(Array.isArray(cli) ? cli : []);
         setProductos(Array.isArray(prod) ? prod : []);
         setRepartidores(Array.isArray(rep) ? rep : []);
@@ -40,28 +37,22 @@ const FormularioPedido = () => {
             setValue("idCliente", pedido.idCliente);
             setValue("tipoEntrega", pedido.tipoEntrega);
             setValue("estado", pedido.estado);
-            setValue("observaciones", pedido.observaciones);
             setValue("direccionEntrega", pedido.direccionEntrega);
             setValue("idRepartidor", pedido.idRepartidor); 
-            
             if (Array.isArray(pedido.productos)) {
                 setCarrito(pedido.productos.map(p => ({
-                    id: p.id,
-                    nombre: p.nombre,
+                    id: p.id, nombre: p.nombre, 
                     precio: parseFloat(p.PedidoProducto?.precioUnitario || p.precio),
                     cantidad: p.PedidoProducto?.cantidad || 1
                 })));
             }
           }
         }
-      } catch (error) {
-        console.error("Error al inicializar formulario:", error);
-      }
+      } catch (error) { console.error(error); }
     };
     init();
   }, [id, setValue]);
 
-  // UX Mejorada: Control de cantidades fluido
   const agregar = (prod) => {
     const existe = carrito.find(i => i.id === prod.id);
     if(existe) {
@@ -76,194 +67,172 @@ const FormularioPedido = () => {
     if(existe.cantidad > 1) {
         setCarrito(carrito.map(i => i.id === id ? {...i, cantidad: i.cantidad - 1} : i));
     } else {
-        quitar(id);
+        setCarrito(carrito.filter(i => i.id !== id));
     }
   };
 
-  const quitar = (id) => setCarrito(carrito.filter(i => i.id !== id));
-  
-  const total = Array.isArray(carrito) ? carrito.reduce((acc, i) => acc + ((i.precio || 0) * (i.cantidad || 1)), 0) : 0;
+  const total = carrito.reduce((acc, i) => acc + (i.precio * i.cantidad), 0);
 
   const onSubmit = async (data) => {
     if (data.tipoEntrega === 'local') data.idRepartidor = null;
     const payload = { 
-        ...data, 
-        fecha: new Date(), 
+        ...data, fecha: new Date(), 
         productos: carrito.map(i => ({ id: i.id, cantidad: i.cantidad, precio: i.precio })) 
     };
-    
     try {
         setCargando(true);
         id ? await pedidosService.actualizar(id, payload) : await pedidosService.crear(payload);
         navigate("/pedidos");
-    } catch(e) { 
-        console.error("Error al guardar:", e);
-    } finally { 
-        setCargando(false); 
-    }
+    } catch(e) { console.error(e); } 
+    finally { setCargando(false); }
   };
 
   return (
     <div className="container-fluid py-4 fade-in">
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      
+      {/* Header */}
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
         <div>
-          <h2 className="mb-0 fw-bold" style={{ color: 'var(--text-dark)' }}>
-            {id ? "Editar Pedido #"+id : "Nuevo Pedido"}
-          </h2>
-          <p className="text-muted small mb-0">Completá los datos del cliente y armá la comanda</p>
+          <h2 className="mb-0 fw-bold">{id ? `Editando Orden #${id}` : "Nueva Orden"}</h2>
+          <p className="text-muted small mb-0">Configura la comanda y entrega</p>
         </div>
-        <button type="button" className="btn btn-outline-secondary" onClick={() => navigate("/pedidos")}>
-          <i className="fas fa-arrow-left me-2"></i>Volver
+        <button type="button" className="btn btn-outline-secondary px-4" onClick={() => navigate("/pedidos")}>
+          <i className="fas fa-arrow-left"></i> Volver
         </button>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="row g-4">
           
-          {/* COLUMNA IZQUIERDA: Configuración y Productos (Jerarquía Visual) */}
-          <div className="col-lg-8">
+          {/* LADO IZQUIERDO: Operación */}
+          <div className="col-12 col-xl-8">
             
-            {/* Sección 1: Datos del Envío */}
-            <div className="card shadow-sm border-0 mb-4">
-              <div className="card-body">
-                <h5 className="fw-bold mb-3 border-bottom pb-2">1. Datos de Entrega</h5>
-                <div className="row g-3">
-                    <div className="col-md-6">
-                        <label className="form-label small fw-bold text-muted">Cliente</label>
-                        <select className="form-select" {...register("idCliente", {required: true})}>
-                            <option value="">Seleccionar Consumidor Final...</option>
-                            {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
-                        </select>
-                    </div>
-                    
-                    <div className="col-md-3">
-                        <label className="form-label small fw-bold text-muted">Modalidad</label>
-                        <select className="form-select" {...register("tipoEntrega")}>
-                            <option value="local">Local</option>
-                            <option value="delivery">Delivery</option>
-                        </select>
-                    </div>
+            {/* Tarjeta de Datos Logísticos */}
+            <div className="card border-0 p-4 mb-4">
+              <h5 className="fw-bold mb-4" style={{color: 'var(--primary-color)'}}><i className="fas fa-map-marker-alt me-2"></i>1. Logística</h5>
+              <div className="row g-3">
+                  <div className="col-12 col-md-6">
+                      <label className="form-label">Asignar Cliente</label>
+                      <select className="form-select bg-light" {...register("idCliente", {required: true})}>
+                          <option value="">Consumidor Final (Mostrador)</option>
+                          {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
+                      </select>
+                  </div>
+                  
+                  <div className="col-6 col-md-3">
+                      <label className="form-label">Modalidad</label>
+                      <select className="form-select bg-light" {...register("tipoEntrega")}>
+                          <option value="local">Retiro Local</option>
+                          <option value="delivery">Delivery</option>
+                      </select>
+                  </div>
 
-                    {id && (
-                        <div className="col-md-3">
-                            <label className="form-label small fw-bold text-muted">Estado Actual</label>
-                            <select className="form-select" {...register("estado")}>
-                                <option value="pendiente">Pendiente</option>
-                                <option value="preparando">Preparando</option>
-                                <option value="en_camino">En Camino</option>
-                                <option value="entregado">Entregado</option>
-                                <option value="cancelado">Cancelado</option>
+                  {id && (
+                      <div className="col-6 col-md-3">
+                          <label className="form-label">Estado</label>
+                          <select className="form-select bg-light" {...register("estado")}>
+                              <option value="pendiente">Pendiente</option>
+                              <option value="preparando">Preparando</option>
+                              <option value="en_camino">En Camino</option>
+                              <option value="entregado">Entregado</option>
+                          </select>
+                      </div>
+                  )}
+
+                  {tipoEntrega === 'delivery' && (
+                      <div className="col-12 row g-3 fade-in mt-0">
+                        <div className="col-12 col-md-4">
+                            <label className="form-label text-primary">Repartidor</label>
+                            <select className="form-select border-primary" {...register("idRepartidor")}>
+                                <option value="">Sin asignar</option>
+                                {repartidores.map(r => <option key={r.id} value={r.id}>{r.nombre}</option>)}
                             </select>
                         </div>
-                    )}
-
-                    {tipoEntrega === 'delivery' && (
-                        <>
-                          <div className="col-md-4 fade-in">
-                              <label className="form-label small fw-bold text-muted"><i className="fas fa-helmet-safety me-1"></i>Repartidor</label>
-                              <select className="form-select" style={{borderColor: 'var(--primary-color)'}} {...register("idRepartidor")}>
-                                  <option value="">Sin asignar...</option>
-                                  {repartidores.map(r => <option key={r.id} value={r.id}>{r.nombre} {r.apellido}</option>)}
-                              </select>
-                          </div>
-                          <div className="col-md-8 fade-in">
-                              <label className="form-label small fw-bold text-muted">Dirección de Entrega</label>
-                              <input type="text" className="form-control" {...register("direccionEntrega")} placeholder="Ej: Av. Colón 1234, B° Centro" />
-                          </div>
-                        </>
-                    )}
-                </div>
+                        <div className="col-12 col-md-8">
+                            <label className="form-label">Dirección destino</label>
+                            <input type="text" className="form-control" {...register("direccionEntrega")} placeholder="Ingresa la calle y número" />
+                        </div>
+                      </div>
+                  )}
               </div>
             </div>
 
-            {/* Sección 2: Catálogo de Productos (Simplicidad) */}
-            <div className="card shadow-sm border-0">
-              <div className="card-body">
-                <h5 className="fw-bold mb-3 border-bottom pb-2">2. Catálogo de Productos</h5>
-                <div className="grid-responsive custom-scrollbar" style={{maxHeight: '400px', overflowY: 'auto', paddingRight: '10px'}}>
-                    {productos.map(p => (
-                        <div key={p.id} className="product-card p-3 d-flex flex-column justify-content-between h-100 bg-light">
-                            <div>
-                                <h6 className="fw-bold mb-1">{p.nombre}</h6>
-                                <span className="price-display text-success">${parseFloat(p.precio || 0).toFixed(2)}</span>
+            {/* Tarjeta Catálogo POS (Responsive Grid) */}
+            <div className="card border-0 p-4">
+              <h5 className="fw-bold mb-4" style={{color: 'var(--primary-color)'}}><i className="fas fa-hamburger me-2"></i>2. Menú Rápido</h5>
+              <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 custom-scrollbar" style={{maxHeight: '450px', overflowY: 'auto'}}>
+                  {productos.map(p => (
+                      <div key={p.id} className="col">
+                        <div className="card h-100 bg-light border-0 shadow-none p-3" style={{cursor: 'pointer'}} onClick={() => agregar(p)}>
+                            <div className="d-flex flex-column h-100 justify-content-between">
+                                <div>
+                                    <h6 className="fw-bold text-dark mb-1 lh-sm">{p.nombre}</h6>
+                                    <span className="fw-bold text-success fs-5">${parseFloat(p.precio || 0).toFixed(2)}</span>
+                                </div>
+                                <button type="button" className="btn btn-sm btn-light mt-3 w-100 fw-bold border" aria-label={`Agregar ${p.nombre}`}>
+                                  <i className="fas fa-plus text-primary"></i>
+                                </button>
                             </div>
-                            <button 
-                              type="button" 
-                              className="btn btn-sm mt-3 w-100 fw-bold"
-                              style={{backgroundColor: 'var(--primary-color)', color: 'white'}}
-                              onClick={() => agregar(p)}
-                              aria-label={`Agregar ${p.nombre} al pedido`}
-                            >
-                              <i className="fas fa-plus me-1"></i> Agregar
-                            </button>
                         </div>
-                    ))}
-                </div>
+                      </div>
+                  ))}
               </div>
             </div>
 
           </div>
 
-          {/* COLUMNA DERECHA: El "Ticket" o Carrito (Retroalimentación constante) */}
-          <div className="col-lg-4">
-            <div className="card shadow-sm border-0 sticky-top" style={{top: '20px'}}>
-              <div className="card-header bg-white border-bottom-0 pt-4 pb-0">
-                <h5 className="fw-bold"><i className="fas fa-receipt me-2 text-muted"></i>Resumen del Pedido</h5>
+          {/* LADO DERECHO: Carrito / Ticket fijo */}
+          <div className="col-12 col-xl-4 mt-4 mt-xl-0">
+            <div className="card border-0 shadow-sm sticky-top" style={{top: '20px'}}>
+              <div className="card-header bg-white border-bottom-0 pt-4 pb-2 px-4">
+                <h5 className="fw-bold mb-0 text-dark">Ticket de Venta</h5>
               </div>
-              <div className="card-body d-flex flex-column" style={{minHeight: '400px'}}>
+              <div className="card-body p-0 d-flex flex-column" style={{minHeight: '450px'}}>
                 
-                {/* Listado del Carrito */}
-                <div className="flex-grow-1 custom-scrollbar" style={{overflowY: 'auto', maxHeight: '300px'}}>
+                {/* Items del Carrito */}
+                <div className="flex-grow-1 custom-scrollbar px-4 pb-2" style={{overflowY: 'auto', maxHeight: '350px'}}>
                     {carrito.length === 0 ? (
-                        <div className="empty-state p-3 text-center">
-                            <i className="fas fa-shopping-basket fs-1 text-muted opacity-25 mb-3"></i>
-                            <p className="text-muted small">El pedido está vacío.<br/>Agregá productos desde el catálogo.</p>
+                        <div className="h-100 d-flex flex-column align-items-center justify-content-center text-muted p-5 text-center">
+                            <i className="fas fa-shopping-bag fs-1 mb-3" style={{opacity: 0.2}}></i>
+                            <p className="mb-0">Añade productos para<br/>iniciar la comanda</p>
                         </div>
                     ) : (
-                        <ul className="list-group list-group-flush">
+                        <div className="d-flex flex-column gap-3 mt-3">
                             {carrito.map(item => (
-                                <li key={item.id} className="list-group-item px-0 py-3 border-bottom smooth-transition">
-                                    <div className="d-flex justify-content-between align-items-start mb-2">
-                                        <span className="fw-bold text-dark">{item.nombre}</span>
-                                        <span className="fw-bold text-success">${(item.precio * item.cantidad).toFixed(2)}</span>
+                                <div key={item.id} className="d-flex align-items-center justify-content-between p-3 bg-light rounded-3">
+                                    <div className="d-flex flex-column">
+                                        <span className="fw-bold text-dark lh-1">{item.nombre}</span>
+                                        <span className="text-muted small mt-1">${item.precio.toFixed(2)} /u</span>
                                     </div>
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <span className="text-muted small">${item.precio.toFixed(2)} c/u</span>
-                                        <div className="btn-group btn-group-sm" role="group">
-                                            <button type="button" className="btn btn-outline-secondary" onClick={() => restar(item.id)} aria-label="Disminuir cantidad">
-                                              <i className={`fas ${item.cantidad === 1 ? 'fa-trash text-danger' : 'fa-minus'}`}></i>
-                                            </button>
-                                            <span className="btn btn-outline-secondary disabled fw-bold" style={{width: '40px', opacity: 1}}>{item.cantidad}</span>
-                                            <button type="button" className="btn btn-outline-secondary" onClick={() => agregar(item)} aria-label="Aumentar cantidad">
-                                              <i className="fas fa-plus"></i>
-                                            </button>
-                                        </div>
+                                    <div className="d-flex align-items-center gap-2">
+                                        <button type="button" className="btn-qty" onClick={() => restar(item.id)}>
+                                          <i className={`fas ${item.cantidad === 1 ? 'fa-trash-alt text-danger' : 'fa-minus'}`}></i>
+                                        </button>
+                                        <span className="fw-bold text-center" style={{width: '24px'}}>{item.cantidad}</span>
+                                        <button type="button" className="btn-qty" onClick={() => agregar(item)}>
+                                          <i className="fas fa-plus"></i>
+                                        </button>
                                     </div>
-                                </li>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     )}
                 </div>
 
-                {/* Zona de Totales y Acción */}
-                <div className="border-top pt-3 mt-3">
-                    <div className="d-flex justify-content-between align-items-center mb-3">
-                        <span className="text-uppercase fw-bold text-muted">Total</span>
-                        <span className="fs-3 fw-bold text-dark">${total.toFixed(2)}</span>
+                {/* Footer del Ticket */}
+                <div className="bg-light p-4 rounded-bottom-4 mt-auto">
+                    <div className="d-flex justify-content-between align-items-end mb-4">
+                        <span className="fw-bold text-muted text-uppercase tracking-wider">A Cobrar</span>
+                        <span className="fs-2 fw-bold text-dark lh-1">${total.toFixed(2)}</span>
                     </div>
                     
-                    <button 
-                      type="submit" 
-                      className="btn btn-lg w-100 fw-bold d-flex justify-content-center align-items-center"
-                      style={{backgroundColor: carrito.length === 0 ? '#e5e7eb' : 'var(--primary-color)', color: carrito.length === 0 ? '#9ca3af' : 'white'}}
-                      disabled={cargando || carrito.length === 0}
-                    >
+                    <button type="submit" className="btn btn-primary btn-lg w-100 py-3 fs-5" disabled={cargando || carrito.length === 0}>
                       {cargando ? (
-                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span className="spinner-border spinner-border-sm me-2"></span>
                       ) : (
-                        <i className="fas fa-check-circle me-2"></i>
+                        <i className="fas fa-arrow-right me-2"></i>
                       )}
-                      {cargando ? "Guardando..." : "Confirmar Pedido"}
+                      Procesar Orden
                     </button>
                 </div>
 
