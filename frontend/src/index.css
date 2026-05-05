@@ -167,16 +167,28 @@ body {
 .table {
   color: var(--text-dark);
 }
-.table th {
-  color: var(--secondary-color);
-  font-weight: 600;
+
+/* Forzamos el fondo claro y anulamos cualquier marrón viejo */
+.table thead, 
+.table thead tr {
+  background-color: var(--bg-color) !important;
+}
+
+.table th, 
+.table thead th {
+  background-color: var(--bg-color) !important; /* Mismo fondo gris clarito que la app */
+  color: var(--secondary-color) !important; /* Letras gris oscuro */
+  font-weight: 700 !important;
   text-transform: uppercase;
   font-size: 0.8rem;
-  letter-spacing: 0.5px;
-  border-bottom: 2px solid #e0e0e0;
+  letter-spacing: 0.8px;
+  border-bottom: 2px solid #dcdcdc !important;
+  border-top: none !important;
+  padding: 1rem 0.5rem !important; /* Le da más aire a los títulos */
 }
+
 .table-hover tbody tr:hover {
-  background-color: rgba(11, 87, 208, 0.04);
+  background-color: rgba(11, 87, 208, 0.04) !important;
 }
 
 /* Scrollbar moderno */
@@ -184,13 +196,6 @@ body {
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 10px; }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #bdc1c6; }
-
-/* Animaciones */
-.fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 /* =========================================
    7. ESTILOS DE NAVEGACIÓN (HEADER)
    ========================================= */
