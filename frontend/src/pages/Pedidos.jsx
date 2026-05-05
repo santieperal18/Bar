@@ -75,136 +75,139 @@ const Pedidos = () => {
   };
 
   return (
-    <div className="container-fluid py-4 fade-in">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-0 fw-bold" style={{color: 'var(--text-dark)'}}>Pedidos</h2>
-          <p className="text-muted small mb-0">Gestión de órdenes y entregas</p>
-        </div>
-      </div>
-
-      {/* Tarjeta de Filtros Responsive */}
-      <div className="card border-0 mb-4">
-        <div className="card-body p-4">
-          <div className="row g-3 align-items-end">
-             <div className="col-12 col-md-4 col-lg-3">
-               <label className="form-label">Cliente</label>
-               <select className="form-select" value={filtros.cliente} onChange={e => setFiltros({...filtros, cliente: e.target.value})}>
-                 <option value="">Todos los clientes</option>
-                 {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
-               </select>
-             </div>
-             <div className="col-12 col-md-4 col-lg-2">
-               <label className="form-label">Estado</label>
-               <select className="form-select" value={filtros.estado} onChange={e => setFiltros({...filtros, estado: e.target.value})}>
-                 <option value="">Todos</option>
-                 <option value="pendiente">Pendiente</option>
-                 <option value="preparando">Preparando</option>
-                 <option value="en_camino">En Camino</option>
-                 <option value="entregado">Entregado</option>
-               </select>
-             </div>
-             <div className="col-6 col-md-4 col-lg-2">
-                <label className="form-label">Desde</label>
-                <input type="date" className="form-control" value={filtros.fechaDesde} onChange={e => setFiltros({...filtros, fechaDesde: e.target.value})} />
-             </div>
-             <div className="col-6 col-md-4 col-lg-2">
-                <label className="form-label">Hasta</label>
-                <input type="date" className="form-control" value={filtros.fechaHasta} onChange={e => setFiltros({...filtros, fechaHasta: e.target.value})} />
-             </div>
-             <div className="col-12 col-md-8 col-lg-3 d-flex gap-2">
-               <button className="btn btn-primary flex-grow-1" onClick={buscar} disabled={cargando}>
-                 {cargando ? <span className="spinner-border spinner-border-sm me-2"></span> : <i className="fas fa-search"></i>} Buscar
-               </button>
-               <button className="btn btn-outline-secondary" aria-label="Restablecer filtros" onClick={() => {
-                  setFiltros({...filtros, cliente: "", estado: "", tipoEntrega: "", fechaDesde: obtenerFechaLocal(), fechaHasta: ObtenerFechaMañana()});
-               }}>
-                 <i className="fas fa-undo"></i>
-               </button>
-             </div>
+    <> {/* ACÁ ARRANCA EL FRAGMENTO */}
+      <div className="container-fluid py-4 fade-in overflow-hidden">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 className="mb-0 fw-bold" style={{color: 'var(--text-dark)'}}>Pedidos</h2>
+            <p className="text-muted small mb-0">Gestión de órdenes y entregas</p>
           </div>
         </div>
-      </div>
 
-      {/* Tabla Responsive */}
-      <div className="card border-0 position-relative overflow-hidden">
-        {cargando && (
-          <div className="position-absolute w-100 h-100 d-flex justify-content-center align-items-center bg-white" style={{zIndex: 10, opacity: 0.8}}>
-             <div className="spinner-border text-primary"></div>
+        {/* Tarjeta de Filtros Responsive */}
+        <div className="card border-0 mb-4 overflow-hidden">
+          <div className="card-body p-4">
+            <div className="row g-3 align-items-end">
+               <div className="col-12 col-md-4 col-lg-3">
+                 <label className="form-label">Cliente</label>
+                 <select className="form-select" value={filtros.cliente} onChange={e => setFiltros({...filtros, cliente: e.target.value})}>
+                   <option value="">Todos los clientes</option>
+                   {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
+                 </select>
+               </div>
+               <div className="col-12 col-md-4 col-lg-2">
+                 <label className="form-label">Estado</label>
+                 <select className="form-select" value={filtros.estado} onChange={e => setFiltros({...filtros, estado: e.target.value})}>
+                   <option value="">Todos</option>
+                   <option value="pendiente">Pendiente</option>
+                   <option value="preparando">Preparando</option>
+                   <option value="en_camino">En Camino</option>
+                   <option value="entregado">Entregado</option>
+                 </select>
+               </div>
+               <div className="col-6 col-md-4 col-lg-2">
+                  <label className="form-label">Desde</label>
+                  <input type="date" className="form-control" value={filtros.fechaDesde} onChange={e => setFiltros({...filtros, fechaDesde: e.target.value})} />
+               </div>
+               <div className="col-6 col-md-4 col-lg-2">
+                  <label className="form-label">Hasta</label>
+                  <input type="date" className="form-control" value={filtros.fechaHasta} onChange={e => setFiltros({...filtros, fechaHasta: e.target.value})} />
+               </div>
+               <div className="col-12 col-md-8 col-lg-3 d-flex gap-2">
+                 <button className="btn btn-primary flex-grow-1" onClick={buscar} disabled={cargando}>
+                   {cargando ? <span className="spinner-border spinner-border-sm me-2"></span> : <i className="fas fa-search"></i>} Buscar
+                 </button>
+                 <button className="btn btn-outline-secondary" aria-label="Restablecer filtros" onClick={() => {
+                    setFiltros({...filtros, cliente: "", estado: "", tipoEntrega: "", fechaDesde: obtenerFechaLocal(), fechaHasta: ObtenerFechaMañana()});
+                 }}>
+                   <i className="fas fa-undo"></i>
+                 </button>
+               </div>
+            </div>
           </div>
-        )}
-        <div className="table-responsive custom-scrollbar border-0">
-          <table className="table table-hover table-borderless mb-0 align-middle">
-            <thead className="bg-light">
-              <tr>
-                <th className="ps-4">ID</th>
-                <th className="d-none d-md-table-cell">Hora</th>
-                <th>Cliente</th>
-                <th className="d-none d-lg-table-cell" style={{minWidth: '220px'}}>Resumen</th>
-                <th className="text-center">Tipo</th>
-                <th className="text-center">Estado</th>
-                <th className="text-end">Total</th>
-                <th className="text-center pe-4">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pedidos.length === 0 ? (
-                  <tr>
-                    <td colSpan="8" className="text-center py-5">
-                      <div className="text-muted">
-                        <i className="fas fa-inbox fs-1 mb-3 opacity-50"></i>
-                        <h5>No se encontraron resultados</h5>
-                        <p className="mb-0">Ajusta los filtros o intenta con otra búsqueda.</p>
-                      </div>
-                    </td>
-                  </tr>
-              ) : (
-                  pedidos.map(p => (
-                  <tr key={p.id}>
-                      <td className="ps-4 fw-bold text-muted">#{p.id}</td>
-                      <td className="d-none d-md-table-cell text-muted">{new Date(p.fecha).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</td>
-                      <td>
-                        <span className="fw-bold text-dark">{p.cliente ? `${p.cliente.nombre} ${p.cliente.apellido}` : 'Consumidor Final'}</span>
-                        {p.repartidor && <div className="small text-muted d-block d-lg-none mt-1"><i className="fas fa-motorcycle me-1"></i>{p.repartidor.nombre}</div>}
-                      </td>
-                      <td className="d-none d-lg-table-cell text-muted small text-truncate" style={{maxWidth: '220px'}}>
-                        {p.productos?.map(prod => `${prod.PedidoProducto?.cantidad || prod.cantidad}x ${prod.nombre}`).join(', ')}
-                      </td>
-                      <td className="text-center text-muted">
-                        {p.tipoEntrega === 'delivery' ? <i className="fas fa-motorcycle" title="Delivery"></i> : <i className="fas fa-store" title="Local"></i>}
-                      </td>
-                      <td className="text-center">
-                        <span className={getEstadoBadge(p.estado)}>
-                          {p.estado === 'entregado' && <i className="fas fa-check-circle"></i>}
-                          {p.estado === 'en_camino' && <i className="fas fa-route"></i>}
-                          {p.estado === 'preparando' && <i className="fas fa-fire"></i>}
-                          {p.estado}
-                        </span>
-                      </td>
-                      <td className="text-end fw-bold text-dark">${parseFloat(p.total || 0).toFixed(2)}</td>
-                      <td className="text-center pe-4">
-                        <div className="d-flex justify-content-center gap-1">
-                          {p.estado !== 'entregado' && p.estado !== 'cancelado' && (
-                              <button className="btn btn-sm btn-light text-success" onClick={() => marcarEntregado(p.id)} aria-label="Entregar">
-                                <i className="fas fa-check"></i>
-                              </button>
-                          )}
-                          <button className="btn btn-sm btn-light text-primary" onClick={() => navigate(`/pedidos/editar/${p.id}`)} aria-label="Editar">
-                            <i className="fas fa-pen"></i>
-                          </button>
-                          <button className="btn btn-sm btn-light text-secondary" onClick={() => { setPedidoSeleccionado(p); setModalIsOpen(true); }} aria-label="Ver">
-                            <i className="fas fa-eye"></i>
-                          </button>
+        </div>
+
+        {/* Tabla Responsive */}
+        <div className="card border-0 position-relative overflow-hidden w-100">
+          {cargando && (
+            <div className="position-absolute w-100 h-100 d-flex justify-content-center align-items-center bg-white" style={{zIndex: 10, opacity: 0.8}}>
+               <div className="spinner-border text-primary"></div>
+            </div>
+          )}
+          <div className="table-responsive custom-scrollbar border-0 w-100">
+            <table className="table table-hover table-borderless mb-0 align-middle">
+              <thead className="bg-light">
+                <tr>
+                  <th className="ps-4">ID</th>
+                  <th className="d-none d-md-table-cell">Hora</th>
+                  <th>Cliente</th>
+                  <th className="d-none d-lg-table-cell" style={{minWidth: '220px'}}>Resumen</th>
+                  <th className="text-center">Tipo</th>
+                  <th className="text-center">Estado</th>
+                  <th className="text-end">Total</th>
+                  <th className="text-center pe-4">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pedidos.length === 0 ? (
+                    <tr>
+                      <td colSpan="8" className="text-center py-5">
+                        <div className="text-muted">
+                          <i className="fas fa-inbox fs-1 mb-3 opacity-50"></i>
+                          <h5>No se encontraron resultados</h5>
+                          <p className="mb-0">Ajusta los filtros o intenta con otra búsqueda.</p>
                         </div>
                       </td>
-                  </tr>
-                  ))
-              )}
-            </tbody>
-          </table>
+                    </tr>
+                ) : (
+                    pedidos.map(p => (
+                    <tr key={p.id}>
+                        <td className="ps-4 fw-bold text-muted">#{p.id}</td>
+                        <td className="d-none d-md-table-cell text-muted">{new Date(p.fecha).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</td>
+                        <td>
+                          <span className="fw-bold text-dark">{p.cliente ? `${p.cliente.nombre} ${p.cliente.apellido}` : 'Consumidor Final'}</span>
+                          {p.repartidor && <div className="small text-muted d-block d-lg-none mt-1"><i className="fas fa-motorcycle me-1"></i>{p.repartidor.nombre}</div>}
+                        </td>
+                        <td className="d-none d-lg-table-cell text-muted small text-truncate" style={{maxWidth: '220px'}}>
+                          {p.productos?.map(prod => `${prod.PedidoProducto?.cantidad || prod.cantidad}x ${prod.nombre}`).join(', ')}
+                        </td>
+                        <td className="text-center text-muted">
+                          {p.tipoEntrega === 'delivery' ? <i className="fas fa-motorcycle" title="Delivery"></i> : <i className="fas fa-store" title="Local"></i>}
+                        </td>
+                        <td className="text-center">
+                          <span className={getEstadoBadge(p.estado)}>
+                            {p.estado === 'entregado' && <i className="fas fa-check-circle"></i>}
+                            {p.estado === 'en_camino' && <i className="fas fa-route"></i>}
+                            {p.estado === 'preparando' && <i className="fas fa-fire"></i>}
+                            {p.estado}
+                          </span>
+                        </td>
+                        <td className="text-end fw-bold text-dark">${parseFloat(p.total || 0).toFixed(2)}</td>
+                        <td className="text-center pe-4">
+                          <div className="d-flex justify-content-center gap-1">
+                            {p.estado !== 'entregado' && p.estado !== 'cancelado' && (
+                                <button className="btn btn-sm btn-light text-success" onClick={() => marcarEntregado(p.id)} aria-label="Entregar">
+                                  <i className="fas fa-check"></i>
+                                </button>
+                            )}
+                            <button className="btn btn-sm btn-light text-primary" onClick={() => navigate(`/pedidos/editar/${p.id}`)} aria-label="Editar">
+                              <i className="fas fa-pen"></i>
+                            </button>
+                            <button className="btn btn-sm btn-light text-secondary" onClick={() => { setPedidoSeleccionado(p); setModalIsOpen(true); }} aria-label="Ver">
+                              <i className="fas fa-eye"></i>
+                            </button>
+                          </div>
+                        </td>
+                    </tr>
+                    ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      </div> {/* ACÁ TERMINA EL DIV ANIMADO */}
 
+      {/* ELEMENTOS FLOTANTES LIBERADOS DEL TRANSFORM */}
       <button className="floating-action-btn border-0" onClick={() => navigate("/pedidos/nuevo")} aria-label="Crear pedido">
         <i className="fas fa-plus fs-4"></i>
       </button>
@@ -212,7 +215,7 @@ const Pedidos = () => {
       {pedidoSeleccionado && (
         <ModalDetallesPedido pedido={pedidoSeleccionado} abierto={modalIsOpen} onCerrar={() => setModalIsOpen(false)} />
       )}
-    </div>
+    </>
   );
 };
 
