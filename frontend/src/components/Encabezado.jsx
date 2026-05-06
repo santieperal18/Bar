@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 const Encabezado = () => {
   const navigate = useNavigate();
+  // MAGIA REACT: Estado para controlar el menú en celulares
+  const [menuAbierto, setMenuAbierto] = useState(false);
 
   const handleLogout = () => {
     // Si tenés lógica para borrar tokens, iría acá
     navigate('/login');
+  };
+
+  // Función para abrir/cerrar tocando las 3 rayitas
+  const toggleMenu = () => {
+    setMenuAbierto(!menuAbierto);
+  };
+
+  // Función para cerrar el menú al tocar un link
+  const cerrarMenu = () => {
+    setMenuAbierto(false);
   };
 
   return (
@@ -36,25 +48,23 @@ const Encabezado = () => {
             <i className="fas fa-store me-2"></i> La Esquina
           </span>
 
-          {/* Botón hamburguesa para móviles */}
+          {/* Botón hamburguesa (MODIFICADO PARA USAR REACT) */}
           <button 
             className="navbar-toggler border-0 shadow-none" 
             type="button" 
-            data-bs-toggle="collapse" 
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav" 
-            aria-expanded="false" 
-            aria-label="Toggle navigation"
+            onClick={toggleMenu}
+            aria-label="Abrir menú de navegación"
           >
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          {/* Enlaces de navegación */}
-          <div className="collapse navbar-collapse mt-3 mt-lg-0" id="navbarNav">
+          {/* Enlaces de navegación (MODIFICADO PARA MOSTRARSE SEGÚN EL ESTADO) */}
+          <div className={`collapse navbar-collapse mt-3 mt-lg-0 ${menuAbierto ? 'show' : ''}`} id="navbarNav">
             <ul className="navbar-nav me-auto gap-2">
               <li className="nav-item">
                 <NavLink 
                   to="/pedidos" 
+                  onClick={cerrarMenu}
                   className={({isActive}) => `nav-link modern-nav-link ${isActive ? 'active' : ''}`}
                 >
                   <i className="fas fa-shopping-cart me-2"></i>Pedidos
@@ -63,6 +73,7 @@ const Encabezado = () => {
               <li className="nav-item">
                 <NavLink 
                   to="/clientes" 
+                  onClick={cerrarMenu}
                   className={({isActive}) => `nav-link modern-nav-link ${isActive ? 'active' : ''}`}
                 >
                   <i className="fas fa-users me-2"></i>Clientes
@@ -71,6 +82,7 @@ const Encabezado = () => {
               <li className="nav-item">
                 <NavLink 
                   to="/productos" 
+                  onClick={cerrarMenu}
                   className={({isActive}) => `nav-link modern-nav-link ${isActive ? 'active' : ''}`}
                 >
                   <i className="fas fa-hamburger me-2"></i>Productos
@@ -79,6 +91,7 @@ const Encabezado = () => {
               <li className="nav-item">
                 <NavLink 
                   to="/repartidores" 
+                  onClick={cerrarMenu}
                   className={({isActive}) => `nav-link modern-nav-link ${isActive ? 'active' : ''}`}
                 >
                   <i className="fas fa-motorcycle me-2"></i>Repartidores
@@ -87,6 +100,7 @@ const Encabezado = () => {
               <li className="nav-item">
                 <NavLink 
                   to="/reportes" 
+                  onClick={cerrarMenu}
                   className={({isActive}) => `nav-link modern-nav-link ${isActive ? 'active' : ''}`}
                 >
                   <i className="fas fa-chart-bar me-2"></i>Reportes
