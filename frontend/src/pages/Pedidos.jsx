@@ -75,29 +75,47 @@ const Pedidos = () => {
   };
 
   return (
-    <>
+    <> {/* Fragmento para liberar al botón flotante de la animación */}
       <div className="container-fluid py-4 fade-in overflow-hidden">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <div>
-            <h2 className="mb-0 fw-bold" style={{color: 'var(--text-dark)'}}>Pedidos</h2>
-            <p className="text-muted small mb-0">Gestión de órdenes y entregas</p>
+        
+        {/* ENCABEZADO DE PÁGINA CON BRANDING */}
+        <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3 bg-white p-4 rounded-4 shadow-sm border">
+          <div className="d-flex align-items-center gap-3">
+            {/* Contenedor del Logo (Círculo) */}
+            <div className="bg-light rounded-circle d-flex justify-content-center align-items-center overflow-hidden border" style={{width: '64px', height: '64px', flexShrink: 0}}>
+              <img 
+                src="/logo.png" 
+                alt="Logo La Esquina" 
+                style={{width: '100%', height: '100%', objectFit: 'cover'}} 
+                onError={(e) => { 
+                  e.target.onerror = null; 
+                  e.target.src = "https://via.placeholder.com/64x64/0b57d0/ffffff?text=LE"; 
+                }} 
+              />
+            </div>
+            <div>
+              <p className="text-primary fw-bold small text-uppercase mb-1" style={{letterSpacing: '1px'}}>
+                <i className="fas fa-utensils me-2"></i>Resto Bar La Esquina
+              </p>
+              <h2 className="mb-0 fw-bold text-dark lh-1">Monitor de Pedidos</h2>
+            </div>
           </div>
         </div>
 
-        {/* Tarjeta de Filtros Responsive */}
-        <div className="card border-0 mb-4 overflow-hidden">
+        {/* Tarjeta de Filtros Accesibles */}
+        <div className="card border-0 mb-4 overflow-hidden shadow-sm">
           <div className="card-body p-4">
             <div className="row g-3 align-items-end">
                <div className="col-12 col-md-4 col-lg-3">
-                 <label className="form-label">Cliente</label>
-                 <select className="form-select" value={filtros.cliente} onChange={e => setFiltros({...filtros, cliente: e.target.value})}>
+                 <label htmlFor="filtro-cliente" className="form-label">Cliente</label>
+                 <select id="filtro-cliente" className="form-select bg-light" value={filtros.cliente} onChange={e => setFiltros({...filtros, cliente: e.target.value})}>
                    <option value="">Todos los clientes</option>
                    {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
                  </select>
                </div>
                <div className="col-12 col-md-4 col-lg-2">
-                 <label className="form-label">Estado</label>
-                 <select className="form-select" value={filtros.estado} onChange={e => setFiltros({...filtros, estado: e.target.value})}>
+                 <label htmlFor="filtro-estado" className="form-label">Estado</label>
+                 <select id="filtro-estado" className="form-select bg-light" value={filtros.estado} onChange={e => setFiltros({...filtros, estado: e.target.value})}>
                    <option value="">Todos</option>
                    <option value="pendiente">Pendiente</option>
                    <option value="preparando">Preparando</option>
@@ -106,16 +124,16 @@ const Pedidos = () => {
                  </select>
                </div>
                <div className="col-6 col-md-4 col-lg-2">
-                  <label className="form-label">Desde</label>
-                  <input type="date" className="form-control" value={filtros.fechaDesde} onChange={e => setFiltros({...filtros, fechaDesde: e.target.value})} />
+                  <label htmlFor="filtro-desde" className="form-label">Desde</label>
+                  <input id="filtro-desde" type="date" className="form-control bg-light" value={filtros.fechaDesde} onChange={e => setFiltros({...filtros, fechaDesde: e.target.value})} />
                </div>
                <div className="col-6 col-md-4 col-lg-2">
-                  <label className="form-label">Hasta</label>
-                  <input type="date" className="form-control" value={filtros.fechaHasta} onChange={e => setFiltros({...filtros, fechaHasta: e.target.value})} />
+                  <label htmlFor="filtro-hasta" className="form-label">Hasta</label>
+                  <input id="filtro-hasta" type="date" className="form-control bg-light" value={filtros.fechaHasta} onChange={e => setFiltros({...filtros, fechaHasta: e.target.value})} />
                </div>
                <div className="col-12 col-md-8 col-lg-3 d-flex gap-2">
                  <button className="btn btn-primary flex-grow-1" onClick={buscar} disabled={cargando}>
-                   {cargando ? <span className="spinner-border spinner-border-sm me-2"></span> : <i className="fas fa-search"></i>} Buscar
+                   {cargando ? <span className="spinner-border spinner-border-sm me-2"></span> : <i className="fas fa-search me-2"></i>} Buscar
                  </button>
                  <button className="btn btn-outline-secondary" aria-label="Restablecer filtros" onClick={() => {
                     setFiltros({...filtros, cliente: "", estado: "", tipoEntrega: "", fechaDesde: obtenerFechaLocal(), fechaHasta: ObtenerFechaMañana()});
@@ -128,22 +146,19 @@ const Pedidos = () => {
         </div>
 
         {/* Tabla Responsive Optimizada */}
-        <div className="card border-0 position-relative overflow-hidden w-100">
+        <div className="card border-0 shadow-sm position-relative overflow-hidden w-100">
           {cargando && (
             <div className="position-absolute w-100 h-100 d-flex justify-content-center align-items-center bg-white" style={{zIndex: 10, opacity: 0.8}}>
                <div className="spinner-border text-primary"></div>
             </div>
           )}
-          {/* Se elimina table-responsive en celulares para evitar scroll interno */}
           <div className="w-100">
             <table className="table table-hover table-borderless mb-0 align-middle">
               <thead className="bg-light">
                 <tr>
                   <th className="ps-3 ps-md-4">ID</th>
-                  {/* Se oculta en celulares, aparece en tablets y desktop */}
                   <th className="d-none d-md-table-cell">Hora</th>
                   <th>Cliente</th>
-                  {/* Se oculta en celulares y tablets, aparece solo en desktop */}
                   <th className="d-none d-lg-table-cell" style={{minWidth: '220px'}}>Resumen</th>
                   <th className="d-none d-md-table-cell text-center">Tipo</th>
                   <th className="text-center">Estado</th>
@@ -169,7 +184,6 @@ const Pedidos = () => {
                         <td className="d-none d-md-table-cell text-muted">{new Date(p.fecha).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</td>
                         <td>
                           <span className="fw-bold text-dark">{p.cliente ? `${p.cliente.nombre} ${p.cliente.apellido}` : 'Consumidor Final'}</span>
-                          {/* Info extra de repartidor solo si existe y estamos en tablet/celular para no perder el dato */}
                           {p.repartidor && <div className="small text-muted d-block d-lg-none mt-1"><i className="fas fa-motorcycle me-1"></i>{p.repartidor.nombre}</div>}
                         </td>
                         <td className="d-none d-lg-table-cell text-muted small text-truncate" style={{maxWidth: '220px'}}>
@@ -197,7 +211,6 @@ const Pedidos = () => {
                             <button className="btn btn-sm btn-light text-secondary" onClick={() => { setPedidoSeleccionado(p); setModalIsOpen(true); }} aria-label="Ver detalles">
                               <i className="fas fa-eye"></i>
                             </button>
-                            {/* El botón de editar lo ocultamos en celulares muy chicos para ganar espacio, igual el ojo abre el detalle completo */}
                             <button className="btn btn-sm btn-light text-primary d-none d-sm-inline-flex" onClick={() => navigate(`/pedidos/editar/${p.id}`)} aria-label="Editar">
                               <i className="fas fa-pen"></i>
                             </button>
