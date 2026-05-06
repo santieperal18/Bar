@@ -75,30 +75,14 @@ const Pedidos = () => {
   };
 
   return (
-    <> {/* Fragmento para liberar al botón flotante de la animación */}
+    <>
       <div className="container-fluid py-4 fade-in overflow-hidden">
         
-        {/* ENCABEZADO DE PÁGINA CON BRANDING */}
-        <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3 bg-white p-4 rounded-4 shadow-sm border">
-          <div className="d-flex align-items-center gap-3">
-            {/* Contenedor del Logo (Círculo) */}
-            <div className="bg-light rounded-circle d-flex justify-content-center align-items-center overflow-hidden border" style={{width: '64px', height: '64px', flexShrink: 0}}>
-              <img 
-                src="/logo.png" 
-                alt="Logo La Esquina" 
-                style={{width: '100%', height: '100%', objectFit: 'cover'}} 
-                onError={(e) => { 
-                  e.target.onerror = null; 
-                  e.target.src = "https://via.placeholder.com/64x64/0b57d0/ffffff?text=LE"; 
-                }} 
-              />
-            </div>
-            <div>
-              <p className="text-primary fw-bold small text-uppercase mb-1" style={{letterSpacing: '1px'}}>
-                <i className="fas fa-utensils me-2"></i>Resto Bar La Esquina
-              </p>
-              <h2 className="mb-0 fw-bold text-dark lh-1">Monitor de Pedidos</h2>
-            </div>
+        {/* Título Limpio */}
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 className="mb-0 fw-bold text-dark">Monitor de Pedidos</h2>
+            <p className="text-muted small mb-0">Gestión y seguimiento de comandas</p>
           </div>
         </div>
 
