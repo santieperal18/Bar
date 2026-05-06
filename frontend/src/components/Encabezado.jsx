@@ -42,7 +42,7 @@ const Encabezado = () => {
           <NavLink to="/pedidos" className="navbar-brand d-flex align-items-center gap-3 text-decoration-none" onClick={cerrarMenu}>
             <div className="bg-light rounded-circle d-flex justify-content-center align-items-center overflow-hidden border" style={{width: '45px', height: '45px', flexShrink: 0}}>
               <img 
-                src="/logo.png" 
+                src="https://scontent-eze1-2.cdninstagram.com/v/t51.82787-19/682701300_17877564633577165_5915261755843243421_n.jpg?stp=dst-jpg_s320x320_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLmRqYW5nby44MjguYzIifQ&_nc_ht=scontent-eze1-2.cdninstagram.com&_nc_cat=101&_nc_oc=Q6cZ2gF0IPCGviTUM0dF3t-NWZoS7u4DBfK2YA3RmVxkGy35vzXxA7M9i2gpMAqJarGNPuU&_nc_ohc=mtzDHq49KTAQ7kNvwGPXgI9&_nc_gid=H0kwHBrMuRVSOo3zJj3OKg&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_Af5vySFCPzeWGHrlfv0TXqEx7mZh8e1-8hmJQdZ1KZ36rQ&oe=6A013605&_nc_sid=8b3546" 
                 alt="Logo La Esquina" 
                 style={{width: '100%', height: '100%', objectFit: 'cover'}} 
                 onError={(e) => { 
