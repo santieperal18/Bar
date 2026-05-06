@@ -15,133 +15,127 @@ const Reportes = ({ clienteId }) => {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [tipoReporte, setTipoReporte] = useState("");
   const [parametrosReporte, setParametrosReporte] = useState({});
-  const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
     cargarDatosGenerales();
-    if (clienteId || id) {
-       abrirModalReporte("cliente", { idCliente: id || clienteId });
-    }
+    if (clienteId || id) abrirModalReporte("cliente", { idCliente: id || clienteId });
   }, [id, clienteId]);
 
   const cargarDatosGenerales = async () => {
     try {
-      setCargando(true);
       const hoy = new Date().toISOString().split('T')[0];
+      const [clientesData, reporteHoy, topProd, topRepartidores] = await Promise.all([
+        clientesService.obtenerTodos(),
+        reportesService.obtenerVentasDiarias(hoy),
+        reportesService.obtenerProductosMasVendidos(hoy, hoy, 5),
+        reportesService.obtenerDesempenoRepartidores(hoy)
+      ]);
 
-      const clientesData = await clientesService.obtenerTodos();
-      // ESCUDO 1
       setClientes(Array.isArray(clientesData) ? clientesData : []);
-
-      const reporteHoy = await reportesService.obtenerVentasDiarias(hoy);
-      setResumenHoy({
-        total: reporteHoy?.totalVentas || 0,
-        cantidad: reporteHoy?.cantidadPedidos || 0
-      });
-
-      const topProd = await reportesService.obtenerProductosMasVendidos(hoy, hoy, 5);
+      setResumenHoy({ total: reporteHoy?.totalVentas || 0, cantidad: reporteHoy?.cantidadPedidos || 0 });
       setProductosTopHoy(Array.isArray(topProd) ? topProd : []);
-
-      const topRepartidores = await reportesService.obtenerDesempenoRepartidores(hoy);
       setDesempenoRepartidores(Array.isArray(topRepartidores) ? topRepartidores : []);
-
-    } catch (error) {
-      console.error("Error dashboard:", error);
-      setClientes([]);
-      setProductosTopHoy([]);
-      setDesempenoRepartidores([]);
-    } finally {
-      setCargando(false);
-    }
+    } catch (error) { console.error(error); }
   };
 
   const abrirModalReporte = (tipo, params = {}) => {
-    setTipoReporte(tipo);
-    setParametrosReporte(params);
-    setModalAbierto(true);
+    setTipoReporte(tipo); setParametrosReporte(params); setModalAbierto(true);
   };
 
   return (
-    <div className="container-fluid py-4">
-      <h2 className="mb-4"><i className="fas fa-chart-line me-2"></i>Panel de Reportes</h2>
+    <div className="container-fluid py-4 fade-in">
+      <div className="mb-4">
+        <h2 className="fw-bold text-dark mb-0">Centro de Reportes</h2>
+        <p className="text-muted small">Métricas del día y exportación de documentos</p>
+      </div>
 
+      {/* Zona 1: KPIs y Acciones Principales */}
       <div className="row g-4 mb-4">
-        <div className="col-md-6 col-lg-3">
-          <div className="card bg-primary text-white h-100">
-            <div className="card-body">
-              <h6 className="card-title">Ventas de Hoy</h6>
-              <h2 className="display-6 fw-bold">${resumenHoy.total}</h2>
-              <p className="card-text"><i className="fas fa-shopping-bag me-1"></i> {resumenHoy.cantidad} pedidos</p>
+        <div className="col-12 col-xl-4">
+          <div className="card bg-primary text-white border-0 shadow-sm h-100 p-3">
+            <div className="card-body d-flex flex-column justify-content-center">
+              <h6 className="text-uppercase fw-bold opacity-75 mb-3">Facturación de Hoy</h6>
+              <h1 className="display-4 fw-bold mb-0">${resumenHoy.total.toFixed(2)}</h1>
+              <div className="mt-3 bg-white bg-opacity-25 rounded p-2 d-inline-block w-auto">
+                <i className="fas fa-shopping-bag me-2"></i>{resumenHoy.cantidad} órdenes procesadas
+              </div>
             </div>
           </div>
         </div>
         
-        <div className="col-md-6 col-lg-9">
-          <div className="card h-100 border-0 bg-light">
-            <div className="card-body d-flex align-items-center justify-content-around flex-wrap gap-2">
-              <button className="btn btn-outline-primary px-4 py-3" onClick={() => abrirModalReporte('diario')}>
-                <i className="fas fa-calendar-day fa-2x d-block mb-2"></i>Diario (PDF)
-              </button>
-              <button className="btn btn-outline-primary px-4 py-3" onClick={() => abrirModalReporte('semanal')}>
-                <i className="fas fa-calendar-week fa-2x d-block mb-2"></i>Semanal (PDF)
-              </button>
-              <button className="btn btn-outline-primary px-4 py-3" onClick={() => abrirModalReporte('mensual')}>
-                <i className="fas fa-calendar-alt fa-2x d-block mb-2"></i>Mensual (PDF)
-              </button>
+        <div className="col-12 col-xl-8">
+          <div className="card border-0 shadow-sm h-100 p-3">
+            <h6 className="text-uppercase fw-bold text-muted mb-4">Exportar Balances PDF</h6>
+            <div className="row g-3">
+              <div className="col-12 col-md-4">
+                <button className="btn btn-light border w-100 py-4 h-100 text-dark hover-primary smooth-transition" onClick={() => abrirModalReporte('diario')}>
+                  <i className="fas fa-calendar-day fs-2 mb-2 text-primary d-block"></i>
+                  <span className="fw-bold">Cierre Diario</span>
+                </button>
+              </div>
+              <div className="col-12 col-md-4">
+                <button className="btn btn-light border w-100 py-4 h-100 text-dark hover-primary smooth-transition" onClick={() => abrirModalReporte('semanal')}>
+                  <i className="fas fa-calendar-week fs-2 mb-2 text-primary d-block"></i>
+                  <span className="fw-bold">Balance Semanal</span>
+                </button>
+              </div>
+              <div className="col-12 col-md-4">
+                <button className="btn btn-light border w-100 py-4 h-100 text-dark hover-primary smooth-transition" onClick={() => abrirModalReporte('mensual')}>
+                  <i className="fas fa-calendar-alt fs-2 mb-2 text-primary d-block"></i>
+                  <span className="fw-bold">Resumen Mensual</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Zona 2: Métricas en Detalle (Grilla modular) */}
       <div className="row g-4">
-        <div className="col-md-4">
-          <div className="card shadow-sm h-100">
-            <div className="card-header bg-white fw-bold text-success">
-              <i className="fas fa-star me-2"></i>Productos Más Vendidos (Hoy)
-            </div>
-            <div className="card-body p-0">
-              <ul className="list-group list-group-flush">
-                {/* ESCUDO 2 */}
-                {(Array.isArray(productosTopHoy) && productosTopHoy.length > 0) ? productosTopHoy.map((p, i) => (
-                  <li key={i} className="list-group-item d-flex justify-content-between align-items-center">
-                    <div><span className="badge bg-secondary me-2">#{i+1}</span>{p.nombre}</div>
-                    <span className="fw-bold">{p.total_vendido} un.</span>
-                  </li>
-                )) : <li className="list-group-item text-muted text-center py-3">Sin ventas hoy</li>}
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-md-4">
-          <div className="card shadow-sm h-100">
-             <div className="card-header bg-white fw-bold text-primary">
-              <i className="fas fa-motorcycle me-2"></i>Entregas por Repartidor (Hoy)
-            </div>
-            <div className="card-body p-0">
-              <ul className="list-group list-group-flush">
-                {(Array.isArray(desempenoRepartidores) && desempenoRepartidores.length > 0) ? desempenoRepartidores.map((r, i) => (
-                  <li key={i} className="list-group-item d-flex justify-content-between align-items-center">
-                    <div><i className="fas fa-helmet-safety me-2 text-muted"></i>{r.nombre} {r.apellido}</div>
-                    <span className="badge bg-primary rounded-pill">{r.cantidad_entregas} envíos</span>
-                  </li>
-                )) : <li className="list-group-item text-muted text-center py-3">Sin envíos hoy</li>}
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-md-4">
-          <div className="card shadow-sm h-100">
-             <div className="card-header bg-white fw-bold text-info">
-              <i className="fas fa-user me-2"></i>Reporte por Cliente
+        <div className="col-12 col-lg-4">
+          <div className="card border-0 shadow-sm h-100">
+            <div className="card-header bg-white border-0 pt-4 pb-0">
+              <h6 className="fw-bold text-dark"><i className="fas fa-fire text-danger me-2"></i>Productos Estrella</h6>
             </div>
             <div className="card-body">
-              <select className="form-select mb-3" onChange={(e) => {
+              {productosTopHoy.length > 0 ? productosTopHoy.map((p, i) => (
+                <div key={i} className="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
+                  <span className="fw-bold text-muted">{i+1}. {p.nombre}</span>
+                  <span className="badge bg-success rounded-pill">{p.total_vendido} un.</span>
+                </div>
+              )) : <p className="text-muted text-center mt-4">Aún no hay ventas registradas hoy.</p>}
+            </div>
+          </div>
+        </div>
+
+        <div className="col-12 col-lg-4">
+          <div className="card border-0 shadow-sm h-100">
+             <div className="card-header bg-white border-0 pt-4 pb-0">
+              <h6 className="fw-bold text-dark"><i className="fas fa-motorcycle text-primary me-2"></i>Top Repartidores</h6>
+            </div>
+            <div className="card-body">
+              {desempenoRepartidores.length > 0 ? desempenoRepartidores.map((r, i) => (
+                <div key={i} className="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
+                  <span className="fw-bold text-muted">{r.nombre} {r.apellido}</span>
+                  <span className="badge bg-primary rounded-pill">{r.cantidad_entregas} viajes</span>
+                </div>
+              )) : <p className="text-muted text-center mt-4">No hay despachos de delivery.</p>}
+            </div>
+          </div>
+        </div>
+
+        <div className="col-12 col-lg-4">
+          <div className="card border-0 shadow-sm h-100">
+             <div className="card-header bg-white border-0 pt-4 pb-0">
+              <h6 className="fw-bold text-dark"><i className="fas fa-id-card text-info me-2"></i>Ficha de Cliente</h6>
+            </div>
+            <div className="card-body d-flex flex-column justify-content-center">
+              <label htmlFor="selector-cliente" className="form-label text-muted small">Generar historial de consumos</label>
+              <select id="selector-cliente" className="form-select bg-light py-3" onChange={(e) => {
                   if(e.target.value) abrirModalReporte('cliente', { idCliente: e.target.value });
               }}>
-                <option value="">-- Buscar Cliente --</option>
-                {Array.isArray(clientes) && clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
+                <option value="">Buscar cliente en base de datos...</option>
+                {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
               </select>
             </div>
           </div>
