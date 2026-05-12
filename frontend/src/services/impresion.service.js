@@ -20,33 +20,36 @@ const imprimirTicketPedido = (pedido) => {
           width: 100%;
           margin: 0; 
           padding: 5mm;
-          font-size: 28px; /* Texto base gigante para ocupar la hoja */
-          line-height: 1.3;
+          font-size: 42px; /* Aumentado 50% extra */
+          line-height: 1.2;
           color: #000;
         }
-        .text-center { text-align: center; margin-bottom: 20px; }
+        .text-center { text-align: center; margin-bottom: 30px; }
         .text-right { text-align: right; }
         .bold { font-weight: bold; }
-        .header { margin-bottom: 30px; border-bottom: 4px dashed #000; padding-bottom: 20px; }
-        .info { margin-bottom: 30px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-        th { border-bottom: 4px dashed #000; text-align: left; padding: 10px 0; }
-        .total { border-top: 4px dashed #000; padding-top: 20px; font-size: 48px; }
-        .footer { margin-top: 60px; font-size: 20px; border-top: 3px solid #000; padding-top: 20px; }
+        .header { margin-bottom: 40px; border-bottom: 6px dashed #000; padding-bottom: 30px; }
+        .info { margin-bottom: 40px; }
+        .cliente-info { font-size: 55px; display: block; margin-top: 10px; border: 2px solid #000; padding: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+        th { border-bottom: 6px dashed #000; text-align: left; padding: 15px 0; font-size: 35px; }
+        .item-cant { font-size: 52px; font-weight: bold; }
+        .item-precio { font-size: 50px; font-weight: bold; }
+        .total { border-top: 8px solid #000; padding-top: 30px; font-size: 75px; }
+        .footer { margin-top: 80px; font-size: 28px; border-top: 4px solid #000; padding-top: 30px; }
         .espaciador { height: 100px; } 
-        td { padding: 15px 0; vertical-align: top; }
+        td { padding: 20px 0; vertical-align: top; }
       </style>
     </head>
     <body>
       <div class="header text-center">
-        <div class="bold" style="font-size: 52px;">RESTO BAR</div>
+        <div class="bold" style="font-size: 80px;">RESTO BAR</div>
         <div class="bold">LA ESQUINA</div>
         <div>Pedido #${id}</div>
         <div>${fechaFormateada}</div>
       </div>
 
       <div class="info">
-        <div><span class="bold">Cliente:</span> ${nombreCliente}</div>
+        <div><span class="bold">Cliente:</span> <span class="cliente-info bold">${nombreCliente}</span></div>
         <div><span class="bold">Entrega:</span> ${tipoEntrega.toUpperCase()}</div>
         ${direccionEntrega ? `<div><span class="bold">Dir:</span> ${direccionEntrega}</div>` : ''}
       </div>
@@ -62,9 +65,9 @@ const imprimirTicketPedido = (pedido) => {
         <tbody>
           ${productos.map(p => `
             <tr>
-              <td>${p.cantidad}</td>
+              <td class="item-cant">${p.cantidad}</td>
               <td>${p.nombre || (p.Producto ? p.Producto.nombre : 'Articulo')}</td>
-              <td class="text-right">$${parseFloat(p.subtotal).toFixed(2)}</td>
+              <td class="text-right item-precio">$${parseFloat(p.subtotal).toFixed(2)}</td>
             </tr>
           `).join('')}
         </tbody>
