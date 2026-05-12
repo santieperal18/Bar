@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 const NAV_ITEMS = [
   { to: '/pedidos',      icon: 'fa-receipt',    label: 'Pedidos'      },
@@ -11,6 +12,7 @@ const NAV_ITEMS = [
 
 const Sidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
   const usuario = localStorage.getItem('usuario') || 'Admin';
 
   const handleLogout = () => {
@@ -55,6 +57,12 @@ const Sidebar = ({ isOpen, onClose }) => {
             </div>
             <span className="sidebar-user-name">{usuario}</span>
           </div>
+
+          <button className="sidebar-theme-toggle" onClick={toggleTheme}>
+            <i className={`fas ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`}></i>
+            {theme === 'dark' ? 'Modo Claro' : 'Modo Oscuro'}
+          </button>
+
           <button onClick={handleLogout} className="sidebar-logout">
             <i className="fas fa-sign-out-alt"></i>
             Cerrar sesión

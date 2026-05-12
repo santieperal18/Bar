@@ -6,7 +6,9 @@ import '@fortawesome/fontawesome-free/css/all.min.css'
 import './index.css'
 import App from './App.jsx'
 
-document.documentElement.setAttribute('data-bs-theme', 'dark')
+// Apply saved theme before React mounts to prevent flash
+const savedTheme = localStorage.getItem('theme') || 'dark'
+document.documentElement.setAttribute('data-bs-theme', savedTheme)
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
