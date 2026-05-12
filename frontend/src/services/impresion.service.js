@@ -16,8 +16,8 @@ const imprimirTicketPedido = (pedido) => {
       <style>
         @page { margin: 0; }
         body { 
-          font-family: 'monospace'; 
-          width: 48mm; /* Un poco menos de 55mm para evitar desbordes */
+          font-family: 'monospace';
+          width: 100%; /* Cambiado a 100% para ocupar todo el ancho en la prueba */
           margin: 0; 
           padding: 2mm;
           font-size: 12px;

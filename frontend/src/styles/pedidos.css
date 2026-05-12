@@ -135,7 +135,7 @@
 
   /* Ajustes para el contenedor de impresión si se visualiza */
   .ticket-container {
-    width: 55mm;
+    width: 100% !important; /* Ocupa todo el ancho disponible */
     margin: 0;
     padding: 0;
     font-family: 'Courier New', monospace;
