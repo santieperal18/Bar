@@ -13,6 +13,16 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Buscar clientes por nombre — debe ir ANTES de /:id
+router.get("/buscar/:nombre", async (req, res) => {
+  try {
+    const clientes = await clienteService.buscarPorNombre(req.params.nombre);
+    res.json(clientes);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Obtener cliente por ID
 router.get("/:id", async (req, res) => {
   try {
@@ -21,16 +31,6 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "Cliente no encontrado" });
     }
     res.json(cliente);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Buscar clientes por nombre
-router.get("/buscar/:nombre", async (req, res) => {
-  try {
-    const clientes = await clienteService.buscarPorNombre(req.params.nombre);
-    res.json(clientes);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
