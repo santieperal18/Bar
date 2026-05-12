@@ -1219,15 +1219,15 @@ a:hover { color: var(--accent-dark); }
   --bs-primary-rgb:           245, 158, 11;
   --bs-link-color:            #D97706;
   --bs-link-hover-color:      #B45309;
-  --bs-body-bg:               #F4F6FB;
-  --bs-body-bg-rgb:           244, 246, 251;
+  --bs-body-bg:               #E6E9F2;
+  --bs-body-bg-rgb:           230, 233, 242;
   --bs-body-color:            #0F1117;
   --bs-secondary-color:       #525C70;
   --bs-tertiary-color:        #8B96A8;
   --bs-border-color:          rgba(0,0,0,0.09);
   --bs-border-color-translucent: rgba(0,0,0,0.08);
-  --bs-card-bg:               #FFFFFF;
-  --bs-card-cap-bg:           #F1F3F8;
+  --bs-card-bg:               #ECEEF6;
+  --bs-card-cap-bg:           #E0E3EE;
   --bs-card-border-color:     rgba(0,0,0,0.09);
   --bs-card-color:            #0F1117;
   --bs-table-bg:              transparent;
@@ -1262,12 +1262,12 @@ a:hover { color: var(--accent-dark); }
 
 /* Custom design tokens — light overrides */
 [data-bs-theme="light"] {
-  --bg:           #F4F6FB;
-  --surface-0:    #F4F6FB;
-  --surface-1:    #FFFFFF;
-  --surface-2:    #F1F3F8;
-  --surface-3:    #E5E9F2;
-  --surface-hover:#DDE3EF;
+  --bg:           #E6E9F2;
+  --surface-0:    #E6E9F2;
+  --surface-1:    #ECEEF6;
+  --surface-2:    #E0E3EE;
+  --surface-3:    #D4D8E6;
+  --surface-hover:#C8CEDC;
 
   --accent-dim:   rgba(245, 158, 11, 0.10);
   --accent-glow:  rgba(245, 158, 11, 0.20);
