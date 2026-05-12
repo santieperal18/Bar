@@ -32,6 +32,17 @@ const MobileTopbar = ({ onMenuOpen }) => {
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(
+    () => localStorage.getItem('sidebarCollapsed') === 'true'
+  );
+
+  const toggleCollapsed = () => {
+    setSidebarCollapsed(v => {
+      const next = !v;
+      localStorage.setItem('sidebarCollapsed', String(next));
+      return next;
+    });
+  };
 
   return (
     <ThemeProvider>
@@ -42,8 +53,16 @@ function App() {
             path="/*"
             element={
               <ProtectedRoute>
-                <div className="app-layout">
-                  <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+                <div
+                  className="app-layout"
+                  style={{ '--sidebar-current-w': sidebarCollapsed ? '64px' : 'var(--sidebar-w)' }}
+                >
+                  <Sidebar
+                    isOpen={sidebarOpen}
+                    onClose={() => setSidebarOpen(false)}
+                    collapsed={sidebarCollapsed}
+                    onToggleCollapse={toggleCollapsed}
+                  />
                   <main className="app-main">
                     <MobileTopbar onMenuOpen={() => setSidebarOpen(true)} />
                     <div className="page-wrap fade-in">
