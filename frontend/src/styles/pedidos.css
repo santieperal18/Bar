@@ -120,3 +120,24 @@
   70%  { box-shadow: 0 0 0 12px rgba(225,115,48,0); }
   100% { box-shadow: 0 0 0 0   rgba(225,115,48,0); }
 }
+
+/* ── Estilos de impresión para Ticket de 55mm ── */
+@media print {
+  /* Ocultar todo lo que no sea el ticket en modo impresión de página completa */
+  .no-print, 
+  .navbar, 
+  .sidebar, 
+  .btn, 
+  .floating-btn-group,
+  footer {
+    display: none !important;
+  }
+
+  /* Ajustes para el contenedor de impresión si se visualiza */
+  .ticket-container {
+    width: 55mm;
+    margin: 0;
+    padding: 0;
+    font-family: 'Courier New', monospace;
+  }
+}

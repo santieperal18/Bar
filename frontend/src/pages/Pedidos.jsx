@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import pedidosService from "../services/pedidos.service";
 import clientesService from "../services/clientes.service";
 import ModalDetallesPedido from "../components/ModalDetallesPedido";
+import impresionService from '../services/impresion.service';
 
 const obtenerFechaLocal = () => new Date().toISOString().split('T')[0];
 const obtenerFechaManana = () => {
@@ -75,6 +76,10 @@ const Pedidos = () => {
     { label: 'Preparando', value: pedidos.filter(p => p.estado === 'preparando').length, cls: 'stat-blue'   },
     { label: 'En camino',  value: pedidos.filter(p => p.estado === 'en_camino').length,  cls: 'stat-purple' },
   ];
+
+  const imprimirTicket = (pedido) => {
+    impresionService.imprimirTicketPedido(pedido);
+  };
 
   return (
     <>
@@ -299,6 +304,10 @@ const Pedidos = () => {
                       </button>
                       <button className="btn btn-icon-sm text-primary" onClick={() => navigate(`/pedidos/editar/${p.id}`)} title="Editar">
                         <i className="fas fa-pen"></i>
+                      </button>
+                      <button 
+                        className="btn btn-sm btn-outline-dark me-1" onClick={() => impresionService.imprimirTicketPedido(p)}title="Imprimir Ticket">
+                        <i className="fas fa-print"></i>
                       </button>
                     </div>
                   </div>
