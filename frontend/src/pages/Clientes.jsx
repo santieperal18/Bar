@@ -8,25 +8,18 @@ const Clientes = () => {
   const [cargando, setCargando] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    cargarClientes();
-  }, []);
+  useEffect(() => { cargarClientes(); }, []);
 
   const cargarClientes = async () => {
     try {
       setCargando(true);
       const data = await clientesService.obtenerTodos();
       setClientes(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Error cargando clientes:", error);
-      alert("Error al cargar los clientes");
-      setClientes([]);
-    } finally {
-      setCargando(false);
-    }
+    } catch { setClientes([]); }
+    finally { setCargando(false); }
   };
 
-  const buscarClientes = async () => {
+  const buscar = async () => {
     try {
       if (filtro.trim()) {
         const data = await clientesService.buscarPorNombre(filtro);
@@ -34,131 +27,173 @@ const Clientes = () => {
       } else {
         cargarClientes();
       }
-    } catch (error) {
-      console.error("Error buscando clientes:", error);
-      setClientes([]);
-    }
+    } catch { setClientes([]); }
   };
 
-  const eliminarCliente = async (id) => {
-    if (confirm("¿Está seguro de que desea eliminar este cliente?")) {
-      try {
-        await clientesService.eliminar(id);
-        alert("Cliente eliminado exitosamente");
-        cargarClientes();
-      } catch (error) {
-        alert("Error al eliminar el cliente");
-      }
-    }
-  };
-
-  const formatearFecha = (fechaString) => {
-    if (!fechaString) return 'No registrada';
+  const eliminar = async (id) => {
+    if (!confirm("¿Eliminar este cliente?")) return;
     try {
-      const fecha = new Date(fechaString);
-      return isNaN(fecha) ? 'Fecha inválida' : fecha.toLocaleDateString('es-ES');
-    } catch {
-      return 'Fecha inválida';
-    }
+      await clientesService.eliminar(id);
+      setClientes(prev => prev.filter(c => c.id !== id));
+    } catch { alert("Error al eliminar el cliente"); }
   };
+
+  const formatFecha = (f) => {
+    if (!f) return '—';
+    try {
+      const d = new Date(f);
+      return isNaN(d) ? '—' : d.toLocaleDateString('es-ES');
+    } catch { return '—'; }
+  };
+
+  const lista = Array.isArray(clientes) ? clientes : [];
 
   if (cargando) {
     return (
-      <div className="container mt-5 text-center">
-        <div className="spinner-border text-primary" role="status"><span className="visually-hidden">Cargando...</span></div>
-        <p className="mt-3">Cargando clientes...</p>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '80px 20px', gap: 16, color: 'var(--text-2)' }}>
+        <div className="spinner-border text-primary"></div>
+        <span>Cargando clientes…</span>
       </div>
     );
   }
 
-  const clientesSeguros = Array.isArray(clientes) ? clientes : [];
-
   return (
-    <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2><i className="fas fa-users me-3 text-primary"></i>Gestión de Clientes</h2>
-        <button className="btn btn-primary" onClick={() => navigate("/clientes/nuevo")}><i className="fas fa-plus me-2"></i>Nuevo Cliente</button>
+    <>
+      <div className="page-header">
+        <div>
+          <div className="page-title">Clientes</div>
+          <div className="page-subtitle">Base de datos de clientes registrados</div>
+        </div>
+        <button className="btn btn-primary" onClick={() => navigate("/clientes/nuevo")}>
+          <i className="fas fa-plus"></i> Nuevo Cliente
+        </button>
       </div>
 
-      <div className="card mb-4">
-        <div className="card-body">
-          <div className="row g-3">
-            <div className="col-md-8">
-              <div className="input-group">
-                <span className="input-group-text"><i className="fas fa-search"></i></span>
-                <input type="text" className="form-control" placeholder="Buscar por nombre o apellido..." value={filtro} onChange={(e) => setFiltro(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && buscarClientes()} />
-              </div>
+      {/* Stats */}
+      <div className="row g-3 mb-4">
+        <div className="col-6 col-md-3">
+          <div className="stat-card">
+            <div className="stat-card-label">Total</div>
+            <div className="stat-card-value">{lista.length}</div>
+          </div>
+        </div>
+        <div className="col-6 col-md-3">
+          <div className="stat-card stat-green">
+            <div className="stat-card-label">Activos</div>
+            <div className="stat-card-value">{lista.filter(c => c.activo).length}</div>
+          </div>
+        </div>
+        <div className="col-6 col-md-3">
+          <div className="stat-card stat-blue">
+            <div className="stat-card-label">Con email</div>
+            <div className="stat-card-value">{lista.filter(c => c.email).length}</div>
+          </div>
+        </div>
+        <div className="col-6 col-md-3">
+          <div className="stat-card stat-purple">
+            <div className="stat-card-label">Con dirección</div>
+            <div className="stat-card-value">{lista.filter(c => c.direccion).length}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Búsqueda */}
+      <div className="filter-panel mb-3">
+        <div className="row g-2 align-items-end">
+          <div className="col-12 col-md-6">
+            <div className="input-group">
+              <span className="input-group-text"><i className="fas fa-search"></i></span>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Buscar por nombre o apellido…"
+                value={filtro}
+                onChange={e => setFiltro(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && buscar()}
+              />
             </div>
-            <div className="col-md-4">
-              <div className="d-flex gap-2">
-                <button className="btn btn-primary flex-grow-1" onClick={buscarClientes}>Buscar</button>
-                <button className="btn btn-outline-secondary" onClick={() => { setFiltro(""); cargarClientes(); }}>Limpiar</button>
-              </div>
-            </div>
+          </div>
+          <div className="col-12 col-md-3 d-flex gap-2">
+            <button className="btn btn-primary flex-grow-1" onClick={buscar}>Buscar</button>
+            <button className="btn btn-outline-secondary" onClick={() => { setFiltro(""); cargarClientes(); }}>
+              <i className="fas fa-undo"></i>
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="row mb-4">
-        <div className="col-md-3">
-          <div className="card text-white bg-primary">
-            <div className="card-body text-center"><h6 className="card-title">Total Clientes</h6><h2 className="mb-0">{clientesSeguros.length}</h2></div>
-          </div>
-        </div>
-        <div className="col-md-3">
-          <div className="card text-white bg-success">
-            <div className="card-body text-center"><h6 className="card-title">Clientes Activos</h6><h2 className="mb-0">{clientesSeguros.filter(c => c.activo).length}</h2></div>
-          </div>
-        </div>
-        <div className="col-md-3">
-          <div className="card text-white bg-info">
-            <div className="card-body text-center"><h6 className="card-title">Con Email</h6><h2 className="mb-0">{clientesSeguros.filter(c => c.email).length}</h2></div>
-          </div>
-        </div>
-        <div className="col-md-3">
-          <div className="card text-white bg-warning">
-            <div className="card-body text-center"><h6 className="card-title">Con Dirección</h6><h2 className="mb-0">{clientesSeguros.filter(c => c.direccion).length}</h2></div>
-          </div>
-        </div>
+      {/* Tabla */}
+      <div className="table-wrap">
+        <table className="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th style={{ width: 50 }}>#</th>
+              <th>Nombre</th>
+              <th className="d-none d-md-table-cell">Teléfono</th>
+              <th className="d-none d-lg-table-cell">Email</th>
+              <th className="d-none d-lg-table-cell">Dirección</th>
+              <th className="d-none d-md-table-cell" style={{ width: 110 }}>Registro</th>
+              <th className="text-center" style={{ width: 90 }}>Estado</th>
+              <th className="text-center" style={{ width: 100 }}>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {lista.length === 0 ? (
+              <tr><td colSpan="8">
+                <div className="empty-state">
+                  <i className="fas fa-users"></i>
+                  <h6>Sin clientes</h6>
+                  <p>No se encontraron resultados.</p>
+                </div>
+              </td></tr>
+            ) : lista.map(c => (
+              <tr key={c.id}>
+                <td style={{ color: 'var(--text-2)', fontSize: 13, fontWeight: 600 }}>#{c.id}</td>
+                <td>
+                  <span style={{ fontWeight: 600 }}>{c.nombre} {c.apellido}</span>
+                </td>
+                <td className="d-none d-md-table-cell" style={{ color: 'var(--text-2)' }}>
+                  {c.telefono || <span style={{ color: 'var(--text-3)' }}>—</span>}
+                </td>
+                <td className="d-none d-lg-table-cell" style={{ color: 'var(--text-2)', fontSize: 13 }}>
+                  {c.email ? (
+                    <a href={`mailto:${c.email}`} style={{ color: 'var(--accent)', textDecoration: 'none' }}>{c.email}</a>
+                  ) : <span style={{ color: 'var(--text-3)' }}>—</span>}
+                </td>
+                <td className="d-none d-lg-table-cell" style={{ color: 'var(--text-2)', fontSize: 13, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {c.direccion || <span style={{ color: 'var(--text-3)' }}>—</span>}
+                </td>
+                <td className="d-none d-md-table-cell" style={{ color: 'var(--text-2)', fontSize: 13 }}>
+                  {formatFecha(c.fechaRegistro)}
+                </td>
+                <td className="text-center">
+                  <span className={`status-badge ${c.activo ? 'sb-active' : 'sb-inactive'}`}>
+                    {c.activo ? 'Activo' : 'Inactivo'}
+                  </span>
+                </td>
+                <td className="text-center">
+                  <div className="d-flex justify-content-center gap-1">
+                    <button className="btn btn-icon-sm text-primary" onClick={() => navigate(`/clientes/editar/${c.id}`)} title="Editar">
+                      <i className="fas fa-pen"></i>
+                    </button>
+                    <button className="btn btn-icon-sm text-info" onClick={() => navigate(`/reportes/cliente/${c.id}`)} title="Ver reportes">
+                      <i className="fas fa-chart-bar"></i>
+                    </button>
+                    <button className="btn btn-icon-sm text-danger" onClick={() => eliminar(c.id)} title="Eliminar">
+                      <i className="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      <div className="card">
-        <div className="card-header bg-dark text-white"><h5 className="mb-0"><i className="fas fa-list me-2"></i>Lista de Clientes</h5></div>
-        <div className="card-body">
-          <div className="table-responsive">
-            <table className="table table-hover">
-              <thead><tr><th>ID</th><th>Nombre</th><th>Apellido</th><th>Teléfono</th><th>Email</th><th>Dirección</th><th>Registro</th><th>Estado</th><th>Acciones</th></tr></thead>
-              <tbody>
-                {clientesSeguros.length === 0 ? (
-                  <tr><td colSpan="9" className="text-center py-4"><i className="fas fa-user-slash fa-2x text-muted mb-3"></i><p className="text-muted">No se encontraron clientes</p></td></tr>
-                ) : (
-                  clientesSeguros.map((cliente) => (
-                    <tr key={cliente.id}>
-                      <td>#{cliente.id}</td>
-                      <td>{cliente.nombre}</td>
-                      <td>{cliente.apellido}</td>
-                      <td>{cliente.telefono || <span className="text-muted">No especificado</span>}</td>
-                      <td>{cliente.email ? <a href={`mailto:${cliente.email}`} className="text-decoration-none">{cliente.email}</a> : <span className="text-muted">No especificado</span>}</td>
-                      <td>{cliente.direccion || <span className="text-muted">No especificado</span>}</td>
-                      <td>{formatearFecha(cliente.fechaRegistro)}</td>
-                      <td><span className={`badge bg-${cliente.activo ? 'success' : 'danger'}`}>{cliente.activo ? 'Activo' : 'Inactivo'}</span></td>
-                      <td>
-                        <div className="btn-group">
-                          <button className="btn btn-sm btn-outline-primary" onClick={() => navigate(`/clientes/editar/${cliente.id}`)} title="Editar"><i className="fas fa-edit"></i></button>
-                          <button className="btn btn-sm btn-outline-danger" onClick={() => eliminarCliente(cliente.id)} title="Eliminar"><i className="fas fa-trash"></i></button>
-                          <button className="btn btn-sm btn-outline-info" onClick={() => navigate(`/reportes/cliente/${cliente.id}`)} title="Ver Reporte"><i className="fas fa-chart-bar"></i></button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <button className="btn btn-primary btn-lg rounded-circle position-fixed" style={{ bottom: '80px', right: '20px', width: '60px', height: '60px' }} onClick={() => navigate("/clientes/nuevo")} title="Nuevo Cliente"><i className="fas fa-plus"></i></button>
-    </div>
+      <button className="fab-btn" onClick={() => navigate("/clientes/nuevo")} aria-label="Nuevo cliente">
+        <i className="fas fa-plus"></i>
+      </button>
+    </>
   );
 };
 

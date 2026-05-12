@@ -14,85 +14,81 @@ function Login() {
     e.preventDefault();
     setError('');
     setCargando(true);
-
     try {
-      const response = await axios.post('/auth/login', {
-        usuario,
-        contrasena
-      });
-
-      // Guardar el token en localStorage
+      const response = await axios.post('/auth/login', { usuario, contrasena });
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('usuario', response.data.usuario);
-
-      // Redirigir a la página principal
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al iniciar sesión');
+      setError(err.response?.data?.error || 'Usuario o contraseña incorrectos');
     } finally {
       setCargando(false);
     }
   };
 
   return (
-    <div className="login-container">
+    <div className="login-page">
+      <div className="login-grid" />
+
       <div className="login-card">
         <div className="login-header">
-          <span className="login-logo">🍽️</span>
-          <h1>Resto Bar</h1>
-          <p>Sistema de Gestión</p>
+          <div className="login-icon">
+            <i className="fas fa-wine-glass-alt"></i>
+          </div>
+          <h1>La Esquina</h1>
+          <p>Sistema de gestión interno</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="login-form">
-          <div className="form-group">
+        <form onSubmit={handleSubmit}>
+          <div className="login-field">
             <label htmlFor="usuario">Usuario</label>
             <input
-              type="text"
               id="usuario"
-              className="form-control"
+              type="text"
               value={usuario}
-              onChange={(e) => setUsuario(e.target.value)}
-              placeholder="Ingresa tu usuario"
+              onChange={e => setUsuario(e.target.value)}
+              placeholder="Ingresá tu usuario"
               disabled={cargando}
               autoFocus
+              autoComplete="username"
             />
           </div>
 
-          <div className="form-group">
+          <div className="login-field">
             <label htmlFor="contrasena">Contraseña</label>
             <input
-              type="password"
               id="contrasena"
-              className="form-control"
+              type="password"
               value={contrasena}
-              onChange={(e) => setContrasena(e.target.value)}
-              placeholder="Ingresa tu contraseña"
+              onChange={e => setContrasena(e.target.value)}
+              placeholder="Ingresá tu contraseña"
               disabled={cargando}
+              autoComplete="current-password"
             />
           </div>
 
-          {error && <div className="alert alert-danger">{error}</div>}
+          {error && (
+            <div className="login-error">
+              <i className="fas fa-exclamation-circle"></i>
+              {error}
+            </div>
+          )}
 
           <button
             type="submit"
-            className="btn btn-primary btn-login w-100"
+            className="login-btn"
             disabled={cargando || !usuario || !contrasena}
           >
             {cargando ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                Iniciando sesión...
-              </>
+              <><div className="login-spinner"></div> Iniciando sesión...</>
             ) : (
-              'Iniciar Sesión'
+              <><i className="fas fa-sign-in-alt"></i> Ingresar</>
             )}
           </button>
         </form>
 
-        <div className="login-footer">
-          <p className="text-muted small">
-            <strong>Demo:</strong> usuario: <code>main</code> | contraseña: <code>main123</code>
-          </p>
+        <div className="login-demo">
+          <p>Demo — usuario: <code>main</code> &nbsp;|&nbsp; contraseña: <code>main123</code></p>
         </div>
       </div>
     </div>

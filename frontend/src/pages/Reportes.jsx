@@ -6,144 +6,179 @@ import ModalInformes from "../components/ModalInformes";
 
 const Reportes = ({ clienteId }) => {
   const { id } = useParams();
-  
+
   const [resumenHoy, setResumenHoy] = useState({ total: 0, cantidad: 0 });
-  const [productosTopHoy, setProductosTopHoy] = useState([]);
-  const [desempenoRepartidores, setDesempenoRepartidores] = useState([]);
+  const [productosTop, setProductosTop] = useState([]);
+  const [repartidoresTop, setRepartidoresTop] = useState([]);
   const [clientes, setClientes] = useState([]);
-  
+
   const [modalAbierto, setModalAbierto] = useState(false);
   const [tipoReporte, setTipoReporte] = useState("");
-  const [parametrosReporte, setParametrosReporte] = useState({});
+  const [paramsReporte, setParamsReporte] = useState({});
 
   useEffect(() => {
-    cargarDatosGenerales();
-    if (clienteId || id) abrirModalReporte("cliente", { idCliente: id || clienteId });
+    cargarDatos();
+    if (clienteId || id) abrirModal("cliente", { idCliente: id || clienteId });
   }, [id, clienteId]);
 
-  const cargarDatosGenerales = async () => {
+  const cargarDatos = async () => {
     try {
       const hoy = new Date().toISOString().split('T')[0];
-      const [clientesData, reporteHoy, topProd, topRepartidores] = await Promise.all([
+      const [clis, reporteHoy, top, reps] = await Promise.all([
         clientesService.obtenerTodos(),
         reportesService.obtenerVentasDiarias(hoy),
         reportesService.obtenerProductosMasVendidos(hoy, hoy, 5),
         reportesService.obtenerDesempenoRepartidores(hoy)
       ]);
-
-      setClientes(Array.isArray(clientesData) ? clientesData : []);
+      setClientes(Array.isArray(clis) ? clis : []);
       setResumenHoy({ total: reporteHoy?.totalVentas || 0, cantidad: reporteHoy?.cantidadPedidos || 0 });
-      setProductosTopHoy(Array.isArray(topProd) ? topProd : []);
-      setDesempenoRepartidores(Array.isArray(topRepartidores) ? topRepartidores : []);
-    } catch (error) { console.error(error); }
+      setProductosTop(Array.isArray(top) ? top : []);
+      setRepartidoresTop(Array.isArray(reps) ? reps : []);
+    } catch (e) { console.error(e); }
   };
 
-  const abrirModalReporte = (tipo, params = {}) => {
-    setTipoReporte(tipo); setParametrosReporte(params); setModalAbierto(true);
+  const abrirModal = (tipo, params = {}) => {
+    setTipoReporte(tipo);
+    setParamsReporte(params);
+    setModalAbierto(true);
   };
+
+  const EXPORT_OPTS = [
+    { tipo: 'diario',   icon: 'fa-calendar-day',  label: 'Cierre Diario'    },
+    { tipo: 'semanal',  icon: 'fa-calendar-week', label: 'Balance Semanal'  },
+    { tipo: 'mensual',  icon: 'fa-calendar-alt',  label: 'Resumen Mensual'  },
+  ];
 
   return (
-    <div className="container-fluid py-4 fade-in">
-      <div className="mb-4">
-        <h2 className="fw-bold text-dark mb-0">Centro de Reportes</h2>
-        <p className="text-muted small">Métricas del día y exportación de documentos</p>
+    <>
+      <div className="page-header">
+        <div>
+          <div className="page-title">Reportes</div>
+          <div className="page-subtitle">Métricas del día y exportación de balances</div>
+        </div>
       </div>
 
-      {/* Zona 1: KPIs y Acciones Principales */}
-      <div className="row g-4 mb-4">
-        <div className="col-12 col-xl-4">
-          <div className="card bg-primary text-white border-0 shadow-sm h-100 p-3">
-            <div className="card-body d-flex flex-column justify-content-center">
-              <h6 className="text-uppercase fw-bold opacity-75 mb-3">Facturación de Hoy</h6>
-              <h1 className="display-4 fw-bold mb-0">${resumenHoy.total.toFixed(2)}</h1>
-              <div className="mt-3 bg-white bg-opacity-25 rounded p-2 d-inline-block w-auto">
-                <i className="fas fa-shopping-bag me-2"></i>{resumenHoy.cantidad} órdenes procesadas
-              </div>
+      {/* KPI Row */}
+      <div className="row g-3 mb-4">
+        <div className="col-12 col-md-6">
+          <div className="stat-card stat-accent" style={{ padding: '24px 24px' }}>
+            <div className="stat-card-label">Facturación de hoy</div>
+            <div className="stat-card-value" style={{ fontSize: 42 }}>${resumenHoy.total.toFixed(2)}</div>
+            <div className="stat-card-sub">
+              <i className="fas fa-receipt me-1"></i> {resumenHoy.cantidad} órdenes procesadas
             </div>
           </div>
         </div>
-        
-        <div className="col-12 col-xl-8">
-          <div className="card border-0 shadow-sm h-100 p-3">
-            <h6 className="text-uppercase fw-bold text-muted mb-4">Exportar Balances PDF</h6>
-            <div className="row g-3">
-              <div className="col-12 col-md-4">
-                <button className="btn btn-light border w-100 py-4 h-100 text-dark hover-primary smooth-transition" onClick={() => abrirModalReporte('diario')}>
-                  <i className="fas fa-calendar-day fs-2 mb-2 text-primary d-block"></i>
-                  <span className="fw-bold">Cierre Diario</span>
-                </button>
+        <div className="col-12 col-md-6">
+          <div className="card" style={{ height: '100%' }}>
+            <div className="card-body">
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px', color: 'var(--text-2)', marginBottom: 14 }}>
+                Exportar balances PDF
               </div>
-              <div className="col-12 col-md-4">
-                <button className="btn btn-light border w-100 py-4 h-100 text-dark hover-primary smooth-transition" onClick={() => abrirModalReporte('semanal')}>
-                  <i className="fas fa-calendar-week fs-2 mb-2 text-primary d-block"></i>
-                  <span className="fw-bold">Balance Semanal</span>
-                </button>
-              </div>
-              <div className="col-12 col-md-4">
-                <button className="btn btn-light border w-100 py-4 h-100 text-dark hover-primary smooth-transition" onClick={() => abrirModalReporte('mensual')}>
-                  <i className="fas fa-calendar-alt fs-2 mb-2 text-primary d-block"></i>
-                  <span className="fw-bold">Resumen Mensual</span>
-                </button>
+              <div className="row g-2">
+                {EXPORT_OPTS.map(opt => (
+                  <div key={opt.tipo} className="col-4">
+                    <button
+                      className="btn btn-outline-secondary w-100 d-flex flex-column align-items-center"
+                      style={{ gap: 8, padding: '14px 8px', minHeight: 80 }}
+                      onClick={() => abrirModal(opt.tipo)}
+                    >
+                      <i className={`fas ${opt.icon}`} style={{ fontSize: 20, color: 'var(--accent)' }}></i>
+                      <span style={{ fontSize: 12 }}>{opt.label}</span>
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Zona 2: Métricas en Detalle (Grilla modular) */}
-      <div className="row g-4">
+      {/* Metrics Row */}
+      <div className="row g-3">
+        {/* Top Productos */}
         <div className="col-12 col-lg-4">
-          <div className="card border-0 shadow-sm h-100">
-            <div className="card-header bg-white border-0 pt-4 pb-0">
-              <h6 className="fw-bold text-dark"><i className="fas fa-fire text-danger me-2"></i>Productos Estrella</h6>
+          <div className="card h-100">
+            <div className="card-header" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <i className="fas fa-fire" style={{ color: 'var(--red)' }}></i>
+              Productos estrella hoy
             </div>
-            <div className="card-body">
-              {productosTopHoy.length > 0 ? productosTopHoy.map((p, i) => (
-                <div key={i} className="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
-                  <span className="fw-bold text-muted">{i+1}. {p.nombre}</span>
-                  <span className="badge bg-success rounded-pill">{p.total_vendido} un.</span>
+            <div className="card-body" style={{ padding: '12px 16px' }}>
+              {productosTop.length > 0 ? productosTop.map((p, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 0', borderBottom: i < productosTop.length - 1 ? '1px solid var(--border)' : 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ width: 20, height: 20, background: 'var(--surface-3)', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: 'var(--text-2)', flexShrink: 0 }}>{i + 1}</span>
+                    <span style={{ fontWeight: 500, fontSize: 13 }}>{p.nombre}</span>
+                  </div>
+                  <span className="status-badge sb-delivered">{p.total_vendido} un.</span>
                 </div>
-              )) : <p className="text-muted text-center mt-4">Aún no hay ventas registradas hoy.</p>}
+              )) : (
+                <div className="empty-state" style={{ padding: '32px 0' }}>
+                  <i className="fas fa-chart-bar"></i>
+                  <p>Aún no hay ventas hoy.</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
+        {/* Top Repartidores */}
         <div className="col-12 col-lg-4">
-          <div className="card border-0 shadow-sm h-100">
-             <div className="card-header bg-white border-0 pt-4 pb-0">
-              <h6 className="fw-bold text-dark"><i className="fas fa-motorcycle text-primary me-2"></i>Top Repartidores</h6>
+          <div className="card h-100">
+            <div className="card-header" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <i className="fas fa-motorcycle" style={{ color: 'var(--blue)' }}></i>
+              Top repartidores hoy
             </div>
-            <div className="card-body">
-              {desempenoRepartidores.length > 0 ? desempenoRepartidores.map((r, i) => (
-                <div key={i} className="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
-                  <span className="fw-bold text-muted">{r.nombre} {r.apellido}</span>
-                  <span className="badge bg-primary rounded-pill">{r.cantidad_entregas} viajes</span>
+            <div className="card-body" style={{ padding: '12px 16px' }}>
+              {repartidoresTop.length > 0 ? repartidoresTop.map((r, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 0', borderBottom: i < repartidoresTop.length - 1 ? '1px solid var(--border)' : 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ width: 20, height: 20, background: 'var(--surface-3)', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: 'var(--text-2)', flexShrink: 0 }}>{i + 1}</span>
+                    <span style={{ fontWeight: 500, fontSize: 13 }}>{r.nombre} {r.apellido}</span>
+                  </div>
+                  <span className="status-badge sb-preparing">{r.cantidad_entregas} viajes</span>
                 </div>
-              )) : <p className="text-muted text-center mt-4">No hay despachos de delivery.</p>}
+              )) : (
+                <div className="empty-state" style={{ padding: '32px 0' }}>
+                  <i className="fas fa-motorcycle"></i>
+                  <p>Sin entregas de delivery hoy.</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
+        {/* Ficha de cliente */}
         <div className="col-12 col-lg-4">
-          <div className="card border-0 shadow-sm h-100">
-             <div className="card-header bg-white border-0 pt-4 pb-0">
-              <h6 className="fw-bold text-dark"><i className="fas fa-id-card text-info me-2"></i>Ficha de Cliente</h6>
+          <div className="card h-100">
+            <div className="card-header" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <i className="fas fa-id-card" style={{ color: 'var(--purple)' }}></i>
+              Historial de cliente
             </div>
-            <div className="card-body d-flex flex-column justify-content-center">
-              <label htmlFor="selector-cliente" className="form-label text-muted small">Generar historial de consumos</label>
-              <select id="selector-cliente" className="form-select bg-light py-3" onChange={(e) => {
-                  if(e.target.value) abrirModalReporte('cliente', { idCliente: e.target.value });
-              }}>
-                <option value="">Buscar cliente en base de datos...</option>
-                {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
+            <div className="card-body d-flex flex-column justify-content-center" style={{ padding: '20px' }}>
+              <label className="form-label mb-2">Seleccioná un cliente para generar su reporte</label>
+              <select
+                className="form-select"
+                onChange={e => { if (e.target.value) abrirModal('cliente', { idCliente: e.target.value }); }}
+                defaultValue=""
+              >
+                <option value="">Elegir cliente…</option>
+                {clientes.map(c => (
+                  <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>
+                ))}
               </select>
             </div>
           </div>
         </div>
       </div>
 
-      <ModalInformes abierto={modalAbierto} onCerrar={() => setModalAbierto(false)} tipoReporte={tipoReporte} parametrosIniciales={parametrosReporte} />
-    </div>
+      <ModalInformes
+        abierto={modalAbierto}
+        onCerrar={() => setModalAbierto(false)}
+        tipoReporte={tipoReporte}
+        parametrosIniciales={paramsReporte}
+      />
+    </>
   );
 };
 

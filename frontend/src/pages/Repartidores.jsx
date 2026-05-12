@@ -2,6 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import repartidoresService from "../services/repartidores.service";
 
+const VEHICULO_ICON = (v = '') => {
+  const vl = v.toLowerCase();
+  if (vl.includes('moto'))  return 'fa-motorcycle';
+  if (vl.includes('auto') || vl.includes('carro')) return 'fa-car';
+  if (vl.includes('bici'))  return 'fa-bicycle';
+  return 'fa-truck';
+};
+
 const Repartidores = () => {
   const [repartidores, setRepartidores] = useState([]);
   const [filtro, setFiltro] = useState("");
@@ -9,249 +17,186 @@ const Repartidores = () => {
   const [cargando, setCargando] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    cargarRepartidores();
-  }, []);
+  useEffect(() => { cargar(); }, []);
 
-  const cargarRepartidores = async () => {
+  const cargar = async () => {
     try {
       setCargando(true);
       const data = await repartidoresService.obtenerTodos();
       setRepartidores(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Error cargando repartidores:", error);
-      alert("Error al cargar los repartidores");
-      setRepartidores([]);
-    } finally {
-      setCargando(false);
-    }
+    } catch { setRepartidores([]); }
+    finally { setCargando(false); }
   };
 
-  const buscarRepartidores = async () => {
+  const eliminar = async (id) => {
+    if (!confirm("¿Eliminar este repartidor?")) return;
     try {
-      if (filtro.trim()) {
-        const data = await repartidoresService.buscarPorNombre(filtro);
-        setRepartidores(Array.isArray(data) ? data : []);
-      } else {
-        cargarRepartidores();
-      }
-    } catch (error) {
-      console.error("Error buscando repartidores:", error);
-      setRepartidores([]);
-    }
+      await repartidoresService.eliminar(id);
+      setRepartidores(prev => prev.filter(r => r.id !== id));
+    } catch { alert("Error al eliminar el repartidor"); }
   };
 
-  const eliminarRepartidor = async (id) => {
-    if (confirm("¿Está seguro de que desea eliminar este repartidor?")) {
-      try {
-        await repartidoresService.eliminar(id);
-        alert("Repartidor eliminado exitosamente");
-        cargarRepartidores();
-      } catch (error) {
-        alert("Error al eliminar el repartidor");
-      }
-    }
-  };
-
-  const filtrarRepartidores = () => {
-    if (!Array.isArray(repartidores)) return;
-    
-    let filtrados = [...repartidores];
-    
-    if (filtro.trim()) {
-      const textoLower = filtro.toLowerCase();
-      filtrados = filtrados.filter(r =>
-        r.nombre?.toLowerCase().includes(textoLower) ||
-        r.apellido?.toLowerCase().includes(textoLower) ||
-        r.telefono?.toLowerCase().includes(textoLower) ||
-        r.vehiculo?.toLowerCase().includes(textoLower)
-      );
-    }
-    
-    if (soloActivos) {
-      filtrados = filtrados.filter(r => r.activo);
-    }
-    
-    setRepartidores(filtrados);
-  };
-
-  const limpiarFiltros = () => {
-    setFiltro("");
-    setSoloActivos(true);
-    cargarRepartidores();
-  };
-
-  const getVehiculoIcon = (vehiculo) => {
-    if (!vehiculo) return "fa-question";
-    if (vehiculo.toLowerCase().includes('moto')) return "fa-motorcycle";
-    if (vehiculo.toLowerCase().includes('auto') || vehiculo.toLowerCase().includes('carro')) return "fa-car";
-    if (vehiculo.toLowerCase().includes('bici')) return "fa-bicycle";
-    return "fa-truck";
-  };
+  const lista = repartidores.filter(r => {
+    const q = filtro.toLowerCase();
+    const matchFiltro = !q ||
+      r.nombre?.toLowerCase().includes(q) ||
+      r.apellido?.toLowerCase().includes(q) ||
+      r.telefono?.includes(q) ||
+      r.vehiculo?.toLowerCase().includes(q);
+    const matchActivo = !soloActivos || r.activo;
+    return matchFiltro && matchActivo;
+  });
 
   if (cargando) {
     return (
-      <div className="container mt-5 text-center">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Cargando...</span>
-        </div>
-        <p className="mt-3">Cargando repartidores...</p>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '80px 20px', gap: 16, color: 'var(--text-2)' }}>
+        <div className="spinner-border text-primary"></div>
+        <span>Cargando repartidores…</span>
       </div>
     );
   }
 
-  // Variables seguras para estadísticas
-  const listaSegura = Array.isArray(repartidores) ? repartidores : [];
-
   return (
-    <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>
-          <i className="fas fa-motorcycle me-3 text-primary"></i>
-          Gestión de Repartidores
-        </h2>
+    <>
+      <div className="page-header">
+        <div>
+          <div className="page-title">Repartidores</div>
+          <div className="page-subtitle">Equipo de delivery activo</div>
+        </div>
         <button className="btn btn-primary" onClick={() => navigate("/repartidores/nuevo")}>
-          <i className="fas fa-plus me-2"></i> Nuevo Repartidor
+          <i className="fas fa-plus"></i> Nuevo Repartidor
         </button>
       </div>
 
-      <div className="card mb-4">
-        <div className="card-body">
-          <div className="row g-3">
-            <div className="col-md-6">
-              <div className="input-group">
-                <span className="input-group-text"><i className="fas fa-search"></i></span>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Buscar por nombre, apellido, teléfono o vehículo..."
-                  value={filtro}
-                  onChange={(e) => setFiltro(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && buscarRepartidores()}
-                />
-              </div>
-            </div>
-            
-            <div className="col-md-3">
-              <div className="form-check">
-                <input className="form-check-input" type="checkbox" id="soloActivos" checked={soloActivos} onChange={(e) => setSoloActivos(e.target.checked)} />
-                <label className="form-check-label" htmlFor="soloActivos">Solo repartidores activos</label>
-              </div>
-            </div>
-            
-            <div className="col-md-3">
-              <div className="d-flex gap-2">
-                <button className="btn btn-primary flex-grow-1" onClick={filtrarRepartidores}><i className="fas fa-filter me-2"></i>Filtrar</button>
-                <button className="btn btn-outline-secondary" onClick={limpiarFiltros}><i className="fas fa-times me-2"></i>Limpiar</button>
-              </div>
-            </div>
+      {/* Stats */}
+      <div className="row g-3 mb-4">
+        <div className="col-6 col-md-3">
+          <div className="stat-card">
+            <div className="stat-card-label">Total</div>
+            <div className="stat-card-value">{repartidores.length}</div>
+          </div>
+        </div>
+        <div className="col-6 col-md-3">
+          <div className="stat-card stat-green">
+            <div className="stat-card-label">Activos</div>
+            <div className="stat-card-value">{repartidores.filter(r => r.activo).length}</div>
+          </div>
+        </div>
+        <div className="col-6 col-md-3">
+          <div className="stat-card stat-blue">
+            <div className="stat-card-label">Con moto</div>
+            <div className="stat-card-value">{repartidores.filter(r => r.vehiculo?.toLowerCase().includes('moto')).length}</div>
+          </div>
+        </div>
+        <div className="col-6 col-md-3">
+          <div className="stat-card stat-purple">
+            <div className="stat-card-label">Con auto</div>
+            <div className="stat-card-value">{repartidores.filter(r => r.vehiculo?.toLowerCase().includes('auto') || r.vehiculo?.toLowerCase().includes('carro')).length}</div>
           </div>
         </div>
       </div>
 
-      <div className="row mb-4">
-        <div className="col-md-3">
-          <div className="card text-white bg-primary">
-            <div className="card-body text-center">
-              <h6 className="card-title">Total Repartidores</h6>
-              <h2 className="mb-0">{listaSegura.length}</h2>
+      {/* Filtros */}
+      <div className="filter-panel mb-3">
+        <div className="row g-2 align-items-center">
+          <div className="col-12 col-md-5">
+            <div className="input-group">
+              <span className="input-group-text"><i className="fas fa-search"></i></span>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Buscar por nombre, teléfono o vehículo…"
+                value={filtro}
+                onChange={e => setFiltro(e.target.value)}
+              />
             </div>
           </div>
-        </div>
-        <div className="col-md-3">
-          <div className="card text-white bg-success">
-            <div className="card-body text-center">
-              <h6 className="card-title">Activos</h6>
-              <h2 className="mb-0">{listaSegura.filter(r => r.activo).length}</h2>
+          <div className="col-auto">
+            <div className="form-check mb-0">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="soloActivos"
+                checked={soloActivos}
+                onChange={e => setSoloActivos(e.target.checked)}
+              />
+              <label className="form-check-label" htmlFor="soloActivos">Solo activos</label>
             </div>
           </div>
-        </div>
-        <div className="col-md-3">
-          <div className="card text-white bg-info">
-            <div className="card-body text-center">
-              <h6 className="card-title">Con Motos</h6>
-              <h2 className="mb-0">{listaSegura.filter(r => r.vehiculo?.toLowerCase().includes('moto')).length}</h2>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-3">
-          <div className="card text-white bg-warning">
-            <div className="card-body text-center">
-              <h6 className="card-title">Con Autos</h6>
-              <h2 className="mb-0">
-                {listaSegura.filter(r => r.vehiculo?.toLowerCase().includes('auto') || r.vehiculo?.toLowerCase().includes('carro')).length}
-              </h2>
-            </div>
+          <div className="col-auto ms-auto">
+            <button className="btn btn-outline-secondary" onClick={() => { setFiltro(""); setSoloActivos(true); }}>
+              <i className="fas fa-undo"></i> Limpiar
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="card">
-        <div className="card-header bg-dark text-white">
-          <h5 className="mb-0"><i className="fas fa-list me-2"></i>Lista de Repartidores</h5>
-        </div>
-        <div className="card-body">
-          <div className="table-responsive">
-            <table className="table table-hover">
-              <thead>
-                <tr>
-                  <th>ID</th><th>Nombre</th><th>Apellido</th><th>Teléfono</th><th>Vehículo</th><th>Estado</th><th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {listaSegura.length === 0 ? (
-                  <tr>
-                    <td colSpan="7" className="text-center py-4">
-                      <i className="fas fa-user-slash fa-2x text-muted mb-3"></i>
-                      <p className="text-muted">No se encontraron repartidores</p>
-                    </td>
-                  </tr>
-                ) : (
-                  listaSegura.map((repartidor) => (
-                    <tr key={repartidor.id}>
-                      <td>#{repartidor.id}</td>
-                      <td>{repartidor.nombre}</td>
-                      <td>{repartidor.apellido}</td>
-                      <td><a href={`tel:${repartidor.telefono}`} className="text-decoration-none">{repartidor.telefono}</a></td>
-                      <td>
-                        <div className="d-flex align-items-center">
-                          <i className={`fas ${getVehiculoIcon(repartidor.vehiculo)} me-2 text-primary`}></i>
-                          <span>{repartidor.vehiculo || "No especificado"}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span className={`badge bg-${repartidor.activo ? 'success' : 'danger'}`}>
-                          {repartidor.activo ? 'Activo' : 'Inactivo'}
-                        </span>
-                      </td>
-                      <td>
-                        <div className="btn-group">
-                          <button className="btn btn-sm btn-outline-primary" onClick={() => navigate(`/repartidores/editar/${repartidor.id}`)} title="Editar"><i className="fas fa-edit"></i></button>
-                          <button className="btn btn-sm btn-outline-danger" onClick={() => eliminarRepartidor(repartidor.id)} title="Eliminar"><i className="fas fa-trash"></i></button>
-                          <button className="btn btn-sm btn-outline-info" onClick={() => alert(`Repartidor: ${repartidor.nombre} ${repartidor.apellido}\nTel: ${repartidor.telefono}`)} title="Ver Detalles"><i className="fas fa-eye"></i></button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+      {/* Tabla */}
+      <div className="table-wrap">
+        <table className="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th style={{ width: 50 }}>#</th>
+              <th>Nombre</th>
+              <th className="d-none d-md-table-cell">Teléfono</th>
+              <th className="d-none d-md-table-cell">Vehículo</th>
+              <th className="text-center" style={{ width: 100 }}>Estado</th>
+              <th className="text-center" style={{ width: 90 }}>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {lista.length === 0 ? (
+              <tr><td colSpan="6">
+                <div className="empty-state">
+                  <i className="fas fa-motorcycle"></i>
+                  <h6>Sin repartidores</h6>
+                  <p>No se encontraron resultados.</p>
+                </div>
+              </td></tr>
+            ) : lista.map(r => (
+              <tr key={r.id}>
+                <td style={{ color: 'var(--text-2)', fontSize: 13, fontWeight: 600 }}>#{r.id}</td>
+                <td>
+                  <span style={{ fontWeight: 600 }}>{r.nombre} {r.apellido}</span>
+                </td>
+                <td className="d-none d-md-table-cell">
+                  <a href={`tel:${r.telefono}`} style={{ color: 'var(--text-1)', textDecoration: 'none' }}>
+                    {r.telefono || <span style={{ color: 'var(--text-3)' }}>—</span>}
+                  </a>
+                </td>
+                <td className="d-none d-md-table-cell">
+                  {r.vehiculo ? (
+                    <span style={{ color: 'var(--text-2)', display: 'flex', alignItems: 'center', gap: 7 }}>
+                      <i className={`fas ${VEHICULO_ICON(r.vehiculo)}`} style={{ color: 'var(--accent)', width: 16 }}></i>
+                      {r.vehiculo}
+                    </span>
+                  ) : <span style={{ color: 'var(--text-3)' }}>—</span>}
+                </td>
+                <td className="text-center">
+                  <span className={`status-badge ${r.activo ? 'sb-active' : 'sb-inactive'}`}>
+                    {r.activo ? 'Activo' : 'Inactivo'}
+                  </span>
+                </td>
+                <td className="text-center">
+                  <div className="d-flex justify-content-center gap-1">
+                    <button className="btn btn-icon-sm text-primary" onClick={() => navigate(`/repartidores/editar/${r.id}`)} title="Editar">
+                      <i className="fas fa-pen"></i>
+                    </button>
+                    <button className="btn btn-icon-sm text-danger" onClick={() => eliminar(r.id)} title="Eliminar">
+                      <i className="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      <div className="alert alert-warning mt-4">
-        <h6 className="alert-heading"><i className="fas fa-exclamation-triangle me-2"></i>Notas importantes</h6>
-        <ul className="mb-0">
-          <li>Los repartidores inactivos no aparecerán en las listas de asignación.</li>
-          <li>Solo se pueden asignar repartidores activos a los pedidos de delivery.</li>
-        </ul>
-      </div>
-
-      <button className="btn btn-primary btn-lg rounded-circle position-fixed" style={{ bottom: '80px', right: '20px', width: '60px', height: '60px' }} onClick={() => navigate("/repartidores/nuevo")} title="Nuevo Repartidor">
+      <button className="fab-btn" onClick={() => navigate("/repartidores/nuevo")} aria-label="Nuevo repartidor">
         <i className="fas fa-plus"></i>
       </button>
-    </div>
+    </>
   );
 };
 

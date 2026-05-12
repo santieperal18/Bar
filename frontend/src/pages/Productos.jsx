@@ -6,225 +6,226 @@ import categoriasService from "../services/categorias.service";
 const Productos = () => {
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
-  const [filtros, setFiltros] = useState({ texto: "", categoria: "", tipo: "", soloDisponibles: true });
+  const [productosFiltrados, setProductosFiltrados] = useState([]);
+  const [filtros, setFiltros] = useState({ texto: "", categoria: "", soloDisponibles: false });
   const [cargando, setCargando] = useState(true);
   const navigate = useNavigate();
 
+  useEffect(() => { cargarDatos(); }, []);
+
   useEffect(() => {
-    cargarDatos();
-  }, []);
+    aplicarFiltros();
+  }, [filtros, productos]);
 
   const cargarDatos = async () => {
     try {
       setCargando(true);
-      const [productosData, categoriasData] = await Promise.all([
+      const [prods, cats] = await Promise.all([
         productosService.obtenerTodos(),
         categoriasService.obtenerTodos()
       ]);
-      setProductos(Array.isArray(productosData) ? productosData : []);
-      setCategorias(Array.isArray(categoriasData) ? categoriasData : []);
-    } catch (error) {
-      console.error("Error cargando datos:", error);
-      alert("Error al cargar los datos");
-      setProductos([]);
-      setCategorias([]);
-    } finally {
-      setCargando(false);
-    }
+      setProductos(Array.isArray(prods) ? prods : []);
+      setCategorias(Array.isArray(cats) ? cats : []);
+    } catch { setProductos([]); setCategorias([]); }
+    finally { setCargando(false); }
   };
 
-  const buscarProductos = async () => {
+  const aplicarFiltros = () => {
+    let lista = [...productos];
+    if (filtros.texto) {
+      const q = filtros.texto.toLowerCase();
+      lista = lista.filter(p => p.nombre?.toLowerCase().includes(q) || p.descripcion?.toLowerCase().includes(q));
+    }
+    if (filtros.categoria) {
+      lista = lista.filter(p => p.idCategoria === parseInt(filtros.categoria));
+    }
+    if (filtros.soloDisponibles) {
+      lista = lista.filter(p => p.disponible);
+    }
+    setProductosFiltrados(lista);
+  };
+
+  const limpiar = () => {
+    setFiltros({ texto: "", categoria: "", soloDisponibles: false });
+  };
+
+  const eliminar = async (id) => {
+    if (!confirm("¿Eliminar este producto?")) return;
     try {
-      setCargando(true);
-      if (!Array.isArray(productos)) return;
-      
-      let productosFiltrados = [...productos];
-
-      if (filtros.texto) {
-        const textoLower = filtros.texto.toLowerCase();
-        productosFiltrados = productosFiltrados.filter(p =>
-          p.nombre?.toLowerCase().includes(textoLower) ||
-          p.descripcion?.toLowerCase().includes(textoLower)
-        );
-      }
-
-      if (filtros.categoria) {
-        productosFiltrados = productosFiltrados.filter(p => p.idCategoria === parseInt(filtros.categoria));
-      }
-
-      if (filtros.tipo && Array.isArray(categorias)) {
-        const categoriaTipo = categorias.find(c => c.tipo === filtros.tipo);
-        if (categoriaTipo) {
-          productosFiltrados = productosFiltrados.filter(p => p.idCategoria === categoriaTipo.id);
-        }
-      }
-
-      if (filtros.soloDisponibles) {
-        productosFiltrados = productosFiltrados.filter(p => p.disponible);
-      }
-
-      setProductos(productosFiltrados);
-    } catch (error) {
-      console.error("Error filtrando productos:", error);
-    } finally {
-      setCargando(false);
-    }
+      await productosService.eliminar(id);
+      setProductos(prev => prev.filter(p => p.id !== id));
+    } catch { alert("Error al eliminar el producto"); }
   };
 
-  const limpiarFiltros = () => {
-    setFiltros({ texto: "", categoria: "", tipo: "", soloDisponibles: true });
-    cargarDatos();
+  const getCategoria = (idCat) => categorias.find(c => c.id === idCat);
+  const getTipoBadge = (tipo) => {
+    const map = { desayuno: 'sb-desayuno', comida: 'sb-comida', bebida: 'sb-bebida' };
+    return map[tipo] || 'sb-default';
   };
 
-  const eliminarProducto = async (id) => {
-    if (confirm("¿Está seguro de que desea eliminar este producto?")) {
-      try {
-        await productosService.eliminar(id);
-        alert("Producto eliminado exitosamente");
-        cargarDatos();
-      } catch (error) {
-        alert("Error al eliminar el producto");
-      }
-    }
-  };
-
-  const getTipoCategoria = (idCategoria) => {
-    if (!Array.isArray(categorias)) return "Desconocido";
-    const categoria = categorias.find(c => c.id === idCategoria);
-    return categoria ? categoria.tipo : "Desconocido";
-  };
-
-  const getNombreCategoria = (idCategoria) => {
-    if (!Array.isArray(categorias)) return "Desconocida";
-    const categoria = categorias.find(c => c.id === idCategoria);
-    return categoria ? categoria.nombre : "Desconocida";
-  };
+  const lista = productosFiltrados;
 
   if (cargando) {
     return (
-      <div className="container mt-5 text-center">
-        <div className="spinner-border text-primary" role="status"><span className="visually-hidden">Cargando...</span></div>
-        <p className="mt-3">Cargando productos...</p>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '80px 20px', gap: 16, color: 'var(--text-2)' }}>
+        <div className="spinner-border text-primary"></div>
+        <span>Cargando productos…</span>
       </div>
     );
   }
 
-  const prodSeguros = Array.isArray(productos) ? productos : [];
-  const catSeguras = Array.isArray(categorias) ? categorias : [];
-
   return (
-    <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2><i className="fas fa-hamburger me-3 text-primary"></i>Gestión de Productos</h2>
-        <button className="btn btn-primary" onClick={() => navigate("/productos/nuevo")}><i className="fas fa-plus me-2"></i>Nuevo Producto</button>
+    <>
+      <div className="page-header">
+        <div>
+          <div className="page-title">Productos</div>
+          <div className="page-subtitle">Catálogo del menú y disponibilidad</div>
+        </div>
+        <button className="btn btn-primary" onClick={() => navigate("/productos/nuevo")}>
+          <i className="fas fa-plus"></i> Nuevo Producto
+        </button>
       </div>
 
-      <div className="card mb-4">
-        <div className="card-header bg-light"><h5 className="mb-0"><i className="fas fa-filter me-2"></i>Filtros de Búsqueda</h5></div>
-        <div className="card-body">
-          <div className="row g-3">
-            <div className="col-md-4">
-              <input type="text" className="form-control" placeholder="Buscar por nombre o descripción..." value={filtros.texto} onChange={(e) => setFiltros({...filtros, texto: e.target.value})} />
-            </div>
-            <div className="col-md-3">
-              <select className="form-select" value={filtros.categoria} onChange={(e) => setFiltros({...filtros, categoria: e.target.value})}>
-                <option value="">Todas las categorías</option>
-                {catSeguras.map(categoria => (<option key={categoria.id} value={categoria.id}>{categoria.nombre}</option>))}
-              </select>
-            </div>
-            <div className="col-md-3">
-              <select className="form-select" value={filtros.tipo} onChange={(e) => setFiltros({...filtros, tipo: e.target.value})}>
-                <option value="">Todos los tipos</option>
-                <option value="desayuno">Desayunos</option>
-                <option value="comida">Comidas</option>
-                <option value="bebida">Bebidas</option>
-              </select>
-            </div>
-            <div className="col-md-2">
-              <div className="form-check">
-                <input className="form-check-input" type="checkbox" id="soloDisponibles" checked={filtros.soloDisponibles} onChange={(e) => setFiltros({...filtros, soloDisponibles: e.target.checked})} />
-                <label className="form-check-label" htmlFor="soloDisponibles">Solo disponibles</label>
-              </div>
-            </div>
-            <div className="col-12">
-              <div className="d-flex gap-2">
-                <button className="btn btn-primary" onClick={buscarProductos}><i className="fas fa-search me-2"></i>Buscar</button>
-                <button className="btn btn-outline-secondary" onClick={limpiarFiltros}><i className="fas fa-times me-2"></i>Limpiar</button>
-              </div>
-            </div>
+      {/* Stats */}
+      <div className="row g-3 mb-4">
+        <div className="col-6 col-md-3">
+          <div className="stat-card">
+            <div className="stat-card-label">Total</div>
+            <div className="stat-card-value">{productos.length}</div>
+          </div>
+        </div>
+        <div className="col-6 col-md-3">
+          <div className="stat-card stat-green">
+            <div className="stat-card-label">Disponibles</div>
+            <div className="stat-card-value">{productos.filter(p => p.disponible).length}</div>
+          </div>
+        </div>
+        <div className="col-6 col-md-3">
+          <div className="stat-card stat-accent">
+            <div className="stat-card-label">Desayunos</div>
+            <div className="stat-card-value">{productos.filter(p => getCategoria(p.idCategoria)?.tipo === 'desayuno').length}</div>
+          </div>
+        </div>
+        <div className="col-6 col-md-3">
+          <div className="stat-card stat-blue">
+            <div className="stat-card-label">Bebidas</div>
+            <div className="stat-card-value">{productos.filter(p => getCategoria(p.idCategoria)?.tipo === 'bebida').length}</div>
           </div>
         </div>
       </div>
 
-      <div className="row mb-4">
-        <div className="col-md-3">
-          <div className="card card-gradient-primary">
-            <div className="card-body text-center"><h6 className="card-title">Total Productos</h6><h2 className="mb-0">{prodSeguros.length}</h2></div>
+      {/* Filtros */}
+      <div className="filter-panel mb-3">
+        <div className="row g-2 align-items-end">
+          <div className="col-12 col-md-4">
+            <div className="input-group">
+              <span className="input-group-text"><i className="fas fa-search"></i></span>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Buscar por nombre o descripción…"
+                value={filtros.texto}
+                onChange={e => setFiltros({ ...filtros, texto: e.target.value })}
+              />
+            </div>
           </div>
-        </div>
-        <div className="col-md-3">
-          <div className="card card-gradient-success">
-            <div className="card-body text-center"><h6 className="card-title">Disponibles</h6><h2 className="mb-0">{prodSeguros.filter(p => p.disponible).length}</h2></div>
+          <div className="col-12 col-md-3">
+            <select className="form-select" value={filtros.categoria} onChange={e => setFiltros({ ...filtros, categoria: e.target.value })}>
+              <option value="">Todas las categorías</option>
+              {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+            </select>
           </div>
-        </div>
-        <div className="col-md-3">
-          <div className="card card-gradient-accent">
-            <div className="card-body text-center"><h6 className="card-title">Desayunos</h6><h2 className="mb-0">{prodSeguros.filter(p => getTipoCategoria(p.idCategoria) === 'desayuno').length}</h2></div>
+          <div className="col-12 col-md-3 d-flex align-items-center gap-2">
+            <div className="form-check mb-0">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="soloDisp"
+                checked={filtros.soloDisponibles}
+                onChange={e => setFiltros({ ...filtros, soloDisponibles: e.target.checked })}
+              />
+              <label className="form-check-label" htmlFor="soloDisp">Solo disponibles</label>
+            </div>
           </div>
-        </div>
-        <div className="col-md-3">
-          <div className="card card-gradient-secondary">
-            <div className="card-body text-center"><h6 className="card-title">Comidas</h6><h2 className="mb-0">{prodSeguros.filter(p => getTipoCategoria(p.idCategoria) === 'comida').length}</h2></div>
+          <div className="col-12 col-md-2">
+            <button className="btn btn-outline-secondary w-100" onClick={limpiar}>
+              <i className="fas fa-undo"></i> Limpiar
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="card">
-        <div className="card-header bg-dark text-white"><h5 className="mb-0"><i className="fas fa-list me-2"></i>Lista de Productos</h5></div>
-        <div className="card-body">
-          <div className="table-responsive">
-            <table className="table table-hover">
-              <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Categoría</th><th>Tipo</th><th className="text-end">Precio</th><th>Disponible</th><th>Acciones</th></tr></thead>
-              <tbody>
-                {prodSeguros.length === 0 ? (
-                  <tr><td colSpan="8" className="text-center py-4"><i className="fas fa-box-open fa-2x text-muted mb-3"></i><p className="text-muted">No se encontraron productos</p></td></tr>
-                ) : (
-                  prodSeguros.map((producto) => (
-                    <tr key={producto.id}>
-                      <td>#{producto.id}</td>
-                      <td><strong>{producto.nombre}</strong>{producto.imagen && <span className="ms-2"><i className="fas fa-image text-info" title="Tiene imagen"></i></span>}</td>
-                      <td>{producto.descripcion || <span className="text-muted">Sin descripción</span>}</td>
-                      <td>{getNombreCategoria(producto.idCategoria)}</td>
-                      <td><span className={`badge bg-${getTipoBadgeColor(getTipoCategoria(producto.idCategoria))}`}>{getTipoCategoria(producto.idCategoria)}</span></td>
-                      <td className="text-end"><span className="h6 text-success">${parseFloat(producto.precio || 0).toFixed(2)}</span></td>
-                      <td><span className={`badge bg-${producto.disponible ? 'success' : 'danger'}`}>{producto.disponible ? 'Sí' : 'No'}</span></td>
-                      <td>
-                        <div className="btn-group">
-                          <button className="btn btn-sm btn-outline-primary" onClick={() => navigate(`/productos/editar/${producto.id}`)} title="Editar"><i className="fas fa-edit"></i></button>
-                          <button className="btn btn-sm btn-outline-danger" onClick={() => eliminarProducto(producto.id)} title="Eliminar"><i className="fas fa-trash"></i></button>
-                          <button className="btn btn-sm btn-outline-success" onClick={() => alert(`Producto: ${producto.nombre}\nPrecio: $${producto.precio}`)} title="Ver Detalles"><i className="fas fa-eye"></i></button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+      {/* Tabla */}
+      <div className="table-wrap">
+        <table className="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th style={{ width: 50 }}>#</th>
+              <th>Nombre</th>
+              <th className="d-none d-lg-table-cell">Descripción</th>
+              <th className="d-none d-md-table-cell">Categoría</th>
+              <th className="d-none d-md-table-cell text-center" style={{ width: 100 }}>Tipo</th>
+              <th className="text-end" style={{ width: 90 }}>Precio</th>
+              <th className="text-center" style={{ width: 110 }}>Disponible</th>
+              <th className="text-center" style={{ width: 90 }}>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {lista.length === 0 ? (
+              <tr><td colSpan="8">
+                <div className="empty-state">
+                  <i className="fas fa-utensils"></i>
+                  <h6>Sin productos</h6>
+                  <p>No se encontraron resultados con los filtros actuales.</p>
+                </div>
+              </td></tr>
+            ) : lista.map(p => {
+              const cat = getCategoria(p.idCategoria);
+              return (
+                <tr key={p.id}>
+                  <td style={{ color: 'var(--text-2)', fontSize: 13, fontWeight: 600 }}>#{p.id}</td>
+                  <td><span style={{ fontWeight: 600 }}>{p.nombre}</span></td>
+                  <td className="d-none d-lg-table-cell" style={{ color: 'var(--text-2)', fontSize: 13, maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {p.descripcion || <span style={{ color: 'var(--text-3)' }}>—</span>}
+                  </td>
+                  <td className="d-none d-md-table-cell" style={{ color: 'var(--text-2)' }}>
+                    {cat?.nombre || '—'}
+                  </td>
+                  <td className="d-none d-md-table-cell text-center">
+                    {cat?.tipo && (
+                      <span className={`status-badge ${getTipoBadge(cat.tipo)}`}>{cat.tipo}</span>
+                    )}
+                  </td>
+                  <td className="text-end" style={{ fontWeight: 700, color: 'var(--accent)' }}>
+                    ${parseFloat(p.precio || 0).toFixed(2)}
+                  </td>
+                  <td className="text-center">
+                    <span className={`status-badge ${p.disponible ? 'sb-active' : 'sb-inactive'}`}>
+                      {p.disponible ? 'Sí' : 'No'}
+                    </span>
+                  </td>
+                  <td className="text-center">
+                    <div className="d-flex justify-content-center gap-1">
+                      <button className="btn btn-icon-sm text-primary" onClick={() => navigate(`/productos/editar/${p.id}`)} title="Editar">
+                        <i className="fas fa-pen"></i>
+                      </button>
+                      <button className="btn btn-icon-sm text-danger" onClick={() => eliminar(p.id)} title="Eliminar">
+                        <i className="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
-      <button className="btn btn-primary btn-lg rounded-circle position-fixed" style={{ bottom: '80px', right: '20px', width: '60px', height: '60px' }} onClick={() => navigate("/productos/nuevo")} title="Nuevo Producto"><i className="fas fa-plus"></i></button>
-    </div>
+
+      <button className="fab-btn" onClick={() => navigate("/productos/nuevo")} aria-label="Nuevo producto">
+        <i className="fas fa-plus"></i>
+      </button>
+    </>
   );
-};
-
-const getTipoBadgeColor = (tipo) => {
-  switch(tipo) {
-    case 'desayuno': return 'warning';
-    case 'comida': return 'success';
-    case 'bebida': return 'info';
-    default: return 'secondary';
-  }
 };
 
 export default Productos;
