@@ -14,32 +14,32 @@ const imprimirTicketPedido = (pedido) => {
     <html>
     <head>
       <style>
-        @page { margin: 0; }
+        @page { margin: 1cm; size: auto; }
         body { 
           font-family: 'monospace';
-          width: 100%; /* Cambiado a 100% para ocupar todo el ancho en la prueba */
+          width: 100%;
           margin: 0; 
-          padding: 2mm;
-          font-size: 12px;
-          line-height: 1.1;
+          padding: 5mm;
+          font-size: 28px; /* Texto base gigante para ocupar la hoja */
+          line-height: 1.3;
           color: #000;
         }
-        .text-center { text-align: center; margin-bottom: 5px; }
+        .text-center { text-align: center; margin-bottom: 20px; }
         .text-right { text-align: right; }
         .bold { font-weight: bold; }
-        .header { margin-bottom: 10px; border-bottom: 1px dashed #000; padding-bottom: 5px; }
-        .info { margin-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-        th { border-bottom: 1px dashed #000; text-align: left; }
-        .total { border-top: 1px dashed #000; padding-top: 5px; font-size: 14px; }
-        .footer { margin-top: 15px; font-size: 10px; border-top: 1px solid #000; padding-top: 5px; }
-        .espaciador { height: 30px; } /* Para que la impresora saque un poco más de papel */
-        td { padding: 2px 0; vertical-align: top; }
+        .header { margin-bottom: 30px; border-bottom: 4px dashed #000; padding-bottom: 20px; }
+        .info { margin-bottom: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        th { border-bottom: 4px dashed #000; text-align: left; padding: 10px 0; }
+        .total { border-top: 4px dashed #000; padding-top: 20px; font-size: 48px; }
+        .footer { margin-top: 60px; font-size: 20px; border-top: 3px solid #000; padding-top: 20px; }
+        .espaciador { height: 100px; } 
+        td { padding: 15px 0; vertical-align: top; }
       </style>
     </head>
     <body>
       <div class="header text-center">
-        <div class="bold" style="font-size: 16px;">RESTO BAR</div>
+        <div class="bold" style="font-size: 52px;">RESTO BAR</div>
         <div class="bold">LA ESQUINA</div>
         <div>Pedido #${id}</div>
         <div>${fechaFormateada}</div>

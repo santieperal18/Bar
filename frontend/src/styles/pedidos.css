@@ -139,5 +139,6 @@
     margin: 0;
     padding: 0;
     font-family: 'Courier New', monospace;
+    font-size: 24pt !important; /* Escala global de impresión */
   }
 }
