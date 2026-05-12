@@ -306,7 +306,7 @@ const Pedidos = () => {
                         <i className="fas fa-pen"></i>
                       </button>
                       <button 
-                        className="btn btn-sm btn-outline-dark me-1" onClick={() => impresionService.imprimirTicketPedido(p)}title="Imprimir Ticket">
+                        className="btn btn-sm btn-outline-dark me-1" onClick={() => imprimirTicket(p)}title="Imprimir Ticket">
                         <i className="fas fa-print"></i>
                       </button>
                     </div>
