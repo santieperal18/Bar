@@ -155,57 +155,105 @@ const Productos = () => {
         </div>
       </div>
 
-      {/* Tabla */}
-      <div className="table-wrap">
-        <table className="table table-hover mb-0">
-          <thead>
-            <tr>
-              <th style={{ width: 50 }}>#</th>
-              <th>Nombre</th>
-              <th className="d-none d-lg-table-cell">Descripción</th>
-              <th className="d-none d-md-table-cell">Categoría</th>
-              <th className="d-none d-md-table-cell text-center" style={{ width: 100 }}>Tipo</th>
-              <th className="text-end" style={{ width: 90 }}>Precio</th>
-              <th className="text-center" style={{ width: 110 }}>Disponible</th>
-              <th className="text-center" style={{ width: 90 }}>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {lista.length === 0 ? (
-              <tr><td colSpan="8">
-                <div className="empty-state">
-                  <i className="fas fa-utensils"></i>
-                  <h6>Sin productos</h6>
-                  <p>No se encontraron resultados con los filtros actuales.</p>
-                </div>
-              </td></tr>
-            ) : lista.map(p => {
+      {/* ── DESKTOP: Tabla ── */}
+      <div className="show-desktop">
+        <div className="table-wrap">
+          <table className="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th style={{ width: 50 }}>#</th>
+                <th>Nombre</th>
+                <th className="d-none d-lg-table-cell">Descripción</th>
+                <th className="d-none d-md-table-cell">Categoría</th>
+                <th className="d-none d-md-table-cell text-center" style={{ width: 100 }}>Tipo</th>
+                <th className="text-end" style={{ width: 90 }}>Precio</th>
+                <th className="text-center" style={{ width: 110 }}>Disponible</th>
+                <th className="text-center" style={{ width: 90 }}>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {lista.length === 0 ? (
+                <tr><td colSpan="8">
+                  <div className="empty-state">
+                    <i className="fas fa-utensils"></i>
+                    <h6>Sin productos</h6>
+                    <p>No se encontraron resultados con los filtros actuales.</p>
+                  </div>
+                </td></tr>
+              ) : lista.map(p => {
+                const cat = getCategoria(p.idCategoria);
+                return (
+                  <tr key={p.id}>
+                    <td style={{ color: 'var(--text-2)', fontSize: 13, fontWeight: 600 }}>#{p.id}</td>
+                    <td><span style={{ fontWeight: 600 }}>{p.nombre}</span></td>
+                    <td className="d-none d-lg-table-cell" style={{ color: 'var(--text-2)', fontSize: 13, maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {p.descripcion || <span style={{ color: 'var(--text-3)' }}>—</span>}
+                    </td>
+                    <td className="d-none d-md-table-cell" style={{ color: 'var(--text-2)' }}>
+                      {cat?.nombre || '—'}
+                    </td>
+                    <td className="d-none d-md-table-cell text-center">
+                      {cat?.tipo && (
+                        <span className={`status-badge ${getTipoBadge(cat.tipo)}`}>{cat.tipo}</span>
+                      )}
+                    </td>
+                    <td className="text-end" style={{ fontWeight: 700, color: 'var(--accent)' }}>
+                      ${parseFloat(p.precio || 0).toFixed(2)}
+                    </td>
+                    <td className="text-center">
+                      <span className={`status-badge ${p.disponible ? 'sb-active' : 'sb-inactive'}`}>
+                        {p.disponible ? 'Sí' : 'No'}
+                      </span>
+                    </td>
+                    <td className="text-center">
+                      <div className="d-flex justify-content-center gap-1">
+                        <button className="btn btn-icon-sm text-primary" onClick={() => navigate(`/productos/editar/${p.id}`)} title="Editar">
+                          <i className="fas fa-pen"></i>
+                        </button>
+                        <button className="btn btn-icon-sm text-danger" onClick={() => eliminar(p.id)} title="Eliminar">
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* ── MOBILE: Cards ── */}
+      <div className="show-mobile">
+        {lista.length === 0 ? (
+          <div className="empty-state">
+            <i className="fas fa-utensils"></i>
+            <h6>Sin productos</h6>
+            <p>No se encontraron resultados con los filtros actuales.</p>
+          </div>
+        ) : (
+          <div className="m-list">
+            {lista.map(p => {
               const cat = getCategoria(p.idCategoria);
               return (
-                <tr key={p.id}>
-                  <td style={{ color: 'var(--text-2)', fontSize: 13, fontWeight: 600 }}>#{p.id}</td>
-                  <td><span style={{ fontWeight: 600 }}>{p.nombre}</span></td>
-                  <td className="d-none d-lg-table-cell" style={{ color: 'var(--text-2)', fontSize: 13, maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {p.descripcion || <span style={{ color: 'var(--text-3)' }}>—</span>}
-                  </td>
-                  <td className="d-none d-md-table-cell" style={{ color: 'var(--text-2)' }}>
-                    {cat?.nombre || '—'}
-                  </td>
-                  <td className="d-none d-md-table-cell text-center">
-                    {cat?.tipo && (
-                      <span className={`status-badge ${getTipoBadge(cat.tipo)}`}>{cat.tipo}</span>
-                    )}
-                  </td>
-                  <td className="text-end" style={{ fontWeight: 700, color: 'var(--accent)' }}>
-                    ${parseFloat(p.precio || 0).toFixed(2)}
-                  </td>
-                  <td className="text-center">
-                    <span className={`status-badge ${p.disponible ? 'sb-active' : 'sb-inactive'}`}>
-                      {p.disponible ? 'Sí' : 'No'}
-                    </span>
-                  </td>
-                  <td className="text-center">
-                    <div className="d-flex justify-content-center gap-1">
+                <div key={p.id} className="m-card">
+                  {/* Fila 1: nombre + precio */}
+                  <div className="m-row">
+                    <span className="m-name">{p.nombre}</span>
+                    <span className="m-price">${parseFloat(p.precio || 0).toFixed(2)}</span>
+                  </div>
+
+                  {/* Fila 2: badges + acciones */}
+                  <div className="m-row" style={{ alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                      {cat?.tipo && (
+                        <span className={`status-badge ${getTipoBadge(cat.tipo)}`} style={{ fontSize: 11 }}>{cat.tipo}</span>
+                      )}
+                      <span className={`status-badge ${p.disponible ? 'sb-active' : 'sb-inactive'}`} style={{ fontSize: 11 }}>
+                        {p.disponible ? 'Disponible' : 'No disponible'}
+                      </span>
+                    </div>
+                    <div className="m-actions">
                       <button className="btn btn-icon-sm text-primary" onClick={() => navigate(`/productos/editar/${p.id}`)} title="Editar">
                         <i className="fas fa-pen"></i>
                       </button>
@@ -213,12 +261,12 @@ const Productos = () => {
                         <i className="fas fa-trash"></i>
                       </button>
                     </div>
-                  </td>
-                </tr>
+                  </div>
+                </div>
               );
             })}
-          </tbody>
-        </table>
+          </div>
+        )}
       </div>
 
       <button className="fab-btn" onClick={() => navigate("/productos/nuevo")} aria-label="Nuevo producto">

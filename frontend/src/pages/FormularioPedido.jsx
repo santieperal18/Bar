@@ -14,12 +14,14 @@ const FormularioPedido = () => {
   const [productos, setProductos] = useState([]);
   const [repartidores, setRepartidores] = useState([]);
   const [carrito, setCarrito] = useState([]);
+  const [mobileTab, setMobileTab] = useState('menu');
 
   const { register, handleSubmit, setValue, watch } = useForm({
     defaultValues: { tipoEntrega: "local", estado: "pendiente" }
   });
 
   const tipoEntrega = watch("tipoEntrega");
+  const totalItems = carrito.reduce((acc, i) => acc + i.cantidad, 0);
 
   useEffect(() => {
     const init = async () => {
@@ -103,11 +105,30 @@ const FormularioPedido = () => {
         </button>
       </div>
 
+      {/* POS Tab bar — mobile only */}
+      <div className="pos-tabs">
+        <button
+          type="button"
+          className={`pos-tab${mobileTab === 'menu' ? ' active' : ''}`}
+          onClick={() => setMobileTab('menu')}
+        >
+          <i className="fas fa-utensils"></i> Menú
+        </button>
+        <button
+          type="button"
+          className={`pos-tab${mobileTab === 'ticket' ? ' active' : ''}`}
+          onClick={() => setMobileTab('ticket')}
+        >
+          <i className="fas fa-receipt"></i> Ticket
+          {totalItems > 0 && <span className="pos-tab-badge">{totalItems}</span>}
+        </button>
+      </div>
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="row g-4">
 
           {/* ── Izquierda ── */}
-          <div className="col-12 col-xl-8">
+          <div className={`col-12 col-xl-8 pos-section${mobileTab === 'menu' ? ' visible' : ''}`}>
 
             {/* Logística */}
             <div className="card mb-4">
@@ -183,7 +204,7 @@ const FormularioPedido = () => {
           </div>
 
           {/* ── Derecha: Ticket ── */}
-          <div className="col-12 col-xl-4">
+          <div className={`col-12 col-xl-4 pos-section${mobileTab === 'ticket' ? ' visible' : ''}`}>
             <div className="ticket-card">
               <div className="card-header">
                 <i className="fas fa-receipt me-2" style={{ color: 'var(--accent)' }}></i>

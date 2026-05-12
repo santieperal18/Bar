@@ -131,54 +131,106 @@ const Repartidores = () => {
         </div>
       </div>
 
-      {/* Tabla */}
-      <div className="table-wrap">
-        <table className="table table-hover mb-0">
-          <thead>
-            <tr>
-              <th style={{ width: 50 }}>#</th>
-              <th>Nombre</th>
-              <th className="d-none d-md-table-cell">Teléfono</th>
-              <th className="d-none d-md-table-cell">Vehículo</th>
-              <th className="text-center" style={{ width: 100 }}>Estado</th>
-              <th className="text-center" style={{ width: 90 }}>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {lista.length === 0 ? (
-              <tr><td colSpan="6">
-                <div className="empty-state">
-                  <i className="fas fa-motorcycle"></i>
-                  <h6>Sin repartidores</h6>
-                  <p>No se encontraron resultados.</p>
-                </div>
-              </td></tr>
-            ) : lista.map(r => (
-              <tr key={r.id}>
-                <td style={{ color: 'var(--text-2)', fontSize: 13, fontWeight: 600 }}>#{r.id}</td>
-                <td>
-                  <span style={{ fontWeight: 600 }}>{r.nombre} {r.apellido}</span>
-                </td>
-                <td className="d-none d-md-table-cell">
-                  <a href={`tel:${r.telefono}`} style={{ color: 'var(--text-1)', textDecoration: 'none' }}>
-                    {r.telefono || <span style={{ color: 'var(--text-3)' }}>—</span>}
-                  </a>
-                </td>
-                <td className="d-none d-md-table-cell">
-                  {r.vehiculo ? (
-                    <span style={{ color: 'var(--text-2)', display: 'flex', alignItems: 'center', gap: 7 }}>
-                      <i className={`fas ${VEHICULO_ICON(r.vehiculo)}`} style={{ color: 'var(--accent)', width: 16 }}></i>
-                      {r.vehiculo}
+      {/* ── DESKTOP: Tabla ── */}
+      <div className="show-desktop">
+        <div className="table-wrap">
+          <table className="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th style={{ width: 50 }}>#</th>
+                <th>Nombre</th>
+                <th className="d-none d-md-table-cell">Teléfono</th>
+                <th className="d-none d-md-table-cell">Vehículo</th>
+                <th className="text-center" style={{ width: 100 }}>Estado</th>
+                <th className="text-center" style={{ width: 90 }}>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {lista.length === 0 ? (
+                <tr><td colSpan="6">
+                  <div className="empty-state">
+                    <i className="fas fa-motorcycle"></i>
+                    <h6>Sin repartidores</h6>
+                    <p>No se encontraron resultados.</p>
+                  </div>
+                </td></tr>
+              ) : lista.map(r => (
+                <tr key={r.id}>
+                  <td style={{ color: 'var(--text-2)', fontSize: 13, fontWeight: 600 }}>#{r.id}</td>
+                  <td>
+                    <span style={{ fontWeight: 600 }}>{r.nombre} {r.apellido}</span>
+                  </td>
+                  <td className="d-none d-md-table-cell">
+                    <a href={`tel:${r.telefono}`} style={{ color: 'var(--text-1)', textDecoration: 'none' }}>
+                      {r.telefono || <span style={{ color: 'var(--text-3)' }}>—</span>}
+                    </a>
+                  </td>
+                  <td className="d-none d-md-table-cell">
+                    {r.vehiculo ? (
+                      <span style={{ color: 'var(--text-2)', display: 'flex', alignItems: 'center', gap: 7 }}>
+                        <i className={`fas ${VEHICULO_ICON(r.vehiculo)}`} style={{ color: 'var(--accent)', width: 16 }}></i>
+                        {r.vehiculo}
+                      </span>
+                    ) : <span style={{ color: 'var(--text-3)' }}>—</span>}
+                  </td>
+                  <td className="text-center">
+                    <span className={`status-badge ${r.activo ? 'sb-active' : 'sb-inactive'}`}>
+                      {r.activo ? 'Activo' : 'Inactivo'}
                     </span>
-                  ) : <span style={{ color: 'var(--text-3)' }}>—</span>}
-                </td>
-                <td className="text-center">
+                  </td>
+                  <td className="text-center">
+                    <div className="d-flex justify-content-center gap-1">
+                      <button className="btn btn-icon-sm text-primary" onClick={() => navigate(`/repartidores/editar/${r.id}`)} title="Editar">
+                        <i className="fas fa-pen"></i>
+                      </button>
+                      <button className="btn btn-icon-sm text-danger" onClick={() => eliminar(r.id)} title="Eliminar">
+                        <i className="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* ── MOBILE: Cards ── */}
+      <div className="show-mobile">
+        {lista.length === 0 ? (
+          <div className="empty-state">
+            <i className="fas fa-motorcycle"></i>
+            <h6>Sin repartidores</h6>
+            <p>No se encontraron resultados.</p>
+          </div>
+        ) : (
+          <div className="m-list">
+            {lista.map(r => (
+              <div key={r.id} className="m-card">
+                {/* Fila 1: icono vehiculo + nombre + estado */}
+                <div className="m-row">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ width: 34, height: 34, borderRadius: 10, background: 'var(--surface-3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <i className={`fas ${VEHICULO_ICON(r.vehiculo || '')}`} style={{ color: 'var(--accent)', fontSize: 14 }}></i>
+                    </div>
+                    <span className="m-name">{r.nombre} {r.apellido}</span>
+                  </div>
                   <span className={`status-badge ${r.activo ? 'sb-active' : 'sb-inactive'}`}>
                     {r.activo ? 'Activo' : 'Inactivo'}
                   </span>
-                </td>
-                <td className="text-center">
-                  <div className="d-flex justify-content-center gap-1">
+                </div>
+
+                {/* Fila 2: teléfono + acciones */}
+                <div className="m-row" style={{ alignItems: 'center' }}>
+                  <span className="m-sub">
+                    {r.telefono
+                      ? <a href={`tel:${r.telefono}`} style={{ color: 'var(--text-2)', textDecoration: 'none' }}>
+                          <i className="fas fa-phone me-1" style={{ fontSize: 11 }}></i>{r.telefono}
+                        </a>
+                      : <span style={{ color: 'var(--text-3)' }}>Sin teléfono</span>
+                    }
+                  </span>
+                  <div className="m-actions">
                     <button className="btn btn-icon-sm text-primary" onClick={() => navigate(`/repartidores/editar/${r.id}`)} title="Editar">
                       <i className="fas fa-pen"></i>
                     </button>
@@ -186,11 +238,11 @@ const Repartidores = () => {
                       <i className="fas fa-trash"></i>
                     </button>
                   </div>
-                </td>
-              </tr>
+                </div>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        )}
       </div>
 
       <button className="fab-btn" onClick={() => navigate("/repartidores/nuevo")} aria-label="Nuevo repartidor">
