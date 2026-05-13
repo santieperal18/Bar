@@ -15,6 +15,8 @@ const FormularioPedido = () => {
   const [repartidores, setRepartidores] = useState([]);
   const [carrito, setCarrito] = useState([]);
   const [mobileTab, setMobileTab] = useState('menu');
+  const [busquedaCliente, setBusquedaCliente] = useState("");
+  const [mostrarResultadosCli, setMostrarResultadosCli] = useState(false);
 
   const { register, handleSubmit, setValue, watch } = useForm({
     defaultValues: { tipoEntrega: "local", estado: "pendiente" }
@@ -22,6 +24,13 @@ const FormularioPedido = () => {
 
   const tipoEntrega = watch("tipoEntrega");
   const totalItems = carrito.reduce((acc, i) => acc + i.cantidad, 0);
+
+  // Filtrar clientes por búsqueda
+  const clientesFiltrados = busquedaCliente.length > 0
+    ? clientes.filter(c => 
+        `${c.nombre} ${c.apellido}`.toLowerCase().includes(busquedaCliente.toLowerCase())
+      )
+    : [];
 
   useEffect(() => {
     const init = async () => {
@@ -39,6 +48,9 @@ const FormularioPedido = () => {
           const pedido = await pedidosService.obtenerPorId(id);
           if (pedido) {
             setValue("idCliente", pedido.idCliente);
+            if (pedido.cliente) {
+              setBusquedaCliente(`${pedido.cliente.nombre} ${pedido.cliente.apellido}`);
+            }
             setValue("tipoEntrega", pedido.tipoEntrega);
             setValue("estado", pedido.estado);
             setValue("direccionEntrega", pedido.direccionEntrega);
@@ -56,6 +68,12 @@ const FormularioPedido = () => {
     };
     init();
   }, [id, setValue]);
+
+  const seleccionarCliente = (c) => {
+    setValue("idCliente", c.id);
+    setBusquedaCliente(`${c.nombre} ${c.apellido}`);
+    setMostrarResultadosCli(false);
+  };
 
   const agregar = (prod) => {
     const existe = carrito.find(i => i.id === prod.id);
@@ -140,10 +158,40 @@ const FormularioPedido = () => {
                 <div className="row g-3">
                   <div className="col-12 col-md-6">
                     <label className="form-label">Cliente</label>
-                    <select className="form-select" {...register("idCliente")}>
-                      <option value="">Consumidor Final (Mostrador)</option>
-                      {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
-                    </select>
+                    <div className="position-relative">
+                      <input 
+                        type="text" 
+                        className="form-control" 
+                        placeholder="Buscar cliente por nombre..." 
+                        value={busquedaCliente}
+                        onChange={(e) => {
+                          setBusquedaCliente(e.target.value);
+                          setMostrarResultadosCli(true);
+                        }}
+                        onFocus={() => setMostrarResultadosCli(true)}
+                      />
+                      <input type="hidden" {...register("idCliente")} />
+                      
+                      {mostrarResultadosCli && (busquedaCliente || clientesFiltrados.length > 0) && (
+                        <ul className="dropdown-menu show w-100 shadow-sm" style={{ maxHeight: '200px', overflowY: 'auto', zIndex: 1000 }}>
+                          <li className="dropdown-item py-2 border-bottom" style={{ cursor: 'pointer' }} onClick={() => {
+                            setValue("idCliente", "");
+                            setBusquedaCliente("");
+                            setMostrarResultadosCli(false);
+                          }}>
+                            <i className="fas fa-user-slash me-2 text-muted"></i><strong>Consumidor Final (Mostrador)</strong>
+                          </li>
+                          {clientesFiltrados.map(c => (
+                            <li key={c.id} className="dropdown-item py-2" style={{ cursor: 'pointer' }} onClick={() => seleccionarCliente(c)}>
+                              <i className="fas fa-user me-2 text-primary-light"></i> {c.nombre} {c.apellido}
+                            </li>
+                          ))}
+                          {busquedaCliente && clientesFiltrados.length === 0 && (
+                            <li className="dropdown-item disabled text-muted">No se encontraron clientes</li>
+                          )}
+                        </ul>
+                      )}
+                    </div>
                   </div>
                   <div className="col-6 col-md-3">
                     <label className="form-label">Modalidad</label>

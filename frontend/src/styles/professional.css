@@ -1,10 +1,21 @@
 /* ══════════════════════════════════════════════════════════════
    PROFESSIONAL.CSS — Componentes premium
    Paleta: text #160a03 | bg #fdf7f3
-           primary #e17330 | secondary #81d1ed | accent #6c4fe6
+           primary #a98e63 | secondary #ab957e | accent #82735b
    ══════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary: #a98e63;
+  --primary-dark: #7b6a4f;
+  --primary-light: #caaf89;
+  --secondary: #ab957e;
+  --secondary-dark: #82735b;
+  --accent: #82735b;
+  --accent-dark: #7b6a4f;
+  --background: #fdf7f3;
+}
 
 /* ══ BASE ════════════════════════════════════════════════════ */
 * { box-sizing: border-box; }
@@ -50,7 +61,7 @@ a:hover { color: var(--primary-dark); }
 
 /* ══ HEADER ══════════════════════════════════════════════════ */
 .professional-header {
-  background: linear-gradient(135deg, #1a0905 0%, #3d1a0b 50%, var(--primary-dark) 100%);
+  background: linear-gradient(135deg, #7b6a4f 0%, #82735b 50%, var(--primary-dark) 100%);
   color: #fff;
   padding: 2rem 0;
   position: relative;
@@ -63,8 +74,8 @@ a:hover { color: var(--primary-dark); }
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at top right,   rgba(225,115,48,0.25) 0%, transparent 60%),
-    radial-gradient(ellipse at bottom left, rgba(108,79,230,0.15) 0%, transparent 55%);
+    radial-gradient(ellipse at top right,   rgba(169,142,99,0.25) 0%, transparent 60%),
+    radial-gradient(ellipse at bottom left, rgba(130,115,91,0.15) 0%, transparent 55%);
   pointer-events: none;
 }
 
@@ -95,7 +106,7 @@ a:hover { color: var(--primary-dark); }
 /* ══ NAVEGACIÓN ══════════════════════════════════════════════ */
 .professional-nav {
   background: var(--primary);
-  box-shadow: 0 3px 16px rgba(225,115,48,0.30);
+  box-shadow: 0 3px 16px rgba(169,142,99,0.30);
   padding: 0;
   position: sticky;
   top: 0;
@@ -159,12 +170,12 @@ a:hover { color: var(--primary-dark); }
 .btn-primary {
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: #fff;
-  box-shadow: 0 3px 12px rgba(225,115,48,0.28);
+  box-shadow: 0 3px 12px rgba(169,142,99,0.28);
 }
 .btn-primary:hover, .btn-primary:focus {
-  background: linear-gradient(135deg, var(--primary-dark), #a84e16);
+  background: linear-gradient(135deg, var(--primary-dark), #82735b);
   color: #fff;
-  box-shadow: var(--shadow-primary);
+  box-shadow: 0 4px 15px rgba(123,106,79,0.35);
 }
 
 /* Success — green */
@@ -192,19 +203,19 @@ a:hover { color: var(--primary-dark); }
 /* Info — sky blue */
 .btn-info {
   background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
-  color: var(--text);
-  box-shadow: 0 3px 12px rgba(129,209,237,0.30);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(171,149,126,0.30);
 }
 .btn-info:hover, .btn-info:focus {
   background: linear-gradient(135deg, var(--secondary-dark), #4ab0d8);
-  color: var(--text);
+  color: #fff;
 }
 
 /* Accent — purple */
 .btn-accent {
   background: linear-gradient(135deg, var(--accent), var(--accent-dark));
   color: #fff;
-  box-shadow: 0 3px 12px rgba(108,79,230,0.28);
+  box-shadow: 0 3px 12px rgba(130,115,91,0.28);
 }
 .btn-accent:hover, .btn-accent:focus {
   background: linear-gradient(135deg, var(--accent-dark), #4a30c0);
@@ -220,7 +231,7 @@ a:hover { color: var(--primary-dark); }
 .btn-outline-primary:hover {
   background: var(--primary);
   color: #fff;
-  box-shadow: 0 3px 12px rgba(225,115,48,0.25);
+  box-shadow: 0 3px 12px rgba(169,142,99,0.25);
 }
 
 .btn-outline-secondary {
@@ -281,7 +292,7 @@ a:hover { color: var(--primary-dark); }
 }
 
 .card-header {
-  background: linear-gradient(135deg, #1a0905, var(--primary-dark));
+  background: linear-gradient(135deg, #7b6a4f, var(--primary-dark));
   color: #fff;
   font-weight: 600;
   border: none;
@@ -296,7 +307,7 @@ a:hover { color: var(--primary-dark); }
 }
 
 .card-header.bg-dark {
-  background: linear-gradient(135deg, #1a0905, #3d1a0b) !important;
+  background: linear-gradient(135deg, #7b6a4f, #82735b) !important;
   color: #fff !important;
 }
 
@@ -314,7 +325,7 @@ a:hover { color: var(--primary-dark); }
 }
 
 .table thead th {
-  background: linear-gradient(135deg, #1a0905, #3d1a0b);
+  background: linear-gradient(135deg, #7b6a4f, #82735b);
   color: rgba(255,255,255,0.92);
   font-weight: 600;
   border: none;
@@ -400,7 +411,7 @@ a:hover { color: var(--primary-dark); }
 .badge.bg-success   { background-color: var(--success-color) !important; color: #fff; }
 .badge.bg-danger    { background-color: var(--danger-color)  !important; color: #fff; }
 .badge.bg-warning   { background-color: var(--warning-color) !important; color: var(--text); }
-.badge.bg-dark      { background: linear-gradient(135deg, #1a0905, #3d1a0b) !important; color: #fff; }
+.badge.bg-dark      { background: linear-gradient(135deg, #7b6a4f, #82735b) !important; color: #fff; }
 
 /* ══ SPINNER ═════════════════════════════════════════════════ */
 .spinner-border.text-primary { color: var(--primary) !important; }
@@ -423,7 +434,7 @@ a:hover { color: var(--primary-dark); }
 /* ══ FOOTER ══════════════════════════════════════════════════ */
 .professional-footer,
 .resto-footer {
-  background: linear-gradient(135deg, #160a03 0%, #2a0f06 60%, #3d1a0b 100%);
+  background: linear-gradient(135deg, #7b6a4f 0%, #82735b 60%, #a98e63 100%);
   color: rgba(255,255,255,0.85);
   padding: 3.5rem 0 2rem;
   margin-top: 4rem;
@@ -495,7 +506,7 @@ a:hover { color: var(--primary-dark); }
 .bg-warning { background-color: var(--warning-color) !important; color: var(--text) !important; }
 .bg-info    { background-color: var(--secondary) !important; color: var(--text) !important; }
 .bg-light   { background-color: var(--surface-warm) !important; color: var(--text) !important; }
-.bg-dark    { background: linear-gradient(135deg, #1a0905, #3d1a0b) !important; color: #fff !important; }
+.bg-dark    { background: linear-gradient(135deg, #7b6a4f, #82735b) !important; color: #fff !important; }
 
 /* ══ ESTILOS DE PRECIO ════════════════════════════════════ */
 .price-tag {
