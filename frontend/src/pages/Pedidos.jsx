@@ -27,12 +27,9 @@ const Pedidos = () => {
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
 
-  // Reemplazamos 'cliente' (ID) y 'estado' por 'busqueda'
   const [filtros, setFiltros] = useState({
-    busqueda: "", 
-    tipoEntrega: "",
-    fechaDesde: obtenerFechaLocal(), 
-    fechaHasta: obtenerFechaManana()
+    cliente: "", estado: "", tipoEntrega: "",
+    fechaDesde: obtenerFechaLocal(), fechaHasta: obtenerFechaManana()
   });
 
   const navigate = useNavigate();
@@ -51,7 +48,6 @@ const Pedidos = () => {
 
   const buscar = async () => {
     setCargando(true);
-    // Limpiamos los parámetros vacíos para la API
     const params = Object.fromEntries(Object.entries(filtros).filter(([, v]) => v !== ""));
     try {
       const data = await pedidosService.buscarFiltrado(params);
@@ -61,7 +57,7 @@ const Pedidos = () => {
   };
 
   const resetFiltros = () => {
-    setFiltros({ busqueda: "", tipoEntrega: "", fechaDesde: obtenerFechaLocal(), fechaHasta: obtenerFechaManana() });
+    setFiltros({ cliente: "", estado: "", tipoEntrega: "", fechaDesde: obtenerFechaLocal(), fechaHasta: obtenerFechaManana() });
   };
 
   const marcarEntregado = async (id) => {
@@ -72,7 +68,7 @@ const Pedidos = () => {
     } catch { alert("Error al actualizar estado"); }
   };
 
-  const filtrosActivos = [filtros.busqueda, filtros.tipoEntrega].filter(Boolean).length;
+  const filtrosActivos = [filtros.cliente, filtros.estado, filtros.tipoEntrega].filter(Boolean).length;
 
   const stats = [
     { label: 'Total',      value: pedidos.length,                                      cls: ''             },
@@ -119,49 +115,48 @@ const Pedidos = () => {
         <i className={`fas fa-chevron-${filtrosAbiertos ? 'up' : 'down'}`} style={{ fontSize: 12 }}></i>
       </button>
 
-      {/* Panel de filtros actualizado */}
+      {/* Panel de filtros */}
       <div className={`filter-collapsible${filtrosAbiertos ? ' open' : ''}`}>
         <div className="filter-panel mb-3">
           <div className="row g-2 align-items-end">
-            
-            {/* NUEVO BUSCADOR POR NOMBRE O APELLIDO */}
-            <div className="col-12 col-md-4">
-              <label className="form-label">Buscar Cliente</label>
-              <div className="input-group">
-                <span className="input-group-text bg-white border-end-0"><i className="fas fa-search text-muted"></i></span>
-                <input 
-                  type="text" 
-                  className="form-control border-start-0 ps-0" 
-                  placeholder="Escribí nombre o apellido..." 
-                  value={filtros.busqueda} 
-                  onChange={e => setFiltros({ ...filtros, busqueda: e.target.value })}
-                  onKeyPress={(e) => e.key === 'Enter' && buscar()}
-                />
-              </div>
+            <div className="col-12 col-md-3">
+              <label className="form-label">Cliente</label>
+              <select className="form-select" value={filtros.cliente} onChange={e => setFiltros({ ...filtros, cliente: e.target.value })}>
+                <option value="">Todos</option>
+                {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
+              </select>
             </div>
-
             <div className="col-6 col-md-2">
-              <label className="form-label">Tipo Entrega</label>
+              <label className="form-label">Estado</label>
+              <select className="form-select" value={filtros.estado} onChange={e => setFiltros({ ...filtros, estado: e.target.value })}>
+                <option value="">Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="preparando">Preparando</option>
+                <option value="en_camino">En Camino</option>
+                <option value="entregado">Entregado</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+            </div>
+            <div className="col-6 col-md-2">
+              <label className="form-label">Tipo</label>
               <select className="form-select" value={filtros.tipoEntrega} onChange={e => setFiltros({ ...filtros, tipoEntrega: e.target.value })}>
                 <option value="">Todos</option>
                 <option value="local">Local</option>
                 <option value="delivery">Delivery</option>
               </select>
             </div>
-            
             <div className="col-6 col-md-2">
               <label className="form-label">Desde</label>
               <input type="date" className="form-control" value={filtros.fechaDesde} onChange={e => setFiltros({ ...filtros, fechaDesde: e.target.value })} />
             </div>
-            <div className="col-6 col-md-2">
+            <div className="col-6 col-md-1">
               <label className="form-label">Hasta</label>
               <input type="date" className="form-control" value={filtros.fechaHasta} onChange={e => setFiltros({ ...filtros, fechaHasta: e.target.value })} />
             </div>
-
             <div className="col-12 col-md-2 d-flex gap-2">
               <button className="btn btn-primary flex-grow-1" onClick={() => { buscar(); setFiltrosAbiertos(false); }} disabled={cargando}>
-                {cargando ? <span className="spinner-border spinner-border-sm"></span> : <i className="fas fa-filter"></i>}
-                Filtrar
+                {cargando ? <span className="spinner-border spinner-border-sm"></span> : <i className="fas fa-search"></i>}
+                Buscar
               </button>
               <button className="btn btn-outline-secondary" onClick={resetFiltros} title="Limpiar">
                 <i className="fas fa-undo"></i>
@@ -200,7 +195,7 @@ const Pedidos = () => {
               ) : pedidos.map(p => {
                 const ec = ESTADO_CONFIG[p.estado] || { label: p.estado, cls: 'sb-default', icon: 'fa-circle' };
                 
-                // --- WHATSAPP "EL PANAL" ---
+                // --- LÓGICA WHATSAPP EL PANAL ---
                 const nombreCompleto = p.cliente ? `${p.cliente.nombre} ${p.cliente.apellido}`.toLowerCase() : '';
                 const esPanal = nombreCompleto.includes('panal');
                 const numLimpio = p.cliente?.telefono ? p.cliente.telefono.replace(/\D/g, '') : '';
@@ -252,6 +247,7 @@ const Pedidos = () => {
                             className="btn btn-icon-sm text-white" 
                             style={{ backgroundColor: '#25D366' }}
                             title="Avisar que llegó a la reja"
+                            aria-label="Enviar WhatsApp"
                           >
                             <i className="fab fa-whatsapp"></i>
                           </a>
@@ -300,6 +296,7 @@ const Pedidos = () => {
               const hora = new Date(p.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
               const resumen = p.productos?.map(pr => `${pr.PedidoProducto?.cantidad || pr.cantidad}x ${pr.nombre}`).join(', ');
               
+              // --- LÓGICA WHATSAPP EL PANAL (Móvil) ---
               const nombreCompleto = p.cliente ? `${p.cliente.nombre} ${p.cliente.apellido}`.toLowerCase() : '';
               const esPanal = nombreCompleto.includes('panal');
               const numLimpio = p.cliente?.telefono ? p.cliente.telefono.replace(/\D/g, '') : '';
@@ -310,6 +307,7 @@ const Pedidos = () => {
 
               return (
                 <div key={p.id} className="m-card">
+                  {/* Fila 1: ID + hora + estado */}
                   <div className="m-row">
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ fontWeight: 700, color: 'var(--text-2)', fontSize: 12 }}>#{p.id}</span>
@@ -323,6 +321,7 @@ const Pedidos = () => {
                     </span>
                   </div>
 
+                  {/* Fila 2: Cliente + total */}
                   <div className="m-row">
                     <span className="m-name">
                       {p.cliente ? `${p.cliente.nombre} ${p.cliente.apellido}` : 'Consumidor Final'}
@@ -330,10 +329,12 @@ const Pedidos = () => {
                     <span className="m-price">${parseFloat(p.total || 0).toFixed(2)}</span>
                   </div>
 
+                  {/* Fila 3: Productos + acciones */}
                   <div className="m-row" style={{ alignItems: 'flex-end' }}>
                     <span className="m-sub" style={{ flex: 1 }}>{resumen || '—'}</span>
                     <div className="m-actions">
                       
+                      {/* BOTÓN WHATSAPP */}
                       {mostrarBotonWhatsapp && (
                         <a 
                           href={urlWhatsapp} 
