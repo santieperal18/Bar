@@ -87,9 +87,7 @@ function Login() {
           </button>
         </form>
 
-        <div className="login-demo">
-          <p>Demo — usuario: <code>main</code> &nbsp;|&nbsp; contraseña: <code>main123</code></p>
-        </div>
+        
       </div>
     </div>
   );
