@@ -220,4 +220,167 @@ const Pedidos = () => {
                         </div>
                       )}
                     </td>
-                    <td className="d-none d-lg-table-cell" style={{ maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-2
+                    <td className="d-none d-lg-table-cell" style={{ maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-2)', fontSize: 13 }}>
+                      {p.productos?.map(pr => `${pr.PedidoProducto?.cantidad || pr.cantidad}x ${pr.nombre}`).join(', ')}
+                    </td>
+                    <td className="text-center">
+                      {p.tipoEntrega === 'delivery'
+                        ? <i className="fas fa-motorcycle" style={{ color: 'var(--blue)' }} title="Delivery"></i>
+                        : <i className="fas fa-store" style={{ color: 'var(--text-3)' }} title="Local"></i>
+                      }
+                    </td>
+                    <td className="text-center">
+                      <span className={`status-badge ${ec.cls}`}>
+                        <i className={`fas ${ec.icon}`}></i> {ec.label}
+                      </span>
+                    </td>
+                    <td className="text-end" style={{ fontWeight: 700 }}>${parseFloat(p.total || 0).toFixed(2)}</td>
+                    <td className="text-center">
+                      <div className="d-flex justify-content-center gap-1">
+                        
+                        {/* BOTÓN WHATSAPP */}
+                        {mostrarBotonWhatsapp && (
+                          <a 
+                            href={urlWhatsapp} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="btn btn-icon-sm text-white" 
+                            style={{ backgroundColor: '#25D366' }}
+                            title="Avisar que llegó a la reja"
+                            aria-label="Enviar WhatsApp"
+                          >
+                            <i className="fab fa-whatsapp"></i>
+                          </a>
+                        )}
+
+                        {p.estado !== 'entregado' && p.estado !== 'cancelado' && (
+                          <button className="btn btn-icon-sm text-success" onClick={() => marcarEntregado(p.id)} title="Entregar">
+                            <i className="fas fa-check"></i>
+                          </button>
+                        )}
+                        <button className="btn btn-icon-sm" onClick={() => { setPedidoSeleccionado(p); setModalIsOpen(true); }} title="Ver">
+                          <i className="fas fa-eye"></i>
+                        </button>
+                        <button className="btn btn-icon-sm text-primary" onClick={() => navigate(`/pedidos/editar/${p.id}`)} title="Editar">
+                          <i className="fas fa-pen"></i>
+                        </button>
+                        <button className="btn btn-icon-sm text-secondary" onClick={() => imprimirTicket(p)} title="Imprimir Ticket">
+                          <i className="fas fa-print"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* ── MOBILE: Cards ── */}
+      <div className="show-mobile">
+        {cargando ? (
+          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-2)' }}>
+            <div className="spinner-border text-primary"></div>
+          </div>
+        ) : pedidos.length === 0 ? (
+          <div className="empty-state">
+            <i className="fas fa-receipt"></i>
+            <h6>Sin resultados</h6>
+            <p>Ajustá los filtros o creá una nueva orden.</p>
+          </div>
+        ) : (
+          <div className="m-list">
+            {pedidos.map(p => {
+              const ec = ESTADO_CONFIG[p.estado] || { label: p.estado, cls: 'sb-default', icon: 'fa-circle' };
+              const hora = new Date(p.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+              const resumen = p.productos?.map(pr => `${pr.PedidoProducto?.cantidad || pr.cantidad}x ${pr.nombre}`).join(', ');
+              
+              // --- LÓGICA WHATSAPP EL PANAL (Móvil) ---
+              const nombreCompleto = p.cliente ? `${p.cliente.nombre} ${p.cliente.apellido}`.toLowerCase() : '';
+              const esPanal = nombreCompleto.includes('panal');
+              const numLimpio = p.cliente?.telefono ? p.cliente.telefono.replace(/\D/g, '') : '';
+              const telWhatsapp = numLimpio ? (numLimpio.startsWith('54') ? numLimpio : `549${numLimpio}`) : '';
+              const mensajeCodificado = encodeURIComponent("Hola! El repartidor ya está en la reja 🛵");
+              const urlWhatsapp = `https://wa.me/${telWhatsapp}?text=${mensajeCodificado}`;
+              const mostrarBotonWhatsapp = esPanal && telWhatsapp !== '';
+
+              return (
+                <div key={p.id} className="m-card">
+                  {/* Fila 1: ID + hora + estado */}
+                  <div className="m-row">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontWeight: 700, color: 'var(--text-2)', fontSize: 12 }}>#{p.id}</span>
+                      <span style={{ color: 'var(--text-3)', fontSize: 12 }}>{hora}</span>
+                      {p.tipoEntrega === 'delivery' && (
+                        <i className="fas fa-motorcycle" style={{ color: 'var(--blue)', fontSize: 12 }}></i>
+                      )}
+                    </div>
+                    <span className={`status-badge ${ec.cls}`}>
+                      <i className={`fas ${ec.icon}`}></i> {ec.label}
+                    </span>
+                  </div>
+
+                  {/* Fila 2: Cliente + total */}
+                  <div className="m-row">
+                    <span className="m-name">
+                      {p.cliente ? `${p.cliente.nombre} ${p.cliente.apellido}` : 'Consumidor Final'}
+                    </span>
+                    <span className="m-price">${parseFloat(p.total || 0).toFixed(2)}</span>
+                  </div>
+
+                  {/* Fila 3: Productos + acciones */}
+                  <div className="m-row" style={{ alignItems: 'flex-end' }}>
+                    <span className="m-sub" style={{ flex: 1 }}>{resumen || '—'}</span>
+                    <div className="m-actions">
+                      
+                      {/* BOTÓN WHATSAPP */}
+                      {mostrarBotonWhatsapp && (
+                        <a 
+                          href={urlWhatsapp} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="btn btn-icon-sm text-white" 
+                          style={{ backgroundColor: '#25D366' }}
+                          title="Avisar que llegó a la reja"
+                        >
+                          <i className="fab fa-whatsapp"></i>
+                        </a>
+                      )}
+
+                      {p.estado !== 'entregado' && p.estado !== 'cancelado' && (
+                        <button className="btn btn-icon-sm text-success" onClick={() => marcarEntregado(p.id)} title="Entregar">
+                          <i className="fas fa-check"></i>
+                        </button>
+                      )}
+                      <button className="btn btn-icon-sm" onClick={() => { setPedidoSeleccionado(p); setModalIsOpen(true); }} title="Ver">
+                        <i className="fas fa-eye"></i>
+                      </button>
+                      <button className="btn btn-icon-sm text-primary" onClick={() => navigate(`/pedidos/editar/${p.id}`)} title="Editar">
+                        <i className="fas fa-pen"></i>
+                      </button>
+                      <button 
+                        className="btn btn-sm btn-outline-dark me-1" onClick={() => imprimirTicket(p)} title="Imprimir Ticket">
+                        <i className="fas fa-print"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      <button className="fab-btn" onClick={() => navigate("/pedidos/nuevo")} aria-label="Nueva orden">
+        <i className="fas fa-plus"></i>
+      </button>
+
+      {pedidoSeleccionado && (
+        <ModalDetallesPedido pedido={pedidoSeleccionado} abierto={modalIsOpen} onCerrar={() => setModalIsOpen(false)} />
+      )}
+    </>
+  );
+};
+
+export default Pedidos;
