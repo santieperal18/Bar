@@ -26,6 +26,8 @@ const Pedidos = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
+  const [busquedaCliente, setBusquedaCliente] = useState("");
+  const [mostrarResultadosCli, setMostrarResultadosCli] = useState(false);
 
   const [filtros, setFiltros] = useState({
     cliente: "", estado: "", tipoEntrega: "",
@@ -58,6 +60,13 @@ const Pedidos = () => {
 
   const resetFiltros = () => {
     setFiltros({ cliente: "", estado: "", tipoEntrega: "", fechaDesde: obtenerFechaLocal(), fechaHasta: obtenerFechaManana() });
+    setBusquedaCliente("");
+  };
+
+  const seleccionarCliente = (c) => {
+    setFiltros({ ...filtros, cliente: c ? c.id : "" });
+    setBusquedaCliente(c ? `${c.nombre} ${c.apellido}` : "");
+    setMostrarResultadosCli(false);
   };
 
   const marcarEntregado = async (id) => {
@@ -68,10 +77,16 @@ const Pedidos = () => {
     } catch { alert("Error al actualizar estado"); }
   };
 
+  const clientesFiltrados = busquedaCliente.length > 0
+    ? clientes.filter(c => 
+        `${c.nombre} ${c.apellido}`.toLowerCase().includes(busquedaCliente.toLowerCase())
+      )
+    : [];
+
   const filtrosActivos = [filtros.cliente, filtros.estado, filtros.tipoEntrega].filter(Boolean).length;
 
   const stats = [
-    { label: 'Total',      value: pedidos.length,                                      cls: ''             },
+    { label: 'Total',      value: pedidos.length,                                       cls: ''            },
     { label: 'Pendientes', value: pedidos.filter(p => p.estado === 'pendiente').length,  cls: 'stat-accent' },
     { label: 'Preparando', value: pedidos.filter(p => p.estado === 'preparando').length, cls: 'stat-blue'   },
     { label: 'En camino',  value: pedidos.filter(p => p.estado === 'en_camino').length,  cls: 'stat-purple' },
@@ -121,10 +136,31 @@ const Pedidos = () => {
           <div className="row g-2 align-items-end">
             <div className="col-12 col-md-3">
               <label className="form-label">Cliente</label>
-              <select className="form-select" value={filtros.cliente} onChange={e => setFiltros({ ...filtros, cliente: e.target.value })}>
-                <option value="">Todos</option>
-                {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
-              </select>
+              <div className="position-relative">
+                <input 
+                  type="text" 
+                  className="form-control" 
+                  placeholder="Buscar cliente..." 
+                  value={busquedaCliente}
+                  onChange={(e) => {
+                    setBusquedaCliente(e.target.value);
+                    setMostrarResultadosCli(true);
+                  }}
+                  onFocus={() => setMostrarResultadosCli(true)}
+                />
+                {mostrarResultadosCli && (busquedaCliente || clientesFiltrados.length > 0) && (
+                  <ul className="dropdown-menu show w-100 shadow-sm" style={{ maxHeight: '200px', overflowY: 'auto', zIndex: 1000 }}>
+                    <li className="dropdown-item py-2 border-bottom" style={{ cursor: 'pointer' }} onClick={() => seleccionarCliente(null)}>
+                      <i className="fas fa-users me-2 text-muted"></i><strong>Todos los clientes</strong>
+                    </li>
+                    {clientesFiltrados.map(c => (
+                      <li key={c.id} className="dropdown-item py-2" style={{ cursor: 'pointer' }} onClick={() => seleccionarCliente(c)}>
+                        {c.nombre} {c.apellido}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
             <div className="col-6 col-md-2">
               <label className="form-label">Estado</label>
@@ -194,16 +230,6 @@ const Pedidos = () => {
                 </td></tr>
               ) : pedidos.map(p => {
                 const ec = ESTADO_CONFIG[p.estado] || { label: p.estado, cls: 'sb-default', icon: 'fa-circle' };
-                
-                // --- LÓGICA WHATSAPP EL PANAL ---
-                const nombreCompleto = p.cliente ? `${p.cliente.nombre} ${p.cliente.apellido}`.toLowerCase() : '';
-                const esPanal = nombreCompleto.includes('panal');
-                const numLimpio = p.cliente?.telefono ? p.cliente.telefono.replace(/\D/g, '') : '';
-                const telWhatsapp = numLimpio ? (numLimpio.startsWith('54') ? numLimpio : `549${numLimpio}`) : '';
-                const mensajeCodificado = encodeURIComponent("Hola! El repartidor ya está en la reja 🛵");
-                const urlWhatsapp = `https://wa.me/${telWhatsapp}?text=${mensajeCodificado}`;
-                const mostrarBotonWhatsapp = esPanal && telWhatsapp !== '';
-
                 return (
                   <tr key={p.id}>
                     <td style={{ fontWeight: 700, color: 'var(--text-2)', fontSize: 13 }}>#{p.id}</td>
@@ -237,22 +263,6 @@ const Pedidos = () => {
                     <td className="text-end" style={{ fontWeight: 700 }}>${parseFloat(p.total || 0).toFixed(2)}</td>
                     <td className="text-center">
                       <div className="d-flex justify-content-center gap-1">
-                        
-                        {/* BOTÓN WHATSAPP */}
-                        {mostrarBotonWhatsapp && (
-                          <a 
-                            href={urlWhatsapp} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="btn btn-icon-sm text-white" 
-                            style={{ backgroundColor: '#25D366' }}
-                            title="Avisar que llegó a la reja"
-                            aria-label="Enviar WhatsApp"
-                          >
-                            <i className="fab fa-whatsapp"></i>
-                          </a>
-                        )}
-
                         {p.estado !== 'entregado' && p.estado !== 'cancelado' && (
                           <button className="btn btn-icon-sm text-success" onClick={() => marcarEntregado(p.id)} title="Entregar">
                             <i className="fas fa-check"></i>
@@ -295,16 +305,6 @@ const Pedidos = () => {
               const ec = ESTADO_CONFIG[p.estado] || { label: p.estado, cls: 'sb-default', icon: 'fa-circle' };
               const hora = new Date(p.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
               const resumen = p.productos?.map(pr => `${pr.PedidoProducto?.cantidad || pr.cantidad}x ${pr.nombre}`).join(', ');
-              
-              // --- LÓGICA WHATSAPP EL PANAL (Móvil) ---
-              const nombreCompleto = p.cliente ? `${p.cliente.nombre} ${p.cliente.apellido}`.toLowerCase() : '';
-              const esPanal = nombreCompleto.includes('panal');
-              const numLimpio = p.cliente?.telefono ? p.cliente.telefono.replace(/\D/g, '') : '';
-              const telWhatsapp = numLimpio ? (numLimpio.startsWith('54') ? numLimpio : `549${numLimpio}`) : '';
-              const mensajeCodificado = encodeURIComponent("Hola! El repartidor ya está en la reja 🛵");
-              const urlWhatsapp = `https://wa.me/${telWhatsapp}?text=${mensajeCodificado}`;
-              const mostrarBotonWhatsapp = esPanal && telWhatsapp !== '';
-
               return (
                 <div key={p.id} className="m-card">
                   {/* Fila 1: ID + hora + estado */}
@@ -333,21 +333,6 @@ const Pedidos = () => {
                   <div className="m-row" style={{ alignItems: 'flex-end' }}>
                     <span className="m-sub" style={{ flex: 1 }}>{resumen || '—'}</span>
                     <div className="m-actions">
-                      
-                      {/* BOTÓN WHATSAPP */}
-                      {mostrarBotonWhatsapp && (
-                        <a 
-                          href={urlWhatsapp} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="btn btn-icon-sm text-white" 
-                          style={{ backgroundColor: '#25D366' }}
-                          title="Avisar que llegó a la reja"
-                        >
-                          <i className="fab fa-whatsapp"></i>
-                        </a>
-                      )}
-
                       {p.estado !== 'entregado' && p.estado !== 'cancelado' && (
                         <button className="btn btn-icon-sm text-success" onClick={() => marcarEntregado(p.id)} title="Entregar">
                           <i className="fas fa-check"></i>
@@ -360,7 +345,7 @@ const Pedidos = () => {
                         <i className="fas fa-pen"></i>
                       </button>
                       <button 
-                        className="btn btn-sm btn-outline-dark me-1" onClick={() => imprimirTicket(p)} title="Imprimir Ticket">
+                        className="btn btn-sm btn-outline-dark me-1" onClick={() => imprimirTicket(p)}title="Imprimir Ticket">
                         <i className="fas fa-print"></i>
                       </button>
                     </div>

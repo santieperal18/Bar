@@ -1,8 +1,19 @@
 /* ══════════════════════════════════════════
    RESTO BAR — Estilos específicos del negocio
-   Paleta: text #160a03 | bg #fdf7f3
-           primary #a98e63 | secondary #ab957e | accent #82735b
    ══════════════════════════════════════════ */
+
+:root {
+  --primary: #a98e63;
+  --primary-dark: #7b6a4f;
+  --primary-light: #caaf89;
+  --secondary: #ab957e;
+  --secondary-dark: #82735b;
+  --accent: #82735b;
+  --accent-dark: #7b6a4f;
+  --background: #fdf7f3;
+  --text: #160a03;
+  --card-bg: #ffffff;
+}
 
 /* ── Fondo de la app ── */
 .resto-bg {
@@ -153,7 +164,7 @@
 }
 
 .btn-resto:hover {
-  background: linear-gradient(135deg, var(--primary-dark), #a84e16);
+  background: linear-gradient(135deg, var(--primary-dark), var(--secondary-dark));
   color: #fff;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(123,106,79,0.3);
@@ -190,7 +201,7 @@
 }
 
 .btn-accent:hover {
-  background: linear-gradient(135deg, var(--accent-dark), #4a30c0);
+  background: linear-gradient(135deg, var(--accent-dark), var(--primary-dark));
   color: #fff;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(130,115,91,0.35);
