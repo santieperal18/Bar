@@ -18,7 +18,7 @@ function Login() {
       const response = await axios.post('/auth/login', { usuario, contrasena });
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('usuario', response.data.usuario);
-      navigate('/');
+      navigate('/pedidos');
     } catch (err) {
       setError(err.response?.data?.error || 'Usuario o contraseña incorrectos');
     } finally {

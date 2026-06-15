@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 
+import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Pedidos from './pages/Pedidos';
 import FormularioPedido from './pages/FormularioPedido';
@@ -48,6 +49,7 @@ function App() {
     <ThemeProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route
             path="/*"
