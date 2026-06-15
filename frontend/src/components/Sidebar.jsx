@@ -30,7 +30,7 @@ const Sidebar = ({ isOpen, onClose, collapsed, onToggleCollapse }) => {
         {/* Brand */}
         <NavLink to="/pedidos" className="sidebar-brand" onClick={onClose}>
           <div className="sidebar-brand-icon">
-            <i className="fas fa-wine-glass-alt"></i>
+            <img src={`${import.meta.env.BASE_URL}logo.jpg`} alt="La Esquina" />
           </div>
           <div className="sidebar-label">
             <div className="sidebar-brand-name">La Esquina</div>

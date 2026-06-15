@@ -26,7 +26,7 @@ function Landing() {
       <header className={`lp-nav${scrolled ? ' is-scrolled' : ''}`}>
         <div className="lp-container lp-nav-inner">
           <a href="#inicio" className="lp-brand" onClick={cerrarMenu}>
-            <span className="lp-brand-icon"><i className="fas fa-wine-glass-alt"></i></span>
+            <span className="lp-brand-icon"><img src={`${import.meta.env.BASE_URL}logo.jpg`} alt="La Esquina" /></span>
             <span className="lp-brand-text">
               <strong>La Esquina</strong>
               <small>Resto Bar</small>
@@ -149,7 +149,7 @@ function Landing() {
       <footer className="lp-footer">
         <div className="lp-container lp-footer-inner">
           <div className="lp-brand lp-brand-footer">
-            <span className="lp-brand-icon"><i className="fas fa-wine-glass-alt"></i></span>
+            <span className="lp-brand-icon"><img src={`${import.meta.env.BASE_URL}logo.jpg`} alt="La Esquina" /></span>
             <span className="lp-brand-text">
               <strong>La Esquina</strong>
               <small>Resto Bar</small>

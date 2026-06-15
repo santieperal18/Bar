@@ -1,7 +1,10 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-export default defineConfig({
+// El sitio se publica en https://santieperal18.github.io/Bar/
+// En build usamos base '/Bar/'; en desarrollo queda en '/'.
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/Bar/' : '/',
   plugins: [react()],
   server: {
     port: 5173,
@@ -12,9 +15,8 @@ export default defineConfig({
       }
     }
   },
-  // Para Vercel
   build: {
     outDir: 'dist',
     sourcemap: false,
   }
-})
+}))

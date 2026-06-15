@@ -33,7 +33,7 @@ function Login() {
       <div className="login-card">
         <div className="login-header">
           <div className="login-icon">
-            <i className="fas fa-wine-glass-alt"></i>
+            <img src={`${import.meta.env.BASE_URL}logo.jpg`} alt="La Esquina" />
           </div>
           <h1>La Esquina</h1>
           <p>Sistema de gestión interno</p>
