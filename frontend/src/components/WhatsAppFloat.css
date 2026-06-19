@@ -1,0 +1,89 @@
+/* ── Botón flotante de WhatsApp (abajo a la derecha) ── */
+.wa-float {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 900;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #25D366;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.45);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  animation: wa-pop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.wa-float:hover {
+  color: #fff;
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 12px 30px rgba(37, 211, 102, 0.55);
+}
+
+/* Pulso sutil para llamar la atención */
+.wa-float::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #25D366;
+  z-index: -1;
+  animation: wa-pulse 2.4s ease-out infinite;
+}
+
+.wa-float-tooltip {
+  position: absolute;
+  right: calc(100% + 12px);
+  background: #2A3A20;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 10px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(6px);
+  pointer-events: none;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+.wa-float-tooltip::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-left-color: #2A3A20;
+}
+
+.wa-float:hover .wa-float-tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@keyframes wa-pop {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes wa-pulse {
+  0%   { transform: scale(1);   opacity: 0.55; }
+  70%  { transform: scale(1.6); opacity: 0; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+@media (max-width: 768px) {
+  .wa-float { right: 16px; bottom: 16px; width: 54px; height: 54px; font-size: 28px; }
+  .wa-float-tooltip { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wa-float, .wa-float::before { animation: none; }
+}

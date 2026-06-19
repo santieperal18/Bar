@@ -1,0 +1,223 @@
+/* =========================================================
+   SOLICITUD DE CONTRATACIÓN — La Esquina · Hueso & Olivo
+   ========================================================= */
+
+.solicitud {
+  --sol-olive:   #556B2F;
+  --sol-forest:  #2A3A20;
+  --sol-bone:    #F7F7F4;
+  --sol-ink:     #2A3A20;
+  --sol-soft:    #5A6452;
+  --sol-line:    rgba(42, 58, 32, 0.14);
+
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--sol-bone);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(28px, 7vh, 80px) 20px 64px;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--sol-ink);
+}
+
+.sol-card {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  background: #fff;
+  border: 1px solid var(--sol-line);
+  border-radius: 22px;
+  padding: clamp(28px, 5vw, 44px);
+  box-shadow: 0 24px 64px rgba(42, 58, 32, 0.12);
+  animation: solIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes solIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sol-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sol-soft);
+  text-decoration: none;
+  margin-bottom: 18px;
+  transition: color 0.14s;
+}
+.sol-back:hover { color: var(--sol-olive); }
+
+/* ── Header ── */
+.sol-head { text-align: center; margin-bottom: 28px; }
+
+.sol-brand-icon {
+  display: inline-flex;
+  width: 56px;
+  height: 56px;
+  border-radius: 15px;
+  overflow: hidden;
+  border: 1px solid rgba(85, 107, 47, 0.25);
+  margin-bottom: 14px;
+}
+.sol-brand-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+.sol-head h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.7rem, 4vw, 2.1rem);
+  font-weight: 700;
+  color: var(--sol-forest);
+  margin: 0 0 8px;
+  letter-spacing: -0.2px;
+}
+.sol-head p {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--sol-soft);
+  margin: 0 auto;
+  max-width: 420px;
+}
+
+/* ── Form ── */
+.sol-form { display: flex; flex-direction: column; gap: 16px; }
+
+.sol-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.sol-field { display: flex; flex-direction: column; }
+
+.sol-field label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sol-soft);
+  margin-bottom: 6px;
+  letter-spacing: 0.2px;
+}
+
+.sol-field input,
+.sol-field select,
+.sol-field textarea {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--sol-bone);
+  border: 1px solid var(--sol-line);
+  border-radius: 11px;
+  color: var(--sol-ink);
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.14s, box-shadow 0.14s, background 0.14s;
+}
+
+.sol-field textarea { resize: vertical; min-height: 78px; }
+
+.sol-field input::placeholder,
+.sol-field textarea::placeholder { color: #9AA092; }
+
+.sol-field input:focus,
+.sol-field select:focus,
+.sol-field textarea:focus {
+  outline: none;
+  border-color: var(--sol-olive);
+  box-shadow: 0 0 0 3px rgba(85, 107, 47, 0.14);
+  background: #fff;
+}
+
+/* ── Error ── */
+.sol-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.22);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #DC2626;
+}
+
+/* ── Botón ── */
+.sol-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 4px;
+  padding: 13px 20px;
+  background: var(--sol-olive);
+  color: #fff;
+  border: none;
+  border-radius: 11px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(85, 107, 47, 0.28);
+  transition: background 0.16s, transform 0.16s, box-shadow 0.16s;
+}
+.sol-btn:hover:not(:disabled) {
+  background: var(--sol-forest);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 9px 24px rgba(42, 58, 32, 0.32);
+}
+.sol-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.sol-legal {
+  font-size: 11.5px;
+  color: #9AA092;
+  text-align: center;
+  margin: 4px 0 0;
+}
+
+/* ── Spinner ── */
+.sol-spinner {
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: sol-spin 0.65s linear infinite;
+}
+@keyframes sol-spin { to { transform: rotate(360deg); } }
+
+/* ── Éxito ── */
+.sol-success { text-align: center; padding: 12px 0 8px; }
+.sol-success-icon {
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: rgba(85, 107, 47, 0.12);
+  border: 1px solid rgba(85, 107, 47, 0.3);
+  color: var(--sol-olive);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  animation: solPop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes solPop { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.sol-success h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.9rem;
+  color: var(--sol-forest);
+  margin: 0 0 10px;
+}
+.sol-success p {
+  color: var(--sol-soft);
+  line-height: 1.6;
+  max-width: 380px;
+  margin: 0 auto 24px;
+}
+
+@media (max-width: 480px) {
+  .sol-row { grid-template-columns: 1fr; }
+}

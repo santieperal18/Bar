@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import WhatsAppFloat from '../components/WhatsAppFloat';
 import './Landing.css';
 
 const ESPECIALIDADES = [
@@ -46,9 +47,10 @@ function Landing() {
             <a href="#inicio"        onClick={cerrarMenu}>Inicio</a>
             <a href="#nosotros"      onClick={cerrarMenu}>Nosotros</a>
             <a href="#especialidades" onClick={cerrarMenu}>Especialidades</a>
+            <a href="#sumate"        onClick={cerrarMenu}>Sumá tu local</a>
             <a href="#contacto"      onClick={cerrarMenu}>Contacto</a>
-            <Link to="/pedidos" className="lp-btn lp-btn-sm" onClick={cerrarMenu}>
-              <i className="fas fa-arrow-right-to-bracket"></i> Ingresar al sistema
+            <Link to="/contratar" className="lp-btn lp-btn-sm" onClick={cerrarMenu}>
+              <i className="fas fa-store"></i> Quiero el sistema
             </Link>
           </nav>
         </div>
@@ -134,6 +136,56 @@ function Landing() {
         </div>
       </section>
 
+      {/* ── Sumá tu local (preview del formulario) ── */}
+      <section className="lp-section lp-sumate" id="sumate">
+        <div className="lp-container lp-sumate-grid">
+          <div className="lp-sumate-text">
+            <span className="lp-eyebrow lp-eyebrow-dark">Para tu negocio</span>
+            <h2>¿Tenés un local? Sumate al sistema</h2>
+            <p>
+              Gestioná pedidos, clientes, productos y repartidores desde un solo
+              lugar. Dejanos tus datos y activamos el sistema para tu local.
+            </p>
+            <ul className="lp-sumate-list">
+              <li><i className="fas fa-check"></i> Alta rápida, sin vueltas</li>
+              <li><i className="fas fa-check"></i> Soporte y acompañamiento</li>
+              <li><i className="fas fa-check"></i> Pensado para resto bares</li>
+            </ul>
+            <Link to="/contratar" className="lp-btn lp-btn-lg">
+              <i className="fas fa-paper-plane"></i> Completar solicitud
+            </Link>
+          </div>
+
+          {/* Preview no funcional del formulario — lleva a /contratar */}
+          <Link to="/contratar" className="lp-form-preview" aria-label="Ir al formulario de solicitud">
+            <div className="lp-form-preview-head">
+              <span className="lp-form-preview-dot" />
+              <strong>Solicitud de contratación</strong>
+            </div>
+            <span className="lp-fp-label">Nombre y apellido</span>
+            <span className="lp-fp-input">Ej: Juan Pérez</span>
+            <div className="lp-fp-row">
+              <div>
+                <span className="lp-fp-label">Email</span>
+                <span className="lp-fp-input">tucorreo@…</span>
+              </div>
+              <div>
+                <span className="lp-fp-label">WhatsApp</span>
+                <span className="lp-fp-input">+54 9 …</span>
+              </div>
+            </div>
+            <span className="lp-fp-label">Nombre del local</span>
+            <span className="lp-fp-input">Tu local</span>
+            <span className="lp-fp-cta">
+              <i className="fas fa-paper-plane"></i> Enviar solicitud
+            </span>
+            <span className="lp-fp-overlay">
+              <i className="fas fa-arrow-right"></i> Completar ahora
+            </span>
+          </Link>
+        </div>
+      </section>
+
       {/* ── CTA final ── */}
       <section className="lp-cta" id="contacto">
         <div className="lp-container lp-cta-inner">
@@ -165,6 +217,8 @@ function Landing() {
           © {new Date().getFullYear()} La Esquina · Resto Bar — Todos los derechos reservados.
         </div>
       </footer>
+
+      <WhatsAppFloat />
     </div>
   );
 }

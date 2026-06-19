@@ -344,6 +344,137 @@
   color: var(--lp-ink-soft);
 }
 
+/* =================== SUMÁ TU LOCAL =================== */
+.lp-sumate-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: clamp(36px, 6vw, 72px);
+  align-items: center;
+}
+.lp-sumate-text h2 {
+  font-size: clamp(2rem, 4.5vw, 3.1rem);
+  line-height: 1.12;
+  margin-bottom: 16px;
+}
+.lp-sumate-text p {
+  font-size: clamp(1.05rem, 1.7vw, 1.22rem);
+  color: var(--lp-ink-soft);
+  margin-bottom: 22px;
+}
+.lp-sumate-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.lp-sumate-list li {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 1.05rem;
+  color: var(--lp-ink);
+  font-weight: 500;
+}
+.lp-sumate-list i {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(85, 107, 47, 0.12);
+  color: var(--lp-gold);
+  font-size: 0.78rem;
+  flex-shrink: 0;
+}
+
+/* Preview no funcional del formulario */
+.lp-form-preview {
+  position: relative;
+  display: block;
+  background: var(--lp-white);
+  border: 1px solid rgba(85, 107, 47, 0.16);
+  border-radius: 20px;
+  padding: 26px 26px 24px;
+  box-shadow: var(--lp-shadow);
+  text-decoration: none;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.lp-form-preview:hover {
+  transform: translateY(-5px);
+  border-color: rgba(85, 107, 47, 0.4);
+  box-shadow: 0 22px 56px rgba(42, 58, 32, 0.18);
+}
+.lp-form-preview-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 18px;
+  color: var(--lp-ink);
+}
+.lp-form-preview-head strong { font-size: 1.02rem; }
+.lp-form-preview-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--lp-gold);
+  box-shadow: 0 0 0 4px rgba(85, 107, 47, 0.15);
+}
+.lp-fp-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--lp-ink-soft);
+  margin: 12px 0 5px;
+}
+.lp-fp-input {
+  display: block;
+  background: var(--lp-cream);
+  border: 1px solid rgba(85, 107, 47, 0.14);
+  border-radius: 9px;
+  padding: 10px 13px;
+  font-size: 0.9rem;
+  color: #9AA092;
+}
+.lp-fp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.lp-fp-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+  background: var(--lp-gold);
+  color: #fff;
+  border-radius: 10px;
+  padding: 11px;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+/* Velo + llamada a la acción al pasar el mouse */
+.lp-fp-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(85, 107, 47, 0.92), rgba(42, 58, 32, 0.94));
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.lp-form-preview:hover .lp-fp-overlay { opacity: 1; }
+
+@media (max-width: 860px) {
+  .lp-sumate-grid { grid-template-columns: 1fr; }
+  .lp-form-preview { order: -1; }
+}
+
 /* =================== CTA =================== */
 .lp-cta {
   position: relative;

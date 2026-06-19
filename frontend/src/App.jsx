@@ -6,6 +6,7 @@ import { ThemeProvider, useTheme } from './context/ThemeContext';
 
 import Landing from './pages/Landing';
 import Login from './pages/Login';
+import SolicitudContratacion from './pages/SolicitudContratacion';
 import Pedidos from './pages/Pedidos';
 import FormularioPedido from './pages/FormularioPedido';
 import Clientes from './pages/Clientes';
@@ -51,6 +52,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/contratar" element={<SolicitudContratacion />} />
           <Route
             path="/*"
             element={
