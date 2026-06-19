@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// El sitio se publica en https://santieperal18.github.io/Bar/
-// En build usamos base '/Bar/'; en desarrollo queda en '/'.
-export default defineConfig(({ command }) => ({
-  base: command === 'build' ? '/Bar/' : '/',
+// Base configurable por entorno:
+//  - Railway (y dev): base '/' por defecto (el sitio se sirve desde la raíz).
+//  - GitHub Pages: el workflow setea VITE_BASE='/Bar/' (subcarpeta del repo).
+export default defineConfig(() => ({
+  base: process.env.VITE_BASE || '/',
   plugins: [react()],
   server: {
     port: 5173,

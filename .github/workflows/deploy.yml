@@ -37,6 +37,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_BASE: /Bar/
 
       # SPA fallback: GitHub Pages sirve 404.html en rutas desconocidas.
       # Al ser copia de index.html, React Router resuelve la ruta en el cliente.
