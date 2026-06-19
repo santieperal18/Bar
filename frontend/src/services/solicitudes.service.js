@@ -1,16 +1,16 @@
 import { supabase } from '../utils/supabase';
 
 /**
- * Guarda una solicitud de contratación en la base de datos (Supabase).
+ * Guarda una solicitud del servicio de comida/delivery en la BD (Supabase).
  *
- * Requiere una tabla `solicitudes_contratacion` con una política RLS que
- * permita INSERT al rol anónimo. Ver el SQL en el README / instrucciones.
+ * Requiere una tabla `solicitudes_servicio` con una política RLS que
+ * permita INSERT al rol anónimo. Ver el SQL en las instrucciones.
  *
- * @param {Object} datos - { nombre, email, telefono, empresa, pais, tipo_negocio, mensaje }
+ * @param {Object} datos - { nombre, email, telefono, tipo_servicio, zona, mensaje }
  */
 export async function crearSolicitud(datos) {
   const { data, error } = await supabase
-    .from('solicitudes_contratacion')
+    .from('solicitudes_servicio')
     .insert([datos])
     .select();
 

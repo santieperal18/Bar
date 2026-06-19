@@ -4,23 +4,20 @@ import { crearSolicitud } from '../services/solicitudes.service';
 import WhatsAppFloat from '../components/WhatsAppFloat';
 import './SolicitudContratacion.css';
 
-const PAISES = [
-  'Argentina', 'Uruguay', 'Chile', 'Paraguay', 'Bolivia', 'Perú',
-  'Colombia', 'Ecuador', 'México', 'España', 'Otro',
-];
-
-const TIPOS_NEGOCIO = [
-  'Resto bar', 'Restaurante', 'Bar', 'Cafetería', 'Food truck',
-  'Panadería', 'Delivery / Dark kitchen', 'Otro',
+const TIPOS_SERVICIO = [
+  'Delivery a domicilio',
+  'Catering para eventos',
+  'Comida para empresas / viandas',
+  'Reserva de mesa',
+  'Otro',
 ];
 
 const ESTADO_INICIAL = {
   nombre: '',
   email: '',
   telefono: '',
-  empresa: '',
-  pais: '',
-  tipo_negocio: '',
+  tipo_servicio: '',
+  zona: '',
   mensaje: '',
 };
 
@@ -38,7 +35,8 @@ function SolicitudContratacion() {
   const validar = () => {
     if (!form.nombre.trim()) return 'Ingresá tu nombre.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return 'Ingresá un email válido.';
-    if (!form.empresa.trim()) return 'Ingresá el nombre de tu local o empresa.';
+    if (!form.telefono.trim()) return 'Ingresá un teléfono o WhatsApp de contacto.';
+    if (!form.tipo_servicio) return 'Elegí el tipo de servicio que necesitás.';
     return '';
   };
 
@@ -53,10 +51,9 @@ function SolicitudContratacion() {
       await crearSolicitud({
         nombre: form.nombre.trim(),
         email: form.email.trim(),
-        telefono: form.telefono.trim() || null,
-        empresa: form.empresa.trim(),
-        pais: form.pais || null,
-        tipo_negocio: form.tipo_negocio || null,
+        telefono: form.telefono.trim(),
+        tipo_servicio: form.tipo_servicio,
+        zona: form.zona.trim() || null,
         mensaje: form.mensaje.trim() || null,
       });
       setEnviado(true);
@@ -80,8 +77,8 @@ function SolicitudContratacion() {
             <div className="sol-success-icon"><i className="fas fa-check"></i></div>
             <h1>¡Solicitud enviada!</h1>
             <p>
-              Gracias, <strong>{form.nombre.split(' ')[0]}</strong>. Recibimos tus
-              datos y nuestro equipo se va a poner en contacto a la brevedad.
+              Gracias, <strong>{form.nombre.split(' ')[0]}</strong>. Recibimos tu
+              pedido y nos vamos a comunicar a la brevedad para coordinar todo.
             </p>
             <Link to="/" className="sol-btn">Volver al inicio</Link>
           </div>
@@ -91,10 +88,10 @@ function SolicitudContratacion() {
               <span className="sol-brand-icon">
                 <img src={`${import.meta.env.BASE_URL}logo.jpg`} alt="La Esquina" />
               </span>
-              <h1>Sumá tu local</h1>
+              <h1>Solicitá nuestro servicio</h1>
               <p>
-                Contanos un poco sobre tu negocio y activamos el sistema de gestión
-                para tu local. Solo te pedimos lo esencial.
+                Delivery, catering o comida para tu empresa: contanos qué
+                necesitás y coordinamos tu pedido. Solo te pedimos lo esencial.
               </p>
             </header>
 
@@ -118,7 +115,7 @@ function SolicitudContratacion() {
                   />
                 </div>
                 <div className="sol-field">
-                  <label htmlFor="telefono">Teléfono / WhatsApp</label>
+                  <label htmlFor="telefono">Teléfono / WhatsApp *</label>
                   <input
                     id="telefono" name="telefono" type="tel" autoComplete="tel"
                     placeholder="+54 9 ..."
@@ -127,37 +124,29 @@ function SolicitudContratacion() {
                 </div>
               </div>
 
-              <div className="sol-field">
-                <label htmlFor="empresa">Nombre del local o empresa *</label>
-                <input
-                  id="empresa" name="empresa" type="text"
-                  placeholder="Ej: Resto Bar La Esquina"
-                  value={form.empresa} onChange={handleChange}
-                />
-              </div>
-
               <div className="sol-row">
                 <div className="sol-field">
-                  <label htmlFor="pais">País</label>
-                  <select id="pais" name="pais" value={form.pais} onChange={handleChange}>
-                    <option value="">Seleccionar país...</option>
-                    {PAISES.map((p) => <option key={p} value={p}>{p}</option>)}
+                  <label htmlFor="tipo_servicio">Tipo de servicio *</label>
+                  <select id="tipo_servicio" name="tipo_servicio" value={form.tipo_servicio} onChange={handleChange}>
+                    <option value="">Seleccionar...</option>
+                    {TIPOS_SERVICIO.map((t) => <option key={t} value={t}>{t}</option>)}
                   </select>
                 </div>
                 <div className="sol-field">
-                  <label htmlFor="tipo_negocio">Tipo de negocio</label>
-                  <select id="tipo_negocio" name="tipo_negocio" value={form.tipo_negocio} onChange={handleChange}>
-                    <option value="">Seleccionar...</option>
-                    {TIPOS_NEGOCIO.map((t) => <option key={t} value={t}>{t}</option>)}
-                  </select>
+                  <label htmlFor="zona">Zona / dirección de entrega</label>
+                  <input
+                    id="zona" name="zona" type="text"
+                    placeholder="Barrio o dirección"
+                    value={form.zona} onChange={handleChange}
+                  />
                 </div>
               </div>
 
               <div className="sol-field">
-                <label htmlFor="mensaje">Mensaje (opcional)</label>
+                <label htmlFor="mensaje">Detalle del pedido (opcional)</label>
                 <textarea
                   id="mensaje" name="mensaje" rows="3"
-                  placeholder="Contanos qué necesitás..."
+                  placeholder="Contanos qué querés pedir, fecha, cantidad de personas..."
                   value={form.mensaje} onChange={handleChange}
                 />
               </div>

@@ -47,10 +47,10 @@ function Landing() {
             <a href="#inicio"        onClick={cerrarMenu}>Inicio</a>
             <a href="#nosotros"      onClick={cerrarMenu}>Nosotros</a>
             <a href="#especialidades" onClick={cerrarMenu}>Especialidades</a>
-            <a href="#sumate"        onClick={cerrarMenu}>Sumá tu local</a>
+            <a href="#servicio"      onClick={cerrarMenu}>Nuestro servicio</a>
             <a href="#contacto"      onClick={cerrarMenu}>Contacto</a>
-            <Link to="/contratar" className="lp-btn lp-btn-sm" onClick={cerrarMenu}>
-              <i className="fas fa-store"></i> Quiero el sistema
+            <Link to="/pedidos" className="lp-btn lp-btn-sm" onClick={cerrarMenu}>
+              <i className="fas fa-arrow-right-to-bracket"></i> Ingresar al sistema
             </Link>
           </nav>
         </div>
@@ -136,23 +136,24 @@ function Landing() {
         </div>
       </section>
 
-      {/* ── Sumá tu local (preview del formulario) ── */}
-      <section className="lp-section lp-sumate" id="sumate">
+      {/* ── Nuestro servicio (preview del formulario) ── */}
+      <section className="lp-section lp-sumate" id="servicio">
         <div className="lp-container lp-sumate-grid">
           <div className="lp-sumate-text">
-            <span className="lp-eyebrow lp-eyebrow-dark">Para tu negocio</span>
-            <h2>¿Tenés un local? Sumate al sistema</h2>
+            <span className="lp-eyebrow lp-eyebrow-dark">Comé rico, sin moverte</span>
+            <h2>Llevamos La Esquina hasta tu mesa</h2>
             <p>
-              Gestioná pedidos, clientes, productos y repartidores desde un solo
-              lugar. Dejanos tus datos y activamos el sistema para tu local.
+              ¿Un evento, una reunión en la oficina o ganas de comer en casa?
+              Cocinamos para vos y te lo llevamos. Dejanos tus datos y
+              coordinamos tu pedido a tu gusto.
             </p>
             <ul className="lp-sumate-list">
-              <li><i className="fas fa-check"></i> Alta rápida, sin vueltas</li>
-              <li><i className="fas fa-check"></i> Soporte y acompañamiento</li>
-              <li><i className="fas fa-check"></i> Pensado para resto bares</li>
+              <li><i className="fas fa-check"></i> Delivery a domicilio</li>
+              <li><i className="fas fa-check"></i> Catering para eventos</li>
+              <li><i className="fas fa-check"></i> Viandas y comida para empresas</li>
             </ul>
             <Link to="/contratar" className="lp-btn lp-btn-lg">
-              <i className="fas fa-paper-plane"></i> Completar solicitud
+              <i className="fas fa-utensils"></i> Solicitar el servicio
             </Link>
           </div>
 
@@ -160,22 +161,22 @@ function Landing() {
           <Link to="/contratar" className="lp-form-preview" aria-label="Ir al formulario de solicitud">
             <div className="lp-form-preview-head">
               <span className="lp-form-preview-dot" />
-              <strong>Solicitud de contratación</strong>
+              <strong>Solicitud de servicio</strong>
             </div>
             <span className="lp-fp-label">Nombre y apellido</span>
             <span className="lp-fp-input">Ej: Juan Pérez</span>
             <div className="lp-fp-row">
               <div>
-                <span className="lp-fp-label">Email</span>
-                <span className="lp-fp-input">tucorreo@…</span>
-              </div>
-              <div>
-                <span className="lp-fp-label">WhatsApp</span>
+                <span className="lp-fp-label">Teléfono / WhatsApp</span>
                 <span className="lp-fp-input">+54 9 …</span>
               </div>
+              <div>
+                <span className="lp-fp-label">Tipo de servicio</span>
+                <span className="lp-fp-input">Delivery…</span>
+              </div>
             </div>
-            <span className="lp-fp-label">Nombre del local</span>
-            <span className="lp-fp-input">Tu local</span>
+            <span className="lp-fp-label">Detalle del pedido</span>
+            <span className="lp-fp-input">Contanos qué querés…</span>
             <span className="lp-fp-cta">
               <i className="fas fa-paper-plane"></i> Enviar solicitud
             </span>
