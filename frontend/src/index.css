@@ -13,11 +13,11 @@
   --bs-border-color:          rgba(255,255,255,0.08);
   --bs-border-color-translucent: rgba(255,255,255,0.07);
 
-  /* Primary → Amber */
-  --bs-primary:               #F59E0B;
-  --bs-primary-rgb:           245, 158, 11;
-  --bs-link-color:            #F59E0B;
-  --bs-link-hover-color:      #D97706;
+  /* Primary → Olivo (sage para legibilidad sobre oscuro) */
+  --bs-primary:               #7E9B4E;
+  --bs-primary-rgb:           126, 155, 78;
+  --bs-link-color:            #9CB36B;
+  --bs-link-hover-color:      #B6C98C;
 
   /* Cards */
   --bs-card-bg:               #171B26;
@@ -56,7 +56,7 @@
   --bs-dropdown-border-color: rgba(255,255,255,0.08);
   --bs-dropdown-link-color:   #E8E3DD;
   --bs-dropdown-link-hover-bg:#262C3D;
-  --bs-dropdown-link-active-bg: #F59E0B;
+  --bs-dropdown-link-active-bg: #7E9B4E;
   --bs-dropdown-link-active-color: #0F1117;
 
   /* Nav */
@@ -82,17 +82,21 @@
   --surface-3:    #262C3D;
   --surface-hover:#2D3448;
 
-  --accent:       #F59E0B;
-  --accent-dark:  #D97706;
-  --accent-dim:   rgba(245, 158, 11, 0.12);
-  --accent-glow:  rgba(245, 158, 11, 0.22);
+  --accent:       #7E9B4E;
+  --accent-dark:  #556B2F;
+  --accent-dim:   rgba(126, 155, 78, 0.14);
+  --accent-glow:  rgba(126, 155, 78, 0.28);
+
+  /* Tipografía: Serif identitaria + Sans para datos */
+  --font-serif:   'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
   --text-1:       #E8E3DD;
   --text-2:       #8B909E;
   --text-3:       #4A5068;
 
   --border:       rgba(255,255,255,0.07);
-  --border-focus: rgba(245, 158, 11, 0.45);
+  --border-focus: rgba(126, 155, 78, 0.5);
 
   --green:        #10B981;
   --green-dim:    rgba(16, 185, 129, 0.12);
@@ -113,7 +117,7 @@
   --shadow-sm:  0 1px 4px rgba(0,0,0,0.5);
   --shadow-md:  0 4px 16px rgba(0,0,0,0.55);
   --shadow-lg:  0 8px 32px rgba(0,0,0,0.65);
-  --shadow-fab: 0 4px 20px rgba(245, 158, 11, 0.3);
+  --shadow-fab: 0 4px 20px rgba(85, 107, 47, 0.35);
 
   --sidebar-w:  252px;
   --topbar-h:   56px;
@@ -131,9 +135,29 @@
 body {
   background: var(--bg) !important;
   color: var(--text-1) !important;
-  font-family: 'Inter', -apple-system, sans-serif !important;
+  font-family: var(--font-sans) !important;
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
+}
+
+/* ── TIPOGRAFÍA IDENTITARIA (Serif elegante para la marca y títulos) ── */
+.sidebar-brand-name,
+.mobile-brand,
+.page-title {
+  font-family: var(--font-serif) !important;
+}
+
+/* Datos, filtros y números → Sans limpia para legibilidad extrema */
+.table,
+.stat-card-value,
+.ticket-total,
+.m-price,
+.form-control,
+.form-select,
+.status-badge,
+.badge {
+  font-family: var(--font-sans) !important;
+  font-feature-settings: 'tnum' 1;
 }
 
 a { color: var(--accent); }
@@ -337,10 +361,10 @@ a:hover { color: var(--accent-dark); }
 
 .sidebar-brand-name {
   font-weight: 700;
-  font-size: 15px;
+  font-size: 18px;
   color: var(--text-1);
   line-height: 1.1;
-  letter-spacing: -0.2px;
+  letter-spacing: 0.1px;
 }
 
 .sidebar-brand-sub {
@@ -637,21 +661,21 @@ a:hover { color: var(--accent-dark); }
   --bs-btn-border-color: var(--accent) !important;
   --bs-btn-hover-bg: var(--accent-dark) !important;
   --bs-btn-hover-border-color: var(--accent-dark) !important;
-  --bs-btn-active-bg: #B45309 !important;
-  --bs-btn-color: #0F1117 !important;
-  --bs-btn-hover-color: #0F1117 !important;
-  --bs-btn-active-color: #0F1117 !important;
+  --bs-btn-active-bg: #2A3A20 !important;
+  --bs-btn-color: #FFFFFF !important;
+  --bs-btn-hover-color: #FFFFFF !important;
+  --bs-btn-active-color: #FFFFFF !important;
   --bs-btn-disabled-bg: var(--accent) !important;
   --bs-btn-disabled-border-color: var(--accent) !important;
   background-color: var(--accent) !important;
   border-color: var(--accent) !important;
-  color: #0F1117 !important;
+  color: #FFFFFF !important;
 }
 
 .btn-primary:hover:not(:disabled) {
   background-color: var(--accent-dark) !important;
   border-color: var(--accent-dark) !important;
-  color: #0F1117 !important;
+  color: #FFFFFF !important;
 }
 
 .btn-outline-secondary {
@@ -866,7 +890,7 @@ a:hover { color: var(--accent-dark); }
   height: 52px;
   border-radius: 16px;
   background: var(--accent);
-  color: #0F1117;
+  color: #FFFFFF;
   border: none;
   cursor: pointer;
   display: flex;
@@ -881,7 +905,7 @@ a:hover { color: var(--accent-dark); }
 .fab-btn:hover {
   transform: scale(1.06) translateY(-2px);
   background: var(--accent-dark);
-  box-shadow: 0 6px 28px rgba(245,158,11,0.4);
+  box-shadow: 0 6px 28px rgba(85,107,47,0.45);
 }
 
 /* ── MODALS ── */
@@ -1318,7 +1342,7 @@ a:hover { color: var(--accent-dark); }
 
 .pos-tab-badge {
   background: var(--accent);
-  color: #0F1117;
+  color: #FFFFFF;
   border-radius: 50%;
   width: 18px;
   height: 18px;
@@ -1358,45 +1382,45 @@ a:hover { color: var(--accent-dark); }
 /* Bootstrap overrides for light */
 [data-bs-theme="light"],
 [data-bs-theme="light"] * {
-  --bs-primary:               #F59E0B;
-  --bs-primary-rgb:           245, 158, 11;
-  --bs-link-color:            #D97706;
-  --bs-link-hover-color:      #B45309;
-  --bs-body-bg:               #E8E5DF;
-  --bs-body-bg-rgb:           232, 229, 223;
-  --bs-body-color:            #1C1917;
-  --bs-secondary-color:       #57534E;
-  --bs-tertiary-color:        #A8A29E;
-  --bs-border-color:          rgba(0,0,0,0.10);
-  --bs-border-color-translucent: rgba(0,0,0,0.08);
-  --bs-card-bg:               #EFECE6;
-  --bs-card-cap-bg:           #E3DFD8;
-  --bs-card-border-color:     rgba(0,0,0,0.09);
-  --bs-card-color:            #0F1117;
+  --bs-primary:               #556B2F;
+  --bs-primary-rgb:           85, 107, 47;
+  --bs-link-color:            #556B2F;
+  --bs-link-hover-color:      #2A3A20;
+  --bs-body-bg:               #F7F7F4;
+  --bs-body-bg-rgb:           247, 247, 244;
+  --bs-body-color:            #2A3A20;
+  --bs-secondary-color:       #5A6452;
+  --bs-tertiary-color:        #9AA092;
+  --bs-border-color:          rgba(42,58,32,0.12);
+  --bs-border-color-translucent: rgba(42,58,32,0.10);
+  --bs-card-bg:               #FFFFFF;
+  --bs-card-cap-bg:           #EFF0EA;
+  --bs-card-border-color:     rgba(42,58,32,0.11);
+  --bs-card-color:            #2A3A20;
   --bs-table-bg:              transparent;
-  --bs-table-border-color:    rgba(0,0,0,0.07);
-  --bs-table-hover-bg:        rgba(0,0,0,0.025);
-  --bs-table-color:           #1C1917;
-  --bs-table-striped-color:   #1C1917;
-  --bs-table-hover-color:     #1C1917;
-  --bs-table-active-color:    #1C1917;
-  --bs-modal-bg:              #EFECE6;
-  --bs-modal-border-color:    rgba(0,0,0,0.09);
-  --bs-modal-header-border-color: rgba(0,0,0,0.09);
-  --bs-modal-footer-border-color: rgba(0,0,0,0.09);
-  --bs-light:                 #E3DFD8;
-  --bs-light-rgb:             227, 223, 216;
-  --bs-dark:                  #1C1917;
-  --bs-dark-rgb:              28, 25, 23;
-  --bs-dropdown-bg:           #EFECE6;
-  --bs-dropdown-border-color: rgba(0,0,0,0.09);
-  --bs-dropdown-link-color:   #1C1917;
-  --bs-dropdown-link-hover-bg:#E3DFD8;
-  --bs-dropdown-link-active-bg: #F59E0B;
-  --bs-dropdown-link-active-color: #1C1917;
-  --bs-nav-tabs-border-color: rgba(0,0,0,0.09);
-  --bs-nav-tabs-link-active-bg: #EFECE6;
-  --bs-nav-tabs-link-active-border-color: rgba(0,0,0,0.09);
+  --bs-table-border-color:    rgba(42,58,32,0.09);
+  --bs-table-hover-bg:        rgba(85,107,47,0.05);
+  --bs-table-color:           #2A3A20;
+  --bs-table-striped-color:   #2A3A20;
+  --bs-table-hover-color:     #2A3A20;
+  --bs-table-active-color:    #2A3A20;
+  --bs-modal-bg:              #FFFFFF;
+  --bs-modal-border-color:    rgba(42,58,32,0.11);
+  --bs-modal-header-border-color: rgba(42,58,32,0.10);
+  --bs-modal-footer-border-color: rgba(42,58,32,0.10);
+  --bs-light:                 #EFF0EA;
+  --bs-light-rgb:             239, 240, 234;
+  --bs-dark:                  #2A3A20;
+  --bs-dark-rgb:              42, 58, 32;
+  --bs-dropdown-bg:           #FFFFFF;
+  --bs-dropdown-border-color: rgba(42,58,32,0.11);
+  --bs-dropdown-link-color:   #2A3A20;
+  --bs-dropdown-link-hover-bg:#EFF0EA;
+  --bs-dropdown-link-active-bg: #556B2F;
+  --bs-dropdown-link-active-color: #FFFFFF;
+  --bs-nav-tabs-border-color: rgba(42,58,32,0.11);
+  --bs-nav-tabs-link-active-bg: #FFFFFF;
+  --bs-nav-tabs-link-active-border-color: rgba(42,58,32,0.11);
   --bs-badge-color:           #FFFFFF;
   --bs-alert-bg:              rgba(0,0,0,0.02);
   --bs-alert-border-color:    rgba(0,0,0,0.09);
@@ -1405,22 +1429,24 @@ a:hover { color: var(--accent-dark); }
 
 /* Custom design tokens — light overrides */
 [data-bs-theme="light"] {
-  --bg:           #E8E5DF;
-  --surface-0:    #E8E5DF;
-  --surface-1:    #EFECE6;
-  --surface-2:    #E3DFD8;
-  --surface-3:    #D6D1C8;
-  --surface-hover:#CAC5BB;
+  --bg:           #F7F7F4;
+  --surface-0:    #F7F7F4;
+  --surface-1:    #FFFFFF;
+  --surface-2:    #EFF0EA;
+  --surface-3:    #E4E6DC;
+  --surface-hover:#D8DBCD;
 
-  --accent-dim:   rgba(245, 158, 11, 0.12);
-  --accent-glow:  rgba(245, 158, 11, 0.22);
+  --accent:       #556B2F;
+  --accent-dark:  #2A3A20;
+  --accent-dim:   rgba(85, 107, 47, 0.12);
+  --accent-glow:  rgba(85, 107, 47, 0.28);
 
-  --text-1:       #1C1917;
-  --text-2:       #57534E;
-  --text-3:       #A8A29E;
+  --text-1:       #2A3A20;
+  --text-2:       #5A6452;
+  --text-3:       #9AA092;
 
-  --border:       rgba(0, 0, 0, 0.08);
-  --border-focus: rgba(245, 158, 11, 0.5);
+  --border:       rgba(42, 58, 32, 0.12);
+  --border-focus: rgba(85, 107, 47, 0.5);
 
   --green-dim:    rgba(16, 185, 129, 0.10);
   --green-border: rgba(16, 185, 129, 0.18);
@@ -1434,7 +1460,7 @@ a:hover { color: var(--accent-dark); }
   --shadow-sm:  0 1px 4px rgba(0,0,0,0.07);
   --shadow-md:  0 4px 16px rgba(0,0,0,0.09);
   --shadow-lg:  0 8px 32px rgba(0,0,0,0.13);
-  --shadow-fab: 0 4px 20px rgba(245, 158, 11, 0.30);
+  --shadow-fab: 0 4px 20px rgba(85, 107, 47, 0.30);
 }
 
 /* Smooth theme transition */

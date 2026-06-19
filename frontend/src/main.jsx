@@ -7,7 +7,7 @@ import './index.css'
 import App from './App.jsx'
 
 // Apply saved theme before React mounts to prevent flash
-const savedTheme = localStorage.getItem('theme') || 'dark'
+const savedTheme = localStorage.getItem('theme') || 'light'
 document.documentElement.setAttribute('data-bs-theme', savedTheme)
 
 createRoot(document.getElementById('root')).render(
