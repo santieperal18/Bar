@@ -73,7 +73,7 @@ function SolicitudContratacion() {
         </Link>
 
         {enviado ? (
-          <div className="sol-success">
+          <div className="sol-success" role="status">
             <div className="sol-success-icon"><i className="fas fa-check"></i></div>
             <h1>¡Solicitud enviada!</h1>
             <p>
@@ -99,7 +99,7 @@ function SolicitudContratacion() {
               <div className="sol-field">
                 <label htmlFor="nombre">Nombre y apellido *</label>
                 <input
-                  id="nombre" name="nombre" type="text" autoComplete="name"
+                  id="nombre" name="nombre" type="text" autoComplete="name" aria-required="true"
                   placeholder="Ej: Juan Pérez"
                   value={form.nombre} onChange={handleChange}
                 />
@@ -109,7 +109,7 @@ function SolicitudContratacion() {
                 <div className="sol-field">
                   <label htmlFor="email">Email *</label>
                   <input
-                    id="email" name="email" type="email" autoComplete="email"
+                    id="email" name="email" type="email" autoComplete="email" aria-required="true"
                     placeholder="tucorreo@ejemplo.com"
                     value={form.email} onChange={handleChange}
                   />
@@ -117,7 +117,7 @@ function SolicitudContratacion() {
                 <div className="sol-field">
                   <label htmlFor="telefono">Teléfono / WhatsApp *</label>
                   <input
-                    id="telefono" name="telefono" type="tel" autoComplete="tel"
+                    id="telefono" name="telefono" type="tel" autoComplete="tel" aria-required="true"
                     placeholder="+54 9 ..."
                     value={form.telefono} onChange={handleChange}
                   />
@@ -127,7 +127,7 @@ function SolicitudContratacion() {
               <div className="sol-row">
                 <div className="sol-field">
                   <label htmlFor="tipo_servicio">Tipo de servicio *</label>
-                  <select id="tipo_servicio" name="tipo_servicio" value={form.tipo_servicio} onChange={handleChange}>
+                  <select id="tipo_servicio" name="tipo_servicio" aria-required="true" value={form.tipo_servicio} onChange={handleChange}>
                     <option value="">Seleccionar...</option>
                     {TIPOS_SERVICIO.map((t) => <option key={t} value={t}>{t}</option>)}
                   </select>
@@ -152,8 +152,8 @@ function SolicitudContratacion() {
               </div>
 
               {error && (
-                <div className="sol-error">
-                  <i className="fas fa-circle-exclamation"></i> {error}
+                <div className="sol-error" role="alert">
+                  <i className="fas fa-circle-exclamation" aria-hidden="true"></i> {error}
                 </div>
               )}
 
