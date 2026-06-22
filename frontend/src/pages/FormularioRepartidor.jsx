@@ -69,8 +69,9 @@ const FormularioRepartidor = () => {
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="row g-3">
                   <div className="col-md-6">
-                    <label className="form-label">Nombre <span style={{ color: 'var(--red)' }}>*</span></label>
+                    <label htmlFor="rep-nombre" className="form-label">Nombre <span style={{ color: 'var(--red)' }}>*</span></label>
                     <input
+                      id="rep-nombre"
                       type="text"
                       className={`form-control ${errors.nombre ? 'is-invalid' : ''}`}
                       {...register("nombre", { required: "El nombre es obligatorio", minLength: { value: 2, message: "Mínimo 2 caracteres" } })}
@@ -80,8 +81,9 @@ const FormularioRepartidor = () => {
                   </div>
 
                   <div className="col-md-6">
-                    <label className="form-label">Apellido <span style={{ color: 'var(--red)' }}>*</span></label>
+                    <label htmlFor="rep-apellido" className="form-label">Apellido <span style={{ color: 'var(--red)' }}>*</span></label>
                     <input
+                      id="rep-apellido"
                       type="text"
                       className={`form-control ${errors.apellido ? 'is-invalid' : ''}`}
                       {...register("apellido", { required: "El apellido es obligatorio", minLength: { value: 2, message: "Mínimo 2 caracteres" } })}
@@ -91,8 +93,9 @@ const FormularioRepartidor = () => {
                   </div>
 
                   <div className="col-md-6">
-                    <label className="form-label">Teléfono <span style={{ color: 'var(--red)' }}>*</span></label>
+                    <label htmlFor="rep-telefono" className="form-label">Teléfono <span style={{ color: 'var(--red)' }}>*</span></label>
                     <input
+                      id="rep-telefono"
                       type="tel"
                       className={`form-control ${errors.telefono ? 'is-invalid' : ''}`}
                       {...register("telefono", { required: "El teléfono es obligatorio", pattern: { value: /^[0-9+\-\s()]*$/, message: "Formato inválido" } })}
@@ -102,8 +105,8 @@ const FormularioRepartidor = () => {
                   </div>
 
                   <div className="col-md-6">
-                    <label className="form-label">Vehículo</label>
-                    <select className="form-select" {...register("vehiculo")}>
+                    <label htmlFor="rep-vehiculo" className="form-label">Vehículo</label>
+                    <select id="rep-vehiculo" className="form-select" {...register("vehiculo")}>
                       <option value="">Sin especificar</option>
                       <option value="Moto 110cc">Moto 110cc</option>
                       <option value="Moto 125cc">Moto 125cc</option>

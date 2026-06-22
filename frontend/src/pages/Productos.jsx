@@ -124,6 +124,7 @@ const Productos = () => {
                 type="text"
                 className="form-control"
                 placeholder="Buscar por nombre o descripción…"
+                aria-label="Buscar productos por nombre o descripción"
                 value={filtros.texto}
                 onChange={e => setFiltros({ ...filtros, texto: e.target.value })}
               />

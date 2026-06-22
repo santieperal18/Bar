@@ -234,6 +234,18 @@
   font-weight: 700;
 }
 
+/* Nota de uso de datos */
+.login-note {
+  margin: 20px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  font-size: 12px;
+  line-height: 1.5;
+  color: #6B7180;
+  text-align: center;
+}
+.login-note i { color: #8B909E; margin-right: 6px; }
+
 /* Spinner */
 .login-spinner {
   width: 16px;

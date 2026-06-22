@@ -120,15 +120,15 @@ const Pedidos = () => {
         <div className="filter-panel mb-3">
           <div className="row g-2 align-items-end">
             <div className="col-12 col-md-3">
-              <label className="form-label">Cliente</label>
-              <select className="form-select" value={filtros.cliente} onChange={e => setFiltros({ ...filtros, cliente: e.target.value })}>
+              <label htmlFor="f-cliente" className="form-label">Cliente</label>
+              <select id="f-cliente" className="form-select" value={filtros.cliente} onChange={e => setFiltros({ ...filtros, cliente: e.target.value })}>
                 <option value="">Todos</option>
                 {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
               </select>
             </div>
             <div className="col-6 col-md-2">
-              <label className="form-label">Estado</label>
-              <select className="form-select" value={filtros.estado} onChange={e => setFiltros({ ...filtros, estado: e.target.value })}>
+              <label htmlFor="f-estado" className="form-label">Estado</label>
+              <select id="f-estado" className="form-select" value={filtros.estado} onChange={e => setFiltros({ ...filtros, estado: e.target.value })}>
                 <option value="">Todos</option>
                 <option value="pendiente">Pendiente</option>
                 <option value="preparando">Preparando</option>
@@ -138,20 +138,20 @@ const Pedidos = () => {
               </select>
             </div>
             <div className="col-6 col-md-2">
-              <label className="form-label">Tipo</label>
-              <select className="form-select" value={filtros.tipoEntrega} onChange={e => setFiltros({ ...filtros, tipoEntrega: e.target.value })}>
+              <label htmlFor="f-tipo" className="form-label">Tipo</label>
+              <select id="f-tipo" className="form-select" value={filtros.tipoEntrega} onChange={e => setFiltros({ ...filtros, tipoEntrega: e.target.value })}>
                 <option value="">Todos</option>
                 <option value="local">Local</option>
                 <option value="delivery">Delivery</option>
               </select>
             </div>
             <div className="col-6 col-md-2">
-              <label className="form-label">Desde</label>
-              <input type="date" className="form-control" value={filtros.fechaDesde} onChange={e => setFiltros({ ...filtros, fechaDesde: e.target.value })} />
+              <label htmlFor="f-desde" className="form-label">Desde</label>
+              <input id="f-desde" type="date" className="form-control" value={filtros.fechaDesde} onChange={e => setFiltros({ ...filtros, fechaDesde: e.target.value })} />
             </div>
             <div className="col-6 col-md-1">
-              <label className="form-label">Hasta</label>
-              <input type="date" className="form-control" value={filtros.fechaHasta} onChange={e => setFiltros({ ...filtros, fechaHasta: e.target.value })} />
+              <label htmlFor="f-hasta" className="form-label">Hasta</label>
+              <input id="f-hasta" type="date" className="form-control" value={filtros.fechaHasta} onChange={e => setFiltros({ ...filtros, fechaHasta: e.target.value })} />
             </div>
             <div className="col-12 col-md-2 d-flex gap-2">
               <button className="btn btn-primary flex-grow-1" onClick={() => { buscar(); setFiltrosAbiertos(false); }} disabled={cargando}>

@@ -156,8 +156,9 @@ const Reportes = ({ clienteId }) => {
               Historial de cliente
             </div>
             <div className="card-body d-flex flex-column justify-content-center" style={{ padding: '20px' }}>
-              <label className="form-label mb-2">Seleccioná un cliente para generar su reporte</label>
+              <label htmlFor="rep-cliente-select" className="form-label mb-2">Seleccioná un cliente para generar su reporte</label>
               <select
+                id="rep-cliente-select"
                 className="form-select"
                 onChange={e => { if (e.target.value) abrirModal('cliente', { idCliente: e.target.value }); }}
                 defaultValue=""

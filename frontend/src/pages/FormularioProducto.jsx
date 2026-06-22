@@ -80,8 +80,9 @@ const FormularioProducto = () => {
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="row g-3">
                   <div className="col-md-8">
-                    <label className="form-label">Nombre <span style={{ color: 'var(--red)' }}>*</span></label>
+                    <label htmlFor="prod-nombre" className="form-label">Nombre <span style={{ color: 'var(--red)' }}>*</span></label>
                     <input
+                      id="prod-nombre"
                       type="text"
                       className={`form-control ${errors.nombre ? 'is-invalid' : ''}`}
                       {...register("nombre", { required: "Obligatorio", minLength: { value: 3, message: "Mínimo 3 caracteres" } })}
@@ -91,10 +92,11 @@ const FormularioProducto = () => {
                   </div>
 
                   <div className="col-md-4">
-                    <label className="form-label">Precio <span style={{ color: 'var(--red)' }}>*</span></label>
+                    <label htmlFor="prod-precio" className="form-label">Precio <span style={{ color: 'var(--red)' }}>*</span></label>
                     <div className="input-group">
                       <span className="input-group-text">$</span>
                       <input
+                        id="prod-precio"
                         type="number"
                         step="0.01"
                         min="0"
@@ -107,8 +109,9 @@ const FormularioProducto = () => {
                   </div>
 
                   <div className="col-12">
-                    <label className="form-label">Descripción</label>
+                    <label htmlFor="prod-descripcion" className="form-label">Descripción</label>
                     <textarea
+                      id="prod-descripcion"
                       className="form-control"
                       {...register("descripcion")}
                       rows="2"
@@ -117,8 +120,9 @@ const FormularioProducto = () => {
                   </div>
 
                   <div className="col-md-6">
-                    <label className="form-label">Categoría <span style={{ color: 'var(--red)' }}>*</span></label>
+                    <label htmlFor="prod-categoria" className="form-label">Categoría <span style={{ color: 'var(--red)' }}>*</span></label>
                     <select
+                      id="prod-categoria"
                       className={`form-select ${errors.idCategoria ? 'is-invalid' : ''}`}
                       {...register("idCategoria", { required: "Seleccioná una categoría" })}
                     >
@@ -129,8 +133,8 @@ const FormularioProducto = () => {
                   </div>
 
                   <div className="col-md-6">
-                    <label className="form-label">URL de imagen</label>
-                    <input type="url" className="form-control" {...register("imagen")} placeholder="https://…" />
+                    <label htmlFor="prod-imagen" className="form-label">URL de imagen</label>
+                    <input id="prod-imagen" type="url" className="form-control" {...register("imagen")} placeholder="https://…" />
                   </div>
 
                   {id && (

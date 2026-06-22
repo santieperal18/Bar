@@ -87,7 +87,11 @@ function Login() {
           </button>
         </form>
 
-        
+        <p className="login-note">
+          <i className="fas fa-lock" aria-hidden="true"></i>
+          Acceso interno. Tus credenciales se usan únicamente para iniciar sesión
+          en el sistema de gestión; no se comparten con terceros.
+        </p>
       </div>
     </div>
   );

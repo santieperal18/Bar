@@ -69,8 +69,9 @@ const FormularioCliente = () => {
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="row g-3">
                   <div className="col-md-6">
-                    <label className="form-label">Nombre <span style={{ color: 'var(--red)' }}>*</span></label>
+                    <label htmlFor="cli-nombre" className="form-label">Nombre <span style={{ color: 'var(--red)' }}>*</span></label>
                     <input
+                      id="cli-nombre"
                       type="text"
                       className={`form-control ${errors.nombre ? 'is-invalid' : ''}`}
                       {...register("nombre", { required: "El nombre es obligatorio", minLength: { value: 2, message: "Mínimo 2 caracteres" } })}
@@ -80,8 +81,9 @@ const FormularioCliente = () => {
                   </div>
 
                   <div className="col-md-6">
-                    <label className="form-label">Apellido <span style={{ color: 'var(--red)' }}>*</span></label>
+                    <label htmlFor="cli-apellido" className="form-label">Apellido <span style={{ color: 'var(--red)' }}>*</span></label>
                     <input
+                      id="cli-apellido"
                       type="text"
                       className={`form-control ${errors.apellido ? 'is-invalid' : ''}`}
                       {...register("apellido", { required: "El apellido es obligatorio", minLength: { value: 2, message: "Mínimo 2 caracteres" } })}
@@ -91,8 +93,9 @@ const FormularioCliente = () => {
                   </div>
 
                   <div className="col-md-6">
-                    <label className="form-label">Teléfono</label>
+                    <label htmlFor="cli-telefono" className="form-label">Teléfono</label>
                     <input
+                      id="cli-telefono"
                       type="tel"
                       className={`form-control ${errors.telefono ? 'is-invalid' : ''}`}
                       {...register("telefono", { pattern: { value: /^[0-9+\-\s()]*$/, message: "Formato de teléfono inválido" } })}
@@ -102,8 +105,9 @@ const FormularioCliente = () => {
                   </div>
 
                   <div className="col-md-6">
-                    <label className="form-label">Email</label>
+                    <label htmlFor="cli-email" className="form-label">Email</label>
                     <input
+                      id="cli-email"
                       type="email"
                       className={`form-control ${errors.email ? 'is-invalid' : ''}`}
                       {...register("email", { pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: "Email inválido" } })}
@@ -113,8 +117,9 @@ const FormularioCliente = () => {
                   </div>
 
                   <div className="col-12">
-                    <label className="form-label">Dirección</label>
+                    <label htmlFor="cli-direccion" className="form-label">Dirección</label>
                     <textarea
+                      id="cli-direccion"
                       className="form-control"
                       {...register("direccion")}
                       rows="2"

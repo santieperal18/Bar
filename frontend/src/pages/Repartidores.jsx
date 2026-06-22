@@ -106,6 +106,7 @@ const Repartidores = () => {
                 type="text"
                 className="form-control"
                 placeholder="Buscar por nombre, teléfono o vehículo…"
+                aria-label="Buscar repartidores por nombre, teléfono o vehículo"
                 value={filtro}
                 onChange={e => setFiltro(e.target.value)}
               />

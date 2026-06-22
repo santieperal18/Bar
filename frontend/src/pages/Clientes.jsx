@@ -107,6 +107,7 @@ const Clientes = () => {
                 type="text"
                 className="form-control"
                 placeholder="Buscar por nombre o apellido…"
+                aria-label="Buscar clientes por nombre o apellido"
                 value={filtro}
                 onChange={e => setFiltro(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && buscar()}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
+import Breadcrumbs from './components/Breadcrumbs';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 
@@ -57,6 +58,7 @@ function App() {
             path="/*"
             element={
               <ProtectedRoute>
+                <a href="#contenido" className="skip-link">Saltar al contenido</a>
                 <div
                   className="app-layout"
                   style={{ '--sidebar-current-w': sidebarCollapsed ? '64px' : 'var(--sidebar-w)' }}
@@ -67,9 +69,10 @@ function App() {
                     collapsed={sidebarCollapsed}
                     onToggleCollapse={toggleCollapsed}
                   />
-                  <main className="app-main">
+                  <main className="app-main" id="contenido">
                     <MobileTopbar onMenuOpen={() => setSidebarOpen(true)} />
                     <div className="page-wrap fade-in">
+                      <Breadcrumbs />
                       <Routes>
                         <Route path="/"                          element={<Pedidos />} />
                         <Route path="/pedidos"                   element={<Pedidos />} />
