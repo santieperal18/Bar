@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>La Esquina · Poster B2 UX/UI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bone:#F7F7F4; --white:#fff; --panel:#EFF0EA;
+    --olive:#556B2F; --forest:#2A3A20; --deep:#1A2614; --sage:#9CB36B;
+    --ink:#2A3A20; --soft:#5A6452; --muted:#9AA092; --line:rgba(42,58,32,.14);
+    --serif:'Playfair Display',Georgia,serif; --sans:'Inter',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#cdd0c4;font-family:var(--sans);color:var(--ink)}
+  @page{size:500mm 700mm;margin:0}
+  @media print{body{background:none}}
+
+  .poster{
+    width:500mm;height:700mm;background:var(--bone);position:relative;overflow:hidden;
+    margin:20px auto;box-shadow:0 20px 80px rgba(0,0,0,.3);
+    display:flex;flex-direction:column;
+  }
+  @media print{.poster{margin:0;box-shadow:none}}
+
+  /* ── Header ── */
+  .hd{background:linear-gradient(150deg,#36492c 0%,#1A2614 75%);color:#EDEFE6;padding:30mm 30mm 26mm;position:relative;overflow:hidden}
+  .hd::after{content:'';position:absolute;right:-60mm;top:-60mm;width:200mm;height:200mm;border-radius:50%;background:radial-gradient(circle,rgba(156,179,107,.22),transparent 60%)}
+  .brand{display:flex;align-items:center;gap:10mm;margin-bottom:14mm;position:relative}
+  .brand .logo{width:30mm;height:30mm;border-radius:7mm;background:#fff;overflow:hidden;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:900;color:var(--forest);font-size:48pt}
+  .brand .logo img{width:100%;height:100%;object-fit:cover}
+  .brand .bn{font-family:var(--serif);font-weight:800;font-size:40pt;color:#fff;line-height:1}
+  .brand .bs{font-size:13pt;letter-spacing:.4em;text-transform:uppercase;color:var(--sage);margin-top:2mm}
+  .eyebrow{font-size:15pt;letter-spacing:.32em;text-transform:uppercase;font-weight:700;color:var(--sage);position:relative}
+  .hd h1{font-family:var(--serif);font-weight:900;font-size:84pt;line-height:.96;color:#fff;margin:6mm 0 7mm;position:relative;letter-spacing:-.01em}
+  .hd .lead{font-size:20pt;color:#d4dcc6;max-width:330mm;line-height:1.5;position:relative}
+
+  /* ── Cuerpo en grid ── */
+  .body{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:0;}
+  .col{padding:22mm 26mm}
+  .col.left{border-right:1px solid var(--line)}
+  .block{margin-bottom:18mm}
+  .block:last-child{margin-bottom:0}
+  .ktitle{font-family:var(--serif);font-weight:800;font-size:30pt;color:var(--forest);margin-bottom:8mm;display:flex;align-items:center;gap:6mm}
+  .ktitle .n{font-size:18pt;color:#fff;background:var(--olive);width:13mm;height:13mm;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+
+  /* Pilares UX */
+  .pill{display:flex;gap:7mm;margin-bottom:9mm}
+  .pill .dot{width:7mm;height:7mm;border-radius:50%;background:var(--olive);flex-shrink:0;margin-top:3mm}
+  .pill h4{font-family:var(--sans);font-weight:800;font-size:17pt;color:var(--forest);margin-bottom:2mm}
+  .pill p{font-size:13.5pt;color:var(--soft);line-height:1.45}
+
+  /* Paleta */
+  .sw{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6mm;margin-bottom:10mm}
+  .sw .c{border-radius:5mm;overflow:hidden;border:1px solid var(--line)}
+  .sw .chip{height:34mm}
+  .sw .m{padding:4mm;background:#fff}
+  .sw .m b{font-size:13pt;display:block;color:var(--forest)}
+  .sw .m span{font-size:11pt;color:var(--muted)}
+
+  /* Contraste */
+  .aaa-row{display:flex;gap:6mm;align-items:stretch;margin-bottom:6mm}
+  .aaa{flex:1;border-radius:5mm;padding:7mm;border:1px solid var(--line)}
+  .aaa.good{background:linear-gradient(135deg,#2A3A20,#1A2614);color:#fff}
+  .aaa.old{background:#fff}
+  .aaa .big{font-family:var(--serif);font-weight:900;font-size:34pt;line-height:1}
+  .aaa small{font-size:11.5pt;opacity:.85;display:block;margin-top:2mm}
+  .badge{display:inline-block;margin-top:4mm;padding:2mm 5mm;border-radius:50px;font-size:11pt;font-weight:800}
+  .badge.ok{background:var(--sage);color:var(--forest)}
+  .badge.warn{background:#F1E2C0;color:#7a5a16}
+
+  /* Tipografía specimen */
+  .type{background:#fff;border:1px solid var(--line);border-radius:6mm;padding:9mm;margin-bottom:0}
+  .type .serif{font-family:var(--serif);font-weight:800;font-size:46pt;color:var(--forest);line-height:1}
+  .type .lbl{font-size:10.5pt;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin:2mm 0 6mm}
+  .type .sans{font-family:var(--sans);font-size:18pt;color:var(--soft)}
+  .type .num{font-variant-numeric:tabular-nums;font-weight:800;color:var(--forest)}
+
+  /* Screenshots */
+  .shot{border:1px solid var(--line);border-radius:5mm;box-shadow:0 8px 30px rgba(42,58,32,.16);overflow:hidden;background:#fff}
+  .shot img{width:100%;display:block}
+  .shotcap{font-size:11.5pt;color:var(--soft);margin-top:3mm;padding-left:5mm;border-left:3px solid var(--olive)}
+  .shots-main{margin-bottom:7mm}
+  .shots-row{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
+
+  /* Footer */
+  .ft{background:var(--forest);color:#cdd6bf;padding:14mm 30mm;display:flex;justify-content:space-between;align-items:center;font-size:13pt}
+  .ft b{color:#fff}
+  .ft .tags{display:flex;gap:5mm}
+  .ft .t{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:50px;padding:3mm 7mm;font-size:11.5pt;font-weight:600;color:#EDEFE6}
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <!-- HEADER -->
+  <header class="hd">
+    <div class="brand">
+      <span class="logo"><img src="../frontend/public/logo.jpg" alt="La Esquina" onerror="this.parentNode.textContent='LE'"></span>
+      <div><div class="bn">La Esquina</div><div class="bs">Resto Bar</div></div>
+    </div>
+    <div class="eyebrow">Diseño de Experiencia e Interfaz de Usuario</div>
+    <h1>Cómo diseñamos<br>La Esquina</h1>
+    <p class="lead">Un sistema de gestión y una presencia digital para un resto bar de barrio, nacidos del mismo sistema de diseño: claridad operativa para trabajar, identidad de marca para vender.</p>
+  </header>
+
+  <!-- BODY -->
+  <div class="body">
+    <!-- COLUMNA IZQUIERDA: pantallas + UX -->
+    <div class="col left">
+      <div class="block">
+        <div class="shot shots-main">
+          <img src="screenshots/pedidos.png" alt="Monitor de pedidos">
+        </div>
+        <div class="shotcap">Monitor de comandas: métricas de un vistazo → filtros → tabla densa. Botones en verde bosque para máximo contraste.</div>
+      </div>
+
+      <div class="block">
+        <div class="ktitle"><span class="n">UX</span> Experiencia</div>
+        <div class="pill"><span class="dot"></span><div><h4>De lo general a lo específico</h4><p>Tarjetas de métrica antes que la tabla: el estado de la cocina se entiende en un segundo.</p></div></div>
+        <div class="pill"><span class="dot"></span><div><h4>Estados inequívocos</h4><p>Cada pedido lleva color + ícono + texto. La información no depende solo del color.</p></div></div>
+        <div class="pill"><span class="dot"></span><div><h4>Mobile real, no encogido</h4><p>Tablas que se vuelven tarjetas, POS con pestañas y objetivos táctiles ≥ 44px.</p></div></div>
+        <div class="pill"><span class="dot"></span><div><h4>Captación sin fricción</h4><p>Formulario reducido de 14 a 6 campos + WhatsApp flotante. Conversión sobre burocracia.</p></div></div>
+      </div>
+
+      <div class="block">
+        <div class="shots-row">
+          <div><div class="shot"><img src="screenshots/pedidos-nuevo.png" alt="POS"></div><div class="shotcap">Alta tipo POS</div></div>
+          <div><div class="shot"><img src="screenshots/reportes.png" alt="Reportes"></div><div class="shotcap">Reportes del día</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: UI -->
+    <div class="col right">
+      <div class="block">
+        <div class="ktitle"><span class="n">UI</span> Interfaz</div>
+        <p style="font-size:14.5pt;color:var(--soft);line-height:1.5;margin-bottom:7mm">Una identidad <b style="color:var(--forest)">sofisticada y artesanal</b>: verde sobre fondo hueso, lejos del rojo/amarillo del fast-food. Verde = natural, fresco, de barrio.</p>
+        <div class="sw">
+          <div class="c"><div class="chip" style="background:#556B2F"></div><div class="m"><b>Olivo</b><span>#556B2F</span></div></div>
+          <div class="c"><div class="chip" style="background:#2A3A20"></div><div class="m"><b>Bosque</b><span>#2A3A20</span></div></div>
+          <div class="c"><div class="chip" style="background:#F7F7F4"></div><div class="m"><b>Hueso</b><span>#F7F7F4</span></div></div>
+        </div>
+      </div>
+
+      <div class="block">
+        <h4 style="font-family:var(--serif);font-weight:800;font-size:23pt;color:var(--forest);margin-bottom:6mm">Accesibilidad AAA</h4>
+        <div class="aaa-row">
+          <div class="aaa good">
+            <div class="big">12.6:1</div>
+            <small>Blanco sobre verde bosque · botones y datos</small>
+            <span class="badge ok">WCAG AAA ✓</span>
+          </div>
+          <div class="aaa old">
+            <div class="big" style="color:var(--olive)">5.9:1</div>
+            <small style="color:var(--soft)">Antes: olivo claro · reemplazado</small>
+            <span class="badge warn">Solo AA</span>
+          </div>
+        </div>
+        <p style="font-size:12.5pt;color:var(--soft);line-height:1.45">Migramos todo el texto y los botones al <b style="color:var(--forest)">verde bosque</b> para superar el umbral de 7:1 — legible a contraluz, en cocina y desde el celular.</p>
+      </div>
+
+      <div class="block">
+        <h4 style="font-family:var(--serif);font-weight:800;font-size:23pt;color:var(--forest);margin-bottom:6mm">Dos voces tipográficas</h4>
+        <div class="type">
+          <div class="serif">La Esquina</div>
+          <div class="lbl">Playfair Display — marca e identidad</div>
+          <div class="sans">Milanesa napolitana — <span class="num">$6.800,00</span></div>
+          <div class="lbl" style="margin-bottom:0">Inter — datos, filtros y números tabulares</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="shots-row">
+          <div><div class="shot"><img src="screenshots/landing.png" alt="Landing" style="height:78mm;object-fit:cover;object-position:top"></div><div class="shotcap">Landing de marca</div></div>
+          <div><div class="shot"><img src="screenshots/contratar.png" alt="Formulario"></div><div class="shotcap">Formulario reducido</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="ft">
+    <div><b>La Esquina</b> · Documento y poster de Diseño UX/UI &nbsp;·&nbsp; Equipo (hasta 5 integrantes)</div>
+    <div class="tags">
+      <span class="t">React · Vite</span>
+      <span class="t">Design System por tokens</span>
+      <span class="t">WCAG AAA</span>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
