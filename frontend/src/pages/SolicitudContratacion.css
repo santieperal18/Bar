@@ -3,7 +3,7 @@
    ========================================================= */
 
 .solicitud {
-  --sol-olive:   #556B2F;
+  --sol-olive:   #2A3A20;
   --sol-forest:  #2A3A20;
   --sol-bone:    #F7F7F4;
   --sol-ink:     #2A3A20;
@@ -162,7 +162,7 @@
   transition: background 0.16s, transform 0.16s, box-shadow 0.16s;
 }
 .sol-btn:hover:not(:disabled) {
-  background: var(--sol-forest);
+  background: #1A2614;
   color: #fff;
   transform: translateY(-1px);
   box-shadow: 0 9px 24px rgba(42, 58, 32, 0.32);

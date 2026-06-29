@@ -1382,10 +1382,10 @@ a:hover { color: var(--accent-dark); }
 /* Bootstrap overrides for light */
 [data-bs-theme="light"],
 [data-bs-theme="light"] * {
-  --bs-primary:               #556B2F;
-  --bs-primary-rgb:           85, 107, 47;
-  --bs-link-color:            #556B2F;
-  --bs-link-hover-color:      #2A3A20;
+  --bs-primary:               #2A3A20;
+  --bs-primary-rgb:           42, 58, 32;
+  --bs-link-color:            #2A3A20;
+  --bs-link-hover-color:      #1A2614;
   --bs-body-bg:               #F7F7F4;
   --bs-body-bg-rgb:           247, 247, 244;
   --bs-body-color:            #2A3A20;
@@ -1416,7 +1416,7 @@ a:hover { color: var(--accent-dark); }
   --bs-dropdown-border-color: rgba(42,58,32,0.11);
   --bs-dropdown-link-color:   #2A3A20;
   --bs-dropdown-link-hover-bg:#EFF0EA;
-  --bs-dropdown-link-active-bg: #556B2F;
+  --bs-dropdown-link-active-bg: #2A3A20;
   --bs-dropdown-link-active-color: #FFFFFF;
   --bs-nav-tabs-border-color: rgba(42,58,32,0.11);
   --bs-nav-tabs-link-active-bg: #FFFFFF;
@@ -1436,8 +1436,8 @@ a:hover { color: var(--accent-dark); }
   --surface-3:    #E4E6DC;
   --surface-hover:#D8DBCD;
 
-  --accent:       #556B2F;
-  --accent-dark:  #2A3A20;
+  --accent:       #2A3A20;
+  --accent-dark:  #1A2614;
   --accent-dim:   rgba(85, 107, 47, 0.12);
   --accent-glow:  rgba(85, 107, 47, 0.28);
 
