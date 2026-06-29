@@ -3,5 +3,10 @@
 *.png
 *.jpeg
 
+# Excepción: entregables de diseño (capturas y poster) sí se versionan
+!docs/screenshots/
+!docs/screenshots/*.png
+!docs/POSTER-B2.png
+
 # Logo fuente en la raíz (la copia usada por la app está en frontend/public/)
 /logo.jpg
