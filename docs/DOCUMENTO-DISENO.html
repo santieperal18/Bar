@@ -49,8 +49,11 @@
   .cover .badge-brand{display:inline-flex;align-items:center;gap:14px}
   .cover .logo{width:64px;height:64px;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:800;color:var(--forest);font-size:26px;overflow:hidden}
   .cover .logo img{width:100%;height:100%;object-fit:cover}
-  .cover-meta{border-top:1px solid rgba(255,255,255,.18);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;font-size:10pt;color:#cdd6bf}
+  .cover-meta{border-top:1px solid rgba(255,255,255,.18);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px 24px;font-size:10pt;color:#cdd6bf}
   .cover-meta b{display:block;color:#fff;font-size:8.5pt;text-transform:uppercase;letter-spacing:.12em;margin-bottom:3px;font-weight:700}
+  .cover-meta .full{flex-basis:100%}
+  .cover-meta .full span{display:inline-block;margin-right:18px;white-space:nowrap}
+  .cover-meta .full b{display:inline;color:#9CB36B;font-weight:700;margin-right:6px}
 
   /* Encabezado de sección */
   .sec-head{display:flex;align-items:baseline;gap:12px;border-bottom:2px solid var(--forest);padding-bottom:10px;margin-bottom:18px}
@@ -112,118 +115,64 @@
   <div>
     <div class="eyebrow">Documento de Diseño de Experiencia e Interfaz</div>
     <h1>Cómo pensamos<br>La Esquina</h1>
-    <p class="sub">Justificación de las decisiones de UX y UI del sistema de gestión y la presencia digital de un resto bar de barrio.</p>
+    <p class="sub">Justificación de las decisiones de Experiencia (UX) e Interfaz (UI) del sistema de gestión y la presencia digital de un resto bar de barrio.</p>
   </div>
   <div class="cover-meta">
     <div><b>Materia</b>Diseño de Experiencia e Interfaz de Usuario</div>
     <div><b>Producto</b>Sistema de gestión + Landing comercial</div>
-    <div><b>Equipo</b>Hasta 5 integrantes</div>
-    <div><b>Stack</b>React · Vite · Bootstrap 5</div>
-  </div>
-</section>
-
-<!-- ════════ 1. EL PROYECTO ════════ -->
-<section class="page">
-  <div class="sec-head"><span class="sec-num">01</span><h2>El proyecto en una página</h2></div>
-
-  <p class="lead">La Esquina es un resto bar de barrio. El producto digital resuelve dos necesidades en una identidad común: <strong>gestionar la operación diaria</strong> (pedidos, clientes, productos, repartidores y reportes) y <strong>captar clientes</strong> a través de una landing pública con un formulario de contratación del servicio de comida y delivery.</p>
-
-  <div class="grid2" style="margin:16px 0">
-    <div class="card"><div class="ic">Problema</div><h4>Operar sin fricción</h4><p style="font-size:10pt;margin:0">Las comandas, el delivery y el cierre de caja se manejaban con papel y planillas. Se necesitaba un panel rápido, legible y usable desde el celular en plena cocina.</p></div>
-    <div class="card"><div class="ic">Oportunidad</div><h4>Vender más, mejor</h4><p style="font-size:10pt;margin:0">Una cara pública atractiva que transmita la identidad del local y convierta visitas en pedidos de catering, eventos y delivery, con contacto directo por WhatsApp.</p></div>
-  </div>
-
-  <h3 style="margin-bottom:8px">¿Para quién diseñamos?</h3>
-  <div class="grid3">
-    <div class="card"><div class="ic">①</div><h4>Encargado / dueño</h4><p style="font-size:9.5pt;margin:0">Mira métricas del día, controla estados y exporta balances. Prioriza claridad y velocidad.</p></div>
-    <div class="card"><div class="ic">②</div><h4>Cajero / mozo</h4><p style="font-size:9.5pt;margin:0">Carga comandas a toda velocidad desde el celular o la tablet. Prioriza objetivos táctiles grandes.</p></div>
-    <div class="card"><div class="ic">③</div><h4>Cliente final</h4><p style="font-size:9.5pt;margin:0">Llega a la landing, conoce el local y deja su pedido o consulta sin registrarse.</p></div>
-  </div>
-
-  <div class="callout" style="margin-top:16px"><b>Decisión rectora.</b> Un único <b>sistema de diseño</b> (tokens de color, tipografía, espaciado y componentes en <code>index.css</code>) gobierna las 10+ pantallas, garantizando coherencia entre el back-office denso de datos y la landing emocional de marca.</div>
-
-  <div class="foot"><span>La Esquina · Documento de Diseño UX/UI</span><span>01</span></div>
-</section>
-
-<!-- ════════ 2. ARQUITECTURA / FLUJO ════════ -->
-<section class="page">
-  <div class="sec-head"><span class="sec-num">02</span><h2>Arquitectura de información y flujo</h2></div>
-
-  <p>La navegación separa con claridad <strong>lo público</strong> de <strong>lo operativo</strong>. El usuario nunca se pierde: barra lateral persistente, <strong>breadcrumbs</strong> en cada pantalla interna y un <strong>skip-link</strong> de accesibilidad para saltar al contenido.</p>
-
-  <div class="mini2" style="margin:14px 0">
-    <figure><img src="screenshots/landing.png" alt="Landing"><figcaption>Zona pública — Landing comercial con identidad de marca, secciones de venta y CTA.</figcaption></figure>
-    <figure><img src="screenshots/pedidos.png" alt="Panel"><figcaption>Zona operativa — Panel de gestión con sidebar fija, breadcrumbs y acción primaria siempre visible.</figcaption></figure>
-  </div>
-
-  <h3 style="margin:6px 0 8px">Mapa de pantallas</h3>
-  <div class="grid2">
-    <div class="card">
-      <h4>Público (sin sesión)</h4>
-      <ul style="margin:6px 0 0">
-        <li><b>Landing</b> — hero, nosotros, especialidades, servicio + preview, contacto</li>
-        <li><b>Solicitud de servicio</b> — formulario reducido (lead) → guarda en base de datos</li>
-        <li><b>Login</b> — acceso interno, a prueba de fallos para demo</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h4>Panel (con sesión)</h4>
-      <ul style="margin:6px 0 0">
-        <li><b>Pedidos</b> — monitor de comandas + alta (POS)</li>
-        <li><b>Clientes</b> · <b>Productos</b> · <b>Repartidores</b> — ABM con listado</li>
-        <li><b>Reportes</b> — métricas del día y exportación de balances</li>
-      </ul>
+    <div class="full">
+      <b>Integrantes</b>
+      <span>Valentino Bongiorno · 98495</span>
+      <span>Santino Peralta · 403430</span>
+      <span>Matías Cufré · 94898</span>
+      <span>Máximo Tabares · 402064</span>
     </div>
   </div>
-
-  <div class="callout" style="margin-top:16px"><b>Por qué un sidebar y no un menú superior.</b> El back-office es de uso intensivo y repetido: un menú lateral fijo mantiene los 5 destinos a un clic, soporta el modo colapsado para ganar espacio en pantallas chicas y deja el tope libre para el título y la acción primaria de cada vista.</div>
-
-  <div class="foot"><span>La Esquina · Documento de Diseño UX/UI</span><span>02</span></div>
 </section>
 
-<!-- ════════ 3. DECISIONES UX ════════ -->
+<!-- ════════ 1. DECISIONES UX ════════ -->
 <section class="page">
-  <div class="sec-head"><span class="sec-num">03</span><h2>Decisiones de Experiencia (UX)</h2></div>
+  <div class="sec-head"><span class="sec-num">01</span><h2>Decisiones de Experiencia (UX)</h2></div>
 
   <div class="mini2">
     <div>
       <h3 style="margin-bottom:6px">Información de un vistazo</h3>
-      <p style="font-size:10pt">El monitor de pedidos abre con <strong>tarjetas de métricas</strong> (total, pendientes, preparando, en camino) antes que la tabla. Quien entra entiende el estado de la cocina en menos de un segundo, sin leer fila por fila.</p>
+      <p style="font-size:10pt">El monitor de pedidos abre con <strong>tarjetas de métricas</strong> (total, pendientes, preparando, en camino) antes que la tabla. Quien entra entiende el estado de la cocina en menos de un segundo.</p>
       <h3 style="margin:12px 0 6px">Estados con color y forma</h3>
-      <p style="font-size:10pt">Cada pedido lleva un <strong>badge</strong> con color e ícono propios (pendiente, preparando, en camino, entregado, cancelado). El color no es el único canal: ícono + texto aseguran lectura para daltonismo.</p>
+      <p style="font-size:10pt">Cada pedido lleva un <strong>badge</strong> con color e ícono propios (pendiente, preparando, en camino, entregado, cancelado). El color se acompaña de ícono y texto para asegurar la lectura en casos de daltonismo.</p>
       <h3 style="margin:12px 0 6px">Filtros siempre a mano</h3>
-      <p style="font-size:10pt">Cliente, estado, tipo y rango de fechas viven en un panel fijo sobre la tabla. En mobile se colapsan para no robar altura.</p>
+      <p style="font-size:10pt">Cliente, estado, tipo y rango de fechas viven en un panel fijo sobre la tabla. En mobile se colapsan para liberar altura.</p>
     </div>
     <div>
-      <figure><img src="screenshots/pedidos.png" alt="Pedidos"><figcaption>Métricas → filtros → tabla densa. Jerarquía descendente de lo general a lo específico.</figcaption></figure>
-      <figure><img src="screenshots/pedidos-nuevo.png" alt="POS"><figcaption>Alta de comanda tipo POS: grilla de productos táctil + ticket en vivo a la derecha.</figcaption></figure>
+      <figure><img src="screenshots/pedidos.png" alt="Pedidos"><figcaption>Métricas → filtros → tabla densa. Jerarquía descendente, de lo general a lo específico.</figcaption></figure>
+      <figure><img src="screenshots/pedidos-nuevo.png" alt="POS"><figcaption>Alta de comanda tipo POS: grilla de productos táctil y ticket en vivo a la derecha.</figcaption></figure>
     </div>
   </div>
 
   <div class="grid3" style="margin-top:14px">
-    <div class="card"><div class="ic">∅</div><h4>Empty states útiles</h4><p style="font-size:9pt;margin:0">Cuando no hay datos, mostramos ícono, mensaje y la acción siguiente ("creá una nueva orden"), nunca una tabla vacía y muda.</p></div>
-    <div class="card"><div class="ic">↹</div><h4>Mobile real, no encogido</h4><p style="font-size:9pt;margin:0">Las tablas se transforman en <b>tarjetas</b>; el POS usa pestañas; aparece un FAB y una topbar. Objetivos táctiles ≥ 44px.</p></div>
-    <div class="card"><div class="ic">✓</div><h4>Feedback inmediato</h4><p style="font-size:9pt;margin:0">Toasts de éxito/error, spinners de carga, validación en línea con <code>is-invalid</code> y foco de teclado visible.</p></div>
+    <div class="card"><div class="ic">∅</div><h4>Empty states útiles</h4><p style="font-size:9pt;margin:0">Cuando no hay datos mostramos ícono, mensaje y la acción siguiente ("creá una nueva orden") para guiar el próximo paso.</p></div>
+    <div class="card"><div class="ic">↹</div><h4>Experiencia mobile dedicada</h4><p style="font-size:9pt;margin:0">Las tablas se reordenan como <b>tarjetas</b>, el POS usa pestañas y aparecen FAB y topbar. Objetivos táctiles ≥ 44px.</p></div>
+    <div class="card"><div class="ic">✓</div><h4>Feedback inmediato</h4><p style="font-size:9pt;margin:0">Toasts de éxito y error, spinners de carga, validación en línea con <code>is-invalid</code> y foco de teclado visible.</p></div>
   </div>
 
-  <div class="foot"><span>La Esquina · Documento de Diseño UX/UI</span><span>03</span></div>
+  <div class="foot"><span>La Esquina · Documento de Diseño UX/UI</span><span>01</span></div>
 </section>
 
-<!-- ════════ 4. UX — CAPTACIÓN ════════ -->
+<!-- ════════ 2. UX — CAPTACIÓN ════════ -->
 <section class="page">
-  <div class="sec-head"><span class="sec-num">04</span><h2>UX de captación: menos es más</h2></div>
+  <div class="sec-head"><span class="sec-num">02</span><h2>UX de captación</h2></div>
 
-  <p>El formulario original de alta era largo (usuario, empresa, razón social, CUIT, dos contraseñas, captcha, logo…). Para la landing lo <strong>reducimos a lo esencial</strong>: el objetivo no es crear una cuenta, es <strong>iniciar una conversación comercial</strong>. Menos campos = menos abandono.</p>
+  <p>El formulario original de alta era extenso (usuario, empresa, razón social, CUIT, dos contraseñas, captcha, logo…). Para la landing lo <strong>reducimos a lo esencial</strong>: el objetivo es iniciar una conversación comercial, así que pedimos solo lo necesario para responder.</p>
 
   <div class="mini2" style="margin:14px 0">
-    <figure><img src="screenshots/contratar.png" alt="Formulario reducido"><figcaption>Formulario de solicitud reducido: 6 campos, un solo objetivo claro. Se guarda en base de datos para contacto.</figcaption></figure>
+    <figure><img src="screenshots/contratar.png" alt="Formulario reducido"><figcaption>Formulario de solicitud reducido: 6 campos, un objetivo claro. Se guarda en base de datos para contacto.</figcaption></figure>
     <div>
-      <div class="callout" style="margin-top:0"><b>Patrón "preview + página".</b> En la landing mostramos una <b>vista previa</b> del formulario; al hacer clic, se abre la página completa. Reduce la carga cognitiva del scroll y comunica de antemano qué se va a pedir.</div>
+      <div class="callout" style="margin-top:0"><b>Patrón "preview + página".</b> En la landing mostramos una <b>vista previa</b> del formulario; al hacer clic se abre la página completa. Reduce la carga cognitiva del scroll y anticipa qué se va a pedir.</div>
       <h4 style="font-size:12pt;margin:10px 0 6px">Principios aplicados</h4>
       <ul style="font-size:10pt">
         <li>Pedir solo lo que se usará para responder</li>
-        <li>Etiquetas claras, placeholders de ejemplo</li>
-        <li>Validación amable y mensajes de error accionables</li>
+        <li>Etiquetas claras y placeholders de ejemplo</li>
+        <li>Validación amable con mensajes accionables</li>
         <li>Estado de éxito explícito ("¡Solicitud enviada!")</li>
         <li>Canal alternativo: <b>WhatsApp flotante</b> siempre disponible</li>
       </ul>
@@ -231,18 +180,18 @@
   </div>
 
   <div class="grid2">
-    <div class="card"><div class="ic">Antes</div><h4>~14 campos</h4><p style="font-size:9.5pt;margin:0">Contraseñas, captcha, carga de logo, datos fiscales. Fricción alta para un primer contacto.</p></div>
-    <div class="card" style="border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.05)"><div class="ic" style="color:#0d7a54">Ahora</div><h4>6 campos</h4><p style="font-size:9.5pt;margin:0">Nombre, email, teléfono, tipo de servicio, zona y detalle. Conversión sobre burocracia.</p></div>
+    <div class="card"><div class="ic">Antes</div><h4>~14 campos</h4><p style="font-size:9.5pt;margin:0">Contraseñas, captcha, carga de logo y datos fiscales. Mucha fricción para un primer contacto.</p></div>
+    <div class="card" style="border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.05)"><div class="ic" style="color:#0d7a54">Ahora</div><h4>6 campos</h4><p style="font-size:9.5pt;margin:0">Nombre, email, teléfono, tipo de servicio, zona y detalle. Un alta que se completa en segundos.</p></div>
   </div>
 
-  <div class="foot"><span>La Esquina · Documento de Diseño UX/UI</span><span>04</span></div>
+  <div class="foot"><span>La Esquina · Documento de Diseño UX/UI</span><span>02</span></div>
 </section>
 
-<!-- ════════ 5. UI — COLOR ════════ -->
+<!-- ════════ 3. UI — COLOR ════════ -->
 <section class="page">
-  <div class="sec-head"><span class="sec-num">05</span><h2>Interfaz (UI): color con intención</h2></div>
+  <div class="sec-head"><span class="sec-num">03</span><h2>Interfaz (UI): color con intención</h2></div>
 
-  <p>La paleta busca una identidad <strong>sofisticada, artesanal y madura</strong>, alejada del rojo/amarillo saturado del fast-food. El verde evoca lo natural, fresco y de barrio; el fondo hueso aporta calidez y descanso visual para jornadas largas frente a la pantalla.</p>
+  <p>La paleta busca una identidad <strong>sofisticada, artesanal y madura</strong>, alejada del rojo y amarillo saturado del fast-food. El verde evoca lo natural, fresco y de barrio; el fondo hueso aporta calidez y descanso visual para jornadas largas frente a la pantalla.</p>
 
   <div class="swatches">
     <div class="sw"><div class="chip" style="background:#556B2F"></div><div class="meta"><b>Olivo</b> <span>#556B2F</span><br>Acento decorativo, marca</div></div>
@@ -251,73 +200,73 @@
   </div>
 
   <h3 style="margin:6px 0 8px">Accesibilidad: del AA al AAA</h3>
-  <p style="font-size:10pt">Las normas WCAG piden contraste <strong>≥ 4.5:1 (AA)</strong> y <strong>≥ 7:1 (AAA)</strong> para texto. El olivo daba buen contraste pero se quedaba en AA. Por eso <strong>migramos todo el texto y los rellenos de botones al verde bosque</strong>, llevando la lectura a nivel AAA — clave en una app que se lee a contraluz, en cocina y desde el celular.</p>
+  <p style="font-size:10pt">Las normas WCAG piden contraste <strong>≥ 4.5:1 (AA)</strong> y <strong>≥ 7:1 (AAA)</strong> para texto. El olivo cumplía AA pero no alcanzaba el umbral exigente. Por eso migramos todo el texto y los rellenos de botones al <strong>verde bosque</strong>, llevando la lectura a nivel AAA — clave en una app que se usa a contraluz, en cocina y desde el celular.</p>
 
   <table class="ratio">
     <tr><th>Combinación</th><th>Uso</th><th>Ratio</th><th>Nivel</th></tr>
     <tr><td>Bosque #2A3A20 sobre hueso</td><td>Títulos, datos, números</td><td class="num">12.1 : 1</td><td><span class="tag aaa">AAA</span></td></tr>
     <tr><td>Blanco sobre bosque #2A3A20</td><td>Botones "Nueva Orden", "Buscar"</td><td class="num">12.6 : 1</td><td><span class="tag aaa">AAA</span></td></tr>
-    <tr><td>Olivo #556B2F sobre hueso <i>(antes)</i></td><td>Texto y botones — reemplazado</td><td class="num">5.9 : 1</td><td><span class="tag aa">solo AA</span></td></tr>
+    <tr><td>Olivo #556B2F sobre hueso <i>(versión anterior)</i></td><td>Texto y botones — reemplazado</td><td class="num">5.9 : 1</td><td><span class="tag aa">AA</span></td></tr>
   </table>
 
-  <div class="callout"><b>Color no decorativo.</b> Reservamos el espectro semántico (azul, violeta, ámbar, verde esmeralda, rojo) exclusivamente para los <b>estados</b> de pedido y los acentos de las tarjetas de métrica, de modo que el color comunique información y no solo adorne.</div>
+  <div class="callout"><b>Color con función.</b> El espectro semántico (azul, violeta, ámbar, verde esmeralda, rojo) se reserva para los <b>estados</b> de pedido y los acentos de las tarjetas de métrica, de modo que el color comunique información de estado.</div>
 
   <div class="mini2" style="margin-top:10px">
-    <figure style="margin:0"><img src="screenshots/reportes.png" alt="Reportes"><figcaption>El color semántico segmenta métricas y rankings sin sobrecargar.</figcaption></figure>
-    <figure style="margin:0"><img src="screenshots/productos.png" alt="Productos"><figcaption>Bosque para datos, esmeralda/rojo solo para disponibilidad.</figcaption></figure>
+    <figure style="margin:0"><img src="screenshots/reportes.png" alt="Reportes"><figcaption>El color semántico segmenta métricas y rankings con orden.</figcaption></figure>
+    <figure style="margin:0"><img src="screenshots/productos.png" alt="Productos"><figcaption>Bosque para los datos; esmeralda y rojo para la disponibilidad.</figcaption></figure>
   </div>
 
-  <div class="foot"><span>La Esquina · Documento de Diseño UX/UI</span><span>05</span></div>
+  <div class="foot"><span>La Esquina · Documento de Diseño UX/UI</span><span>03</span></div>
 </section>
 
-<!-- ════════ 6. UI — TIPOGRAFÍA Y COMPONENTES ════════ -->
+<!-- ════════ 4. UI — TIPOGRAFÍA Y COMPONENTES ════════ -->
 <section class="page">
-  <div class="sec-head"><span class="sec-num">06</span><h2>Tipografía y sistema de componentes</h2></div>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Tipografía y sistema de componentes</h2></div>
 
   <div class="mini2">
     <div>
       <h3 style="margin-bottom:6px">Dos voces tipográficas</h3>
-      <p style="font-size:10pt">Una <strong>serif elegante</strong> para la identidad y una <strong>sans limpia</strong> para los datos. La combinación da personalidad sin sacrificar legibilidad.</p>
+      <p style="font-size:10pt">Una <strong>serif elegante</strong> para la identidad y una <strong>sans limpia</strong> para los datos. La combinación aporta personalidad y mantiene la legibilidad.</p>
       <div class="type-demo card" style="margin:10px 0">
         <div class="serif">La Esquina</div>
         <div style="font-size:8pt;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin:4px 0 10px">Playfair Display · marca y títulos</div>
         <div class="sans">Milanesa napolitana — <span class="num">$6.800,00</span></div>
         <div style="font-size:8pt;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:4px">Inter · tablas, filtros y números (cifras tabulares)</div>
       </div>
-      <p style="font-size:9.5pt">Los números usan <code>font-variant-numeric: tabular-nums</code> para que precios y totales se alineen en columna — fundamental en tablas y tickets.</p>
+      <p style="font-size:9.5pt">Los números usan <code>font-variant-numeric: tabular-nums</code> para que precios y totales se alineen en columna, algo clave en tablas y tickets.</p>
     </div>
     <div>
       <h3 style="margin-bottom:6px">Componentes reutilizables</h3>
       <ul style="font-size:10pt">
         <li><b>Tarjetas de métrica</b> con variantes de acento</li>
         <li><b>Badges de estado</b> (color + ícono + texto)</li>
-        <li><b>Tablas</b> densas en desktop / <b>tarjetas</b> en mobile</li>
+        <li><b>Tablas</b> densas en desktop y <b>tarjetas</b> en mobile</li>
         <li><b>Formularios</b> con foco, validación y ayudas</li>
         <li><b>Botón flotante</b> de WhatsApp y FAB de acción</li>
         <li><b>Modales</b>, toasts, spinners y empty states</li>
       </ul>
-      <div class="callout" style="margin-top:8px"><b>Tema claro y oscuro.</b> Todo se define con <b>variables CSS</b> (design tokens). El sistema soporta modo oscuro con un olivo más claro para mantener el contraste sobre fondos oscuros.</div>
+      <div class="callout" style="margin-top:8px"><b>Tema claro y oscuro.</b> Todo se define con <b>variables CSS</b> (design tokens). El sistema soporta modo oscuro con un olivo más claro que mantiene el contraste sobre fondos oscuros.</div>
     </div>
   </div>
 
-  <h3 style="margin:14px 0 8px">Mismo sistema, dos contextos</h3>
+  <h3 style="margin:14px 0 8px">Un mismo sistema en distintos contextos</h3>
   <div class="mini3">
     <figure><img src="screenshots/clientes.png" alt="Clientes"><figcaption>Listado ABM</figcaption></figure>
     <figure><img src="screenshots/login.png" alt="Login"><figcaption>Acceso de marca</figcaption></figure>
     <figure><img src="screenshots/repartidores.png" alt="Repartidores"><figcaption>Gestión de flota</figcaption></figure>
   </div>
 
-  <div class="foot"><span>La Esquina · Documento de Diseño UX/UI</span><span>06</span></div>
+  <div class="foot"><span>La Esquina · Documento de Diseño UX/UI</span><span>04</span></div>
 </section>
 
-<!-- ════════ 7. RESPONSIVE + ACCESIBILIDAD ════════ -->
+<!-- ════════ 5. RESPONSIVE + ACCESIBILIDAD ════════ -->
 <section class="page">
-  <div class="sec-head"><span class="sec-num">07</span><h2>Responsive y accesibilidad</h2></div>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Responsive y accesibilidad</h2></div>
 
   <div class="mini2">
     <div>
-      <h3 style="margin-bottom:6px">Mobile como ciudadano de primera</h3>
-      <p style="font-size:10pt">En el salón se trabaja con el celular en la mano. No "achicamos" el escritorio: rediseñamos cada listado como <strong>tarjetas apiladas</strong>, con la información priorizada y acciones táctiles grandes. El POS adopta pestañas y aparece un menú hamburguesa con topbar.</p>
+      <h3 style="margin-bottom:6px">Experiencia mobile dedicada</h3>
+      <p style="font-size:10pt">En el salón se trabaja con el celular en la mano. Cada listado se rediseña como <strong>tarjetas apiladas</strong>, con la información priorizada y acciones táctiles grandes. El POS adopta pestañas y aparece un menú hamburguesa con topbar.</p>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
         <span class="pill">Tarjetas ≥ 44px táctiles</span>
         <span class="pill">Filtros colapsables</span>
@@ -325,7 +274,7 @@
         <span class="pill">Tipografía fluida clamp()</span>
       </div>
     </div>
-    <figure style="margin:0"><img src="screenshots/pedidos-mobile.png" alt="Pedidos en mobile" style="max-width:62%;margin:0 auto"><figcaption>El mismo monitor de pedidos, repensado como lista de tarjetas en mobile.</figcaption></figure>
+    <figure style="margin:0"><img src="screenshots/pedidos-mobile.png" alt="Pedidos en mobile" style="max-width:62%;margin:0 auto"><figcaption>El monitor de pedidos, reordenado como lista de tarjetas en mobile.</figcaption></figure>
   </div>
 
   <h3 style="margin:16px 0 8px">Checklist de accesibilidad (WCAG)</h3>
@@ -333,9 +282,9 @@
     <div class="card">
       <h4>Percepción</h4>
       <ul style="font-size:9.5pt;margin:6px 0 0">
-        <li>Contraste de texto <b>AAA</b> (≥7:1)</li>
+        <li>Contraste de texto <b>AAA</b> (≥ 7:1)</li>
         <li>Estado por color <b>+ ícono + texto</b></li>
-        <li><code>alt</code> en imágenes, íconos decorativos <code>aria-hidden</code></li>
+        <li><code>alt</code> en imágenes; íconos decorativos con <code>aria-hidden</code></li>
       </ul>
     </div>
     <div class="card">
@@ -343,39 +292,27 @@
       <ul style="font-size:9.5pt;margin:6px 0 0">
         <li><b>Skip-link</b> "Saltar al contenido" + <code>&lt;main&gt;</code></li>
         <li>Foco de teclado visible y consistente</li>
-        <li>Labels asociadas (<code>htmlFor/id</code>), <code>aria-label</code> en buscadores</li>
+        <li>Labels asociadas (<code>htmlFor/id</code>) y <code>aria-label</code> en buscadores</li>
         <li><code>prefers-reduced-motion</code> respetado</li>
       </ul>
     </div>
   </div>
-  <div class="callout" style="margin-top:12px"><b>Ética y datos.</b> Sin patrones oscuros. El login aclara que las credenciales son de uso interno y no se comparten con terceros; el formulario público informa el uso de los datos antes de enviarlos.</div>
+  <div class="callout" style="margin-top:12px"><b>Ética y datos.</b> Sin patrones oscuros. El login aclara que las credenciales son de uso interno y el formulario público informa el uso de los datos antes de enviarlos.</div>
 
-  <div class="foot"><span>La Esquina · Documento de Diseño UX/UI</span><span>07</span></div>
+  <div class="foot"><span>La Esquina · Documento de Diseño UX/UI</span><span>05</span></div>
 </section>
 
-<!-- ════════ 8. CIERRE ════════ -->
+<!-- ════════ 6. SÍNTESIS ════════ -->
 <section class="page">
-  <div class="sec-head"><span class="sec-num">08</span><h2>Síntesis</h2></div>
-  <p class="lead">La Esquina demuestra que un back-office puede ser tan cuidado como una landing de marca cuando ambos nacen del mismo sistema de diseño.</p>
+  <div class="sec-head"><span class="sec-num">06</span><h2>Síntesis</h2></div>
+  <p class="lead">El back-office y la landing nacen del mismo sistema de diseño: por eso comparten identidad y mantienen coherencia entre lo operativo y lo comercial.</p>
 
   <div class="grid2" style="margin:16px 0">
-    <div class="card"><div class="ic">UX</div><h4>Claridad operativa</h4><p style="font-size:10pt;margin:0">Jerarquía de lo general a lo específico, estados inequívocos, mobile real, captación sin fricción y feedback en cada acción.</p></div>
+    <div class="card"><div class="ic">UX</div><h4>Claridad operativa</h4><p style="font-size:10pt;margin:0">Jerarquía de lo general a lo específico, estados inequívocos, experiencia mobile dedicada, captación de bajo esfuerzo y feedback en cada acción.</p></div>
     <div class="card"><div class="ic">UI</div><h4>Identidad accesible</h4><p style="font-size:10pt;margin:0">Verde bosque sobre hueso con contraste AAA, doble voz tipográfica serif/sans y componentes consistentes gobernados por tokens.</p></div>
   </div>
 
-  <h3 style="margin-bottom:8px">Próximos pasos</h3>
-  <ul style="font-size:10pt">
-    <li>Pruebas de usabilidad con 5 usuarios + cuestionario SUS (crear pedido, buscar cliente, exportar reporte)</li>
-    <li>Internacionalización (externalizar textos, soporte LTR/RTL)</li>
-    <li>Métricas de conversión del formulario de captación</li>
-  </ul>
-
-  <div style="margin-top:28px;padding:22px;border-radius:16px;background:linear-gradient(135deg,#33462a,#1A2614);color:#EDEFE6">
-    <div style="font-family:var(--serif);font-weight:800;font-size:22pt;color:#fff">La Esquina</div>
-    <p style="margin:6px 0 0;color:#cdd6bf;font-size:10.5pt">Buena comida, mejor compañía — y una experiencia digital a la altura.</p>
-  </div>
-
-  <div class="foot"><span>La Esquina · Documento de Diseño UX/UI</span><span>08</span></div>
+  <div class="foot"><span>La Esquina · Documento de Diseño UX/UI</span><span>06</span></div>
 </section>
 
 </body>

@@ -24,10 +24,7 @@ async function load(file, w, h) {
 {
   const page = await load('DOCUMENTO-DISENO.html', 794, 1123);
   await page.pdf({ path: resolve(DOCS, 'DOCUMENTO-DISENO.pdf'), format: 'A4', printBackground: true, preferCSSPageSize: true });
-  // preview de las 2 primeras páginas
-  await page.setViewport({ width: 794, height: 1123, deviceScaleFactor: 1.4 });
-  await page.screenshot({ path: resolve(DOCS, 'preview-doc.png'), clip: { x: 0, y: 0, width: 794, height: 1123 * 2 + 30 } });
-  console.log('✓ DOCUMENTO-DISENO.pdf + preview');
+  console.log('✓ DOCUMENTO-DISENO.pdf');
   await page.close();
 }
 
@@ -35,8 +32,8 @@ async function load(file, w, h) {
 {
   const page = await load('POSTER-B2.html', 1890, 2646);
   await page.pdf({ path: resolve(DOCS, 'POSTER-B2.pdf'), width: '500mm', height: '700mm', printBackground: true, pageRanges: '1' });
-  await page.screenshot({ path: resolve(DOCS, 'preview-poster.png'), fullPage: false });
-  console.log('✓ POSTER-B2.pdf + preview');
+  await page.screenshot({ path: resolve(DOCS, 'POSTER-B2.png'), fullPage: false });
+  console.log('✓ POSTER-B2.pdf + PNG');
   await page.close();
 }
 
