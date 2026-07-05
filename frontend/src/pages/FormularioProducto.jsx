@@ -9,6 +9,8 @@ const FormularioProducto = () => {
   const navigate = useNavigate();
   const [categorias, setCategorias] = useState([]);
   const [cargando, setCargando] = useState(false);
+  const [cargandoInicial, setCargandoInicial] = useState(true);
+  const [error, setError] = useState("");
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: {
       nombre: "",
@@ -26,10 +28,19 @@ const FormularioProducto = () => {
 
   useEffect(() => {
     const cargar = async () => {
-      setCategorias(await categoriasService.obtenerTodos());
-      if (id) {
-        const producto = await productosService.obtenerPorId(id);
-        reset(producto);
+      try {
+        setCargandoInicial(true);
+        const cats = await categoriasService.obtenerTodos();
+        setCategorias(Array.isArray(cats) ? cats : []);
+        if (id) {
+          const producto = await productosService.obtenerPorId(id);
+          reset(producto);
+        }
+        setError("");
+      } catch (err) {
+        setError(err.response?.data?.error || "No se pudo cargar el producto");
+      } finally {
+        setCargandoInicial(false);
       }
     };
     cargar();
@@ -37,12 +48,14 @@ const FormularioProducto = () => {
 
   const onSubmit = async (data) => {
     setCargando(true);
+    setError("");
     try {
       const payload = {
         ...data,
         precioSalon: Number(data.precioSalon || 0),
         precioMostrador: Number(data.precioMostrador || 0),
         costo: Number(data.costo || 0),
+        idCategoria: Number(data.idCategoria),
         stockActual: Number(data.stockActual || 0)
       };
       if (id) {
@@ -51,10 +64,20 @@ const FormularioProducto = () => {
         await productosService.crear(payload);
       }
       navigate("/productos");
+    } catch (err) {
+      setError(err.response?.data?.error || "No se pudo guardar el producto");
     } finally {
       setCargando(false);
     }
   };
+
+  if (cargandoInicial) {
+    return (
+      <div className="card">
+        <div className="card-body">Cargando producto...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="fade-in">
@@ -66,36 +89,42 @@ const FormularioProducto = () => {
         <button type="button" className="btn btn-outline-secondary" onClick={() => navigate("/productos")}>Volver</button>
       </div>
 
+      {error && (
+        <div className="alert alert-danger mb-4" role="alert">
+          {error}
+        </div>
+      )}
+
       <div className="card">
         <div className="card-body">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="row g-3">
               <div className="col-md-6">
-                <label className="form-label">Nombre</label>
-                <input className={`form-control ${errors.nombre ? "is-invalid" : ""}`} {...register("nombre", { required: true })} />
+                <label className="form-label" htmlFor="nombre">Nombre</label>
+                <input id="nombre" className={`form-control ${errors.nombre ? "is-invalid" : ""}`} {...register("nombre", { required: true })} />
               </div>
               <div className="col-md-6">
-                <label className="form-label">Categoría</label>
-                <select className="form-select" {...register("idCategoria", { required: true })}>
-                  <option value="">Seleccionar…</option>
+                <label className="form-label" htmlFor="idCategoria">Categoria</label>
+                <select id="idCategoria" className="form-select" {...register("idCategoria", { required: true })}>
+                  <option value="">Seleccionar...</option>
                   {categorias.map((categoria) => <option key={categoria.id} value={categoria.id}>{categoria.nombre}</option>)}
                 </select>
               </div>
               <div className="col-md-4">
-                <label className="form-label">Precio salón</label>
-                <input className="form-control" type="number" min="0" step="0.01" {...register("precioSalon")} />
+                <label className="form-label" htmlFor="precioSalon">Precio salon</label>
+                <input id="precioSalon" className="form-control" type="number" min="0" step="0.01" {...register("precioSalon")} />
               </div>
               <div className="col-md-4">
-                <label className="form-label">Precio mostrador/delivery</label>
-                <input className="form-control" type="number" min="0" step="0.01" {...register("precioMostrador")} />
+                <label className="form-label" htmlFor="precioMostrador">Precio mostrador/delivery</label>
+                <input id="precioMostrador" className="form-control" type="number" min="0" step="0.01" {...register("precioMostrador")} />
               </div>
               <div className="col-md-4">
-                <label className="form-label">Costo</label>
-                <input className="form-control" type="number" min="0" step="0.01" {...register("costo")} />
+                <label className="form-label" htmlFor="costo">Costo</label>
+                <input id="costo" className="form-control" type="number" min="0" step="0.01" {...register("costo")} />
               </div>
               <div className="col-12">
-                <label className="form-label">Descripción</label>
-                <textarea className="form-control" rows="3" {...register("descripcion")} />
+                <label className="form-label" htmlFor="descripcion">Descripcion</label>
+                <textarea id="descripcion" className="form-control" rows="3" {...register("descripcion")} />
               </div>
               <div className="col-md-4">
                 <div className="form-check form-switch mt-4">
@@ -110,13 +139,15 @@ const FormularioProducto = () => {
                 </div>
               </div>
               <div className="col-md-4">
-                <label className="form-label">Stock actual</label>
-                <input className="form-control" type="number" min="0" step="1" {...register("stockActual")} />
+                <label className="form-label" htmlFor="stockActual">Stock actual</label>
+                <input id="stockActual" className="form-control" type="number" min="0" step="1" {...register("stockActual")} />
               </div>
             </div>
             <div className="d-flex justify-content-end gap-2 mt-4">
               <button type="button" className="btn btn-outline-secondary" onClick={() => navigate("/productos")}>Cancelar</button>
-              <button type="submit" className="btn btn-primary" disabled={cargando}>{cargando ? "Guardando..." : "Guardar"}</button>
+              <button type="submit" className="btn btn-primary" disabled={cargando || categorias.length === 0}>
+                {cargando ? "Guardando..." : "Guardar"}
+              </button>
             </div>
           </form>
         </div>

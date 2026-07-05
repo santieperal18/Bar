@@ -12,9 +12,28 @@ const Reportes = () => {
     categorias: {},
     ventasPorHora: []
   });
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    reportesService.obtenerDashboardSupervivencia().then(setDashboard);
+    reportesService
+      .obtenerDashboardSupervivencia()
+      .then((data) => {
+        setDashboard({
+          facturacionHoy: 0,
+          facturacionAyer: 0,
+          variacionFacturacion: 0,
+          ticketPromedio: 0,
+          topProductos: [],
+          productosLentos: [],
+          categorias: {},
+          ventasPorHora: [],
+          ...data
+        });
+        setError("");
+      })
+      .catch((err) => {
+        setError(err.response?.data?.error || "No se pudo cargar el dashboard");
+      });
   }, []);
 
   const maxVentas = Math.max(...dashboard.topProductos.map((producto) => Number(producto.total_vendido || 0)), 1);
@@ -28,6 +47,12 @@ const Reportes = () => {
           <div className="page-subtitle">Ventas, productos lentos, categorías fuertes y picos horarios</div>
         </div>
       </div>
+
+      {error && (
+        <div className="alert alert-danger mb-4" role="alert">
+          {error}
+        </div>
+      )}
 
       <div className="row g-3 mb-4">
         <div className="col-12 col-md-4">
@@ -58,6 +83,7 @@ const Reportes = () => {
           <div className="card h-100">
             <div className="card-header">Top vendidos</div>
             <div className="card-body d-flex flex-column gap-3">
+              {dashboard.topProductos.length === 0 && <span style={{ color: "var(--text-2)" }}>Sin ventas registradas.</span>}
               {dashboard.topProductos.map((producto, index) => (
                 <div key={producto.nombre} className="top-product-row">
                   <div className="d-flex justify-content-between">
@@ -77,6 +103,7 @@ const Reportes = () => {
           <div className="card h-100">
             <div className="card-header">Productos para revisar</div>
             <div className="card-body d-flex flex-column gap-2">
+              {dashboard.productosLentos.length === 0 && <span style={{ color: "var(--text-2)" }}>Sin productos para mostrar.</span>}
               {dashboard.productosLentos.map((producto, index) => (
                 <div key={`${producto.nombre}-${index}`} className="d-flex justify-content-between">
                   <span>{producto.nombre}</span>
@@ -113,6 +140,7 @@ const Reportes = () => {
           <div className="card h-100">
             <div className="card-header">Picos por hora</div>
             <div className="card-body d-flex flex-column gap-3">
+              {dashboard.ventasPorHora.length === 0 && <span style={{ color: "var(--text-2)" }}>Sin ventas por hora todavia.</span>}
               {dashboard.ventasPorHora.map((fila) => (
                 <div key={fila.hora} className="top-product-row">
                   <div className="d-flex justify-content-between">

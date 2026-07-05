@@ -8,14 +8,24 @@ const Productos = () => {
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [nuevaCategoria, setNuevaCategoria] = useState({ nombre: "", tipo: "comida", descripcion: "" });
+  const [error, setError] = useState("");
+  const [cargando, setCargando] = useState(true);
 
   const cargar = async () => {
-    const [prods, cats] = await Promise.all([
-      productosService.obtenerTodos(),
-      categoriasService.obtenerTodos()
-    ]);
-    setProductos(prods);
-    setCategorias(cats);
+    try {
+      setCargando(true);
+      const [prods, cats] = await Promise.all([
+        productosService.obtenerTodos(),
+        categoriasService.obtenerTodos()
+      ]);
+      setProductos(Array.isArray(prods) ? prods : []);
+      setCategorias(Array.isArray(cats) ? cats : []);
+      setError("");
+    } catch (err) {
+      setError(err.response?.data?.error || "No se pudieron cargar productos y categorias");
+    } finally {
+      setCargando(false);
+    }
   };
 
   useEffect(() => {
@@ -23,25 +33,43 @@ const Productos = () => {
   }, []);
 
   const eliminar = async (id) => {
-    await productosService.eliminar(id);
-    await cargar();
+    try {
+      await productosService.eliminar(id);
+      await cargar();
+    } catch (err) {
+      setError(err.response?.data?.error || "No se pudo ocultar el producto");
+    }
   };
 
   const crearCategoria = async () => {
-    await categoriasService.crear(nuevaCategoria);
-    setNuevaCategoria({ nombre: "", tipo: "comida", descripcion: "" });
-    await cargar();
+    try {
+      if (!nuevaCategoria.nombre.trim()) {
+        setError("La categoria necesita un nombre.");
+        return;
+      }
+      await categoriasService.crear(nuevaCategoria);
+      setNuevaCategoria({ nombre: "", tipo: "comida", descripcion: "" });
+      await cargar();
+    } catch (err) {
+      setError(err.response?.data?.error || "No se pudo crear la categoria");
+    }
   };
 
   return (
     <>
       <div className="page-header">
         <div>
-          <div className="page-title">Productos y Categorías</div>
-          <div className="page-subtitle">Backoffice del menú, rentabilidad y stock básico</div>
+          <div className="page-title">Productos y Categorias</div>
+          <div className="page-subtitle">Backoffice del menu, rentabilidad y stock basico</div>
         </div>
-        <button className="btn btn-primary" onClick={() => navigate("/productos/nuevo")}>Nuevo Producto</button>
+        <button type="button" className="btn btn-primary" onClick={() => navigate("/productos/nuevo")}>Nuevo Producto</button>
       </div>
+
+      {error && (
+        <div className="alert alert-danger mb-4" role="alert">
+          {error}
+        </div>
+      )}
 
       <div className="row g-3 mb-4">
         <div className="col-12 col-lg-8">
@@ -50,8 +78,8 @@ const Productos = () => {
               <thead>
                 <tr>
                   <th>Producto</th>
-                  <th>Categoría</th>
-                  <th className="text-end">Salón</th>
+                  <th>Categoria</th>
+                  <th className="text-end">Salon</th>
                   <th className="text-end">Mostrador</th>
                   <th className="text-end">Costo</th>
                   <th className="text-end">Margen</th>
@@ -60,6 +88,16 @@ const Productos = () => {
                 </tr>
               </thead>
               <tbody>
+                {cargando && (
+                  <tr>
+                    <td colSpan="8">Cargando productos...</td>
+                  </tr>
+                )}
+                {!cargando && productos.length === 0 && (
+                  <tr>
+                    <td colSpan="8">Todavia no hay productos cargados.</td>
+                  </tr>
+                )}
                 {productos.map((producto) => {
                   const margen = Number(producto.precioMostrador || 0) - Number(producto.costo || 0);
                   return (
@@ -74,12 +112,16 @@ const Productos = () => {
                       <td className="text-end">${Number(producto.costo || 0).toFixed(2)}</td>
                       <td className="text-end" style={{ color: margen >= 0 ? "var(--green)" : "var(--red)" }}>${margen.toFixed(2)}</td>
                       <td className="text-center">
-                        {producto.controlaStock ? <span className={`status-badge ${Number(producto.stockActual || 0) > 3 ? "sb-preparing" : "sb-cancelled"}`}>{producto.stockActual}</span> : <span className="status-badge sb-default">No aplica</span>}
+                        {producto.controlaStock ? (
+                          <span className={`status-badge ${Number(producto.stockActual || 0) > 3 ? "sb-preparing" : "sb-cancelled"}`}>{producto.stockActual}</span>
+                        ) : (
+                          <span className="status-badge sb-default">No aplica</span>
+                        )}
                       </td>
                       <td className="text-center">
                         <div className="d-flex justify-content-center gap-1">
-                          <button className="btn btn-icon-sm text-primary" onClick={() => navigate(`/productos/editar/${producto.id}`)}><i className="fas fa-pen"></i></button>
-                          <button className="btn btn-icon-sm text-danger" onClick={() => eliminar(producto.id)}><i className="fas fa-trash"></i></button>
+                          <button type="button" className="btn btn-icon-sm text-primary" onClick={() => navigate(`/productos/editar/${producto.id}`)} aria-label={`Editar ${producto.nombre}`}><i className="fas fa-pen"></i></button>
+                          <button type="button" className="btn btn-icon-sm text-danger" onClick={() => eliminar(producto.id)} aria-label={`Ocultar ${producto.nombre}`}><i className="fas fa-trash"></i></button>
                         </div>
                       </td>
                     </tr>
@@ -92,16 +134,37 @@ const Productos = () => {
 
         <div className="col-12 col-lg-4">
           <div className="card">
-            <div className="card-header">Alta rápida de categoría</div>
+            <div className="card-header">Alta rapida de categoria</div>
             <div className="card-body d-flex flex-column gap-3">
-              <input className="form-control" placeholder="Nombre" value={nuevaCategoria.nombre} onChange={(e) => setNuevaCategoria((prev) => ({ ...prev, nombre: e.target.value }))} />
-              <select className="form-select" value={nuevaCategoria.tipo} onChange={(e) => setNuevaCategoria((prev) => ({ ...prev, tipo: e.target.value }))}>
+              <input
+                id="nombreCategoria"
+                name="nombreCategoria"
+                className="form-control"
+                placeholder="Nombre"
+                value={nuevaCategoria.nombre}
+                onChange={(e) => setNuevaCategoria((prev) => ({ ...prev, nombre: e.target.value }))}
+              />
+              <select
+                id="tipoCategoria"
+                name="tipoCategoria"
+                className="form-select"
+                value={nuevaCategoria.tipo}
+                onChange={(e) => setNuevaCategoria((prev) => ({ ...prev, tipo: e.target.value }))}
+              >
                 <option value="desayuno">Desayuno</option>
                 <option value="comida">Comida</option>
                 <option value="bebida">Bebida</option>
               </select>
-              <textarea className="form-control" rows="3" placeholder="Descripción" value={nuevaCategoria.descripcion} onChange={(e) => setNuevaCategoria((prev) => ({ ...prev, descripcion: e.target.value }))} />
-              <button className="btn btn-primary" onClick={crearCategoria}>Crear categoría</button>
+              <textarea
+                id="descripcionCategoria"
+                name="descripcionCategoria"
+                className="form-control"
+                rows="3"
+                placeholder="Descripcion"
+                value={nuevaCategoria.descripcion}
+                onChange={(e) => setNuevaCategoria((prev) => ({ ...prev, descripcion: e.target.value }))}
+              />
+              <button type="button" className="btn btn-primary" onClick={crearCategoria}>Crear categoria</button>
               <div className="d-flex flex-wrap gap-2">
                 {categorias.map((categoria) => <span key={categoria.id} className="status-badge sb-active">{categoria.nombre}</span>)}
               </div>
