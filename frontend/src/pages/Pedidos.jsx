@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import pedidosService from "../services/pedidos.service";
-import clientesService from "../services/clientes.service";
 import ModalDetallesPedido from "../components/ModalDetallesPedido";
 import impresionService from '../services/impresion.service';
 
@@ -21,7 +20,6 @@ const ESTADO_CONFIG = {
 
 const Pedidos = () => {
   const [pedidos, setPedidos] = useState([]);
-  const [clientes, setClientes] = useState([]);
   const [cargando, setCargando] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
@@ -35,16 +33,8 @@ const Pedidos = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    cargarClientes();
     buscar();
   }, []);
-
-  const cargarClientes = async () => {
-    try {
-      const data = await clientesService.obtenerTodos();
-      setClientes(Array.isArray(data) ? data : []);
-    } catch { setClientes([]); }
-  };
 
   const buscar = async () => {
     setCargando(true);
@@ -121,10 +111,16 @@ const Pedidos = () => {
           <div className="row g-2 align-items-end">
             <div className="col-12 col-md-3">
               <label htmlFor="f-cliente" className="form-label">Cliente</label>
-              <select id="f-cliente" className="form-select" value={filtros.cliente} onChange={e => setFiltros({ ...filtros, cliente: e.target.value })}>
-                <option value="">Todos</option>
-                {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>)}
-              </select>
+              <input
+                id="f-cliente"
+                name="cliente"
+                type="text"
+                className="form-control"
+                value={filtros.cliente}
+                placeholder="Nombre o apellido"
+                onChange={e => setFiltros({ ...filtros, cliente: e.target.value })}
+                onKeyDown={e => e.key === 'Enter' && buscar()}
+              />
             </div>
             <div className="col-6 col-md-2">
               <label htmlFor="f-estado" className="form-label">Estado</label>

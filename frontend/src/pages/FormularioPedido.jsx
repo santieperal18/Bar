@@ -17,6 +17,8 @@ const FormularioPedido = () => {
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");
+  const [busquedaCliente, setBusquedaCliente] = useState("");
+  const [mostrarSugerenciasCliente, setMostrarSugerenciasCliente] = useState(false);
   const { register, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
       tipoEntrega: location.state?.tipoEntrega || "mostrador",
@@ -47,6 +49,7 @@ const FormularioPedido = () => {
         if (pedido) {
           setValue("tipoEntrega", pedido.tipoEntrega || "mostrador");
           setValue("idCliente", pedido.idCliente || "");
+          setBusquedaCliente(pedido.cliente ? `${pedido.cliente.nombre} ${pedido.cliente.apellido}` : "");
           setValue("idMesa", pedido.idMesa || "");
           setValue("direccionEntrega", pedido.direccionEntrega || "");
           setValue("idRepartidor", pedido.idRepartidor || "");
@@ -91,6 +94,24 @@ const FormularioPedido = () => {
       if (item.cantidad === 1) return [];
       return [{ ...item, cantidad: item.cantidad - 1 }];
     }));
+  };
+
+  const clientesFiltrados = busquedaCliente.trim()
+    ? clientes
+      .filter((cliente) => `${cliente.nombre} ${cliente.apellido} ${cliente.telefono || ""}`.toLowerCase().includes(busquedaCliente.toLowerCase()))
+      .slice(0, 8)
+    : [];
+
+  const seleccionarCliente = (cliente) => {
+    setValue("idCliente", cliente.id);
+    setBusquedaCliente(`${cliente.nombre} ${cliente.apellido}`);
+    setMostrarSugerenciasCliente(false);
+  };
+
+  const limpiarCliente = () => {
+    setValue("idCliente", "");
+    setBusquedaCliente("");
+    setMostrarSugerenciasCliente(false);
   };
 
   const onSubmit = async (data) => {
@@ -160,10 +181,50 @@ const FormularioPedido = () => {
                   </div>
                   <div className="col-md-4">
                     <label className="form-label" htmlFor="idCliente">Cliente</label>
-                    <select className="form-select" id="idCliente" {...register("idCliente")}>
-                      <option value="">Consumidor final</option>
-                      {clientes.map((cliente) => <option key={cliente.id} value={cliente.id}>{cliente.nombre} {cliente.apellido}</option>)}
-                    </select>
+                    <input type="hidden" {...register("idCliente")} />
+                    <div className="position-relative">
+                      <div className="input-group">
+                        <input
+                          className="form-control"
+                          id="idCliente"
+                          name="clienteTexto"
+                          type="text"
+                          value={busquedaCliente}
+                          placeholder="Buscar cliente por nombre o telefono"
+                          autoComplete="off"
+                          onFocus={() => setMostrarSugerenciasCliente(true)}
+                          onChange={(e) => {
+                            setBusquedaCliente(e.target.value);
+                            setValue("idCliente", "");
+                            setMostrarSugerenciasCliente(true);
+                          }}
+                        />
+                        {busquedaCliente && (
+                          <button type="button" className="btn btn-outline-secondary" onClick={limpiarCliente} aria-label="Limpiar cliente">
+                            <i className="fas fa-times"></i>
+                          </button>
+                        )}
+                      </div>
+                      {mostrarSugerenciasCliente && clientesFiltrados.length > 0 && (
+                        <div className="list-group position-absolute w-100 shadow" style={{ zIndex: 20, maxHeight: 220, overflowY: "auto" }}>
+                          {clientesFiltrados.map((cliente) => (
+                            <button
+                              key={cliente.id}
+                              type="button"
+                              className="list-group-item list-group-item-action"
+                              onMouseDown={(e) => {
+                                e.preventDefault();
+                                seleccionarCliente(cliente);
+                              }}
+                            >
+                              <div style={{ fontWeight: 600 }}>{cliente.nombre} {cliente.apellido}</div>
+                              {cliente.telefono && <div style={{ fontSize: 12, color: "var(--text-2)" }}>{cliente.telefono}</div>}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    {!busquedaCliente && <div style={{ color: "var(--text-3)", fontSize: 12, marginTop: 4 }}>Sin cliente: consumidor final</div>}
                   </div>
                   <div className="col-md-4">
                     <label className="form-label" htmlFor="idMesa">Mesa</label>
