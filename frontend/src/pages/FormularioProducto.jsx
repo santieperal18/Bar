@@ -15,6 +15,7 @@ const FormularioProducto = () => {
       descripcion: "",
       precioSalon: "",
       precioMostrador: "",
+      costo: "",
       idCategoria: "",
       disponible: true,
       controlaStock: false,
@@ -41,6 +42,7 @@ const FormularioProducto = () => {
         ...data,
         precioSalon: Number(data.precioSalon || 0),
         precioMostrador: Number(data.precioMostrador || 0),
+        costo: Number(data.costo || 0),
         stockActual: Number(data.stockActual || 0)
       };
       if (id) {
@@ -59,7 +61,7 @@ const FormularioProducto = () => {
       <div className="page-header">
         <div>
           <div className="page-title">{id ? "Editar Producto" : "Nuevo Producto"}</div>
-          <div className="page-subtitle">Precios diferenciados, visibilidad y stock cerrado</div>
+          <div className="page-subtitle">Precios, costo, visibilidad y stock cerrado</div>
         </div>
         <button type="button" className="btn btn-outline-secondary" onClick={() => navigate("/productos")}>Volver</button>
       </div>
@@ -79,13 +81,17 @@ const FormularioProducto = () => {
                   {categorias.map((categoria) => <option key={categoria.id} value={categoria.id}>{categoria.nombre}</option>)}
                 </select>
               </div>
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Precio salón</label>
                 <input className="form-control" type="number" min="0" step="0.01" {...register("precioSalon")} />
               </div>
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Precio mostrador/delivery</label>
                 <input className="form-control" type="number" min="0" step="0.01" {...register("precioMostrador")} />
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Costo</label>
+                <input className="form-control" type="number" min="0" step="0.01" {...register("costo")} />
               </div>
               <div className="col-12">
                 <label className="form-label">Descripción</label>
