@@ -14,6 +14,9 @@ const FormularioPedido = () => {
   const [productos, setProductos] = useState([]);
   const [repartidores, setRepartidores] = useState([]);
   const [carrito, setCarrito] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [guardando, setGuardando] = useState(false);
+  const [error, setError] = useState("");
   const { register, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
       tipoEntrega: location.state?.tipoEntrega || "mostrador",
@@ -26,17 +29,45 @@ const FormularioPedido = () => {
 
   useEffect(() => {
     const cargar = async () => {
-      const [clis, prods, reps] = await Promise.all([
-        clientesService.obtenerTodos(),
-        productosService.obtenerTodos(),
-        repartidoresService.obtenerTodos()
-      ]);
-      setClientes(clis);
-      setProductos(prods);
-      setRepartidores(reps);
+      setCargando(true);
+      setError("");
+
+      try {
+        const [clis, prods, reps, pedido] = await Promise.all([
+          clientesService.obtenerTodos(),
+          productosService.obtenerTodos(),
+          repartidoresService.obtenerTodos(),
+          id ? pedidosService.obtenerPorId(id) : Promise.resolve(null)
+        ]);
+
+        setClientes(clis);
+        setProductos(prods);
+        setRepartidores(reps);
+
+        if (pedido) {
+          setValue("tipoEntrega", pedido.tipoEntrega || "mostrador");
+          setValue("idCliente", pedido.idCliente || "");
+          setValue("idMesa", pedido.idMesa || "");
+          setValue("direccionEntrega", pedido.direccionEntrega || "");
+          setValue("idRepartidor", pedido.idRepartidor || "");
+          setCarrito(
+            (pedido.productos || []).map((producto) => ({
+              id: producto.id,
+              nombre: producto.nombre,
+              precio: Number(producto.PedidoProducto?.precioUnitario ?? producto.precio ?? 0),
+              cantidad: Number(producto.PedidoProducto?.cantidad ?? 1)
+            }))
+          );
+        }
+      } catch (err) {
+        setError(err.response?.data?.error || "No se pudo cargar el pedido");
+      } finally {
+        setCargando(false);
+      }
     };
+
     cargar();
-  }, []);
+  }, [id, setValue]);
 
   const agregar = (producto) => {
     const precio = Number(
@@ -48,7 +79,7 @@ const FormularioPedido = () => {
     setCarrito((prev) => {
       const existe = prev.find((item) => item.id === producto.id);
       if (existe) {
-        return prev.map((item) => item.id === producto.id ? { ...item, cantidad: item.cantidad + 1 } : item);
+        return prev.map((item) => item.id === producto.id ? { ...item, cantidad: item.cantidad + 1, precio } : item);
       }
       return [...prev, { id: producto.id, nombre: producto.nombre, precio, cantidad: 1 }];
     });
@@ -63,29 +94,56 @@ const FormularioPedido = () => {
   };
 
   const onSubmit = async (data) => {
-    const payload = {
-      ...data,
-      productos: carrito.map((item) => ({ id: item.id, cantidad: item.cantidad }))
-    };
-    if (id) {
-      await pedidosService.actualizar(id, payload);
-    } else {
-      await pedidosService.crear(payload);
+    setGuardando(true);
+    setError("");
+
+    try {
+      const payload = {
+        ...data,
+        productos: carrito.map((item) => ({ id: item.id, cantidad: item.cantidad }))
+      };
+
+      if (id) {
+        await pedidosService.actualizar(id, payload);
+      } else {
+        await pedidosService.crear(payload);
+      }
+
+      navigate((data.idMesa || location.state?.idMesa) ? "/salon" : "/pedidos");
+    } catch (err) {
+      setError(err.response?.data?.error || "No se pudo guardar el pedido");
+    } finally {
+      setGuardando(false);
     }
-    navigate(location.state?.idMesa ? "/salon" : "/pedidos");
   };
+
+  if (cargando) {
+    return (
+      <div className="card">
+        <div className="card-body">Cargando pedido...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="fade-in">
       <div className="page-header">
         <div>
           <div className="page-title">{id ? `Editar Pedido #${id}` : "Nueva Comanda"}</div>
-          <div className="page-subtitle">{location.state?.mesaNumero ? `Mesa ${location.state.mesaNumero}` : "Comanda rápida con doble precio"}</div>
+          <div className="page-subtitle">
+            {location.state?.mesaNumero ? `Mesa ${location.state.mesaNumero}` : "Comanda rapida con doble precio"}
+          </div>
         </div>
         <button className="btn btn-outline-secondary" type="button" onClick={() => navigate(-1)}>Volver</button>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
+        {error && (
+          <div className="alert alert-danger mb-4" role="alert">
+            {error}
+          </div>
+        )}
+
         <div className="row g-4">
           <div className="col-12 col-xl-8">
             <div className="card mb-4">
@@ -93,33 +151,33 @@ const FormularioPedido = () => {
               <div className="card-body">
                 <div className="row g-3">
                   <div className="col-md-4">
-                    <label className="form-label">Canal</label>
-                    <select className="form-select" {...register("tipoEntrega")}>
+                    <label className="form-label" htmlFor="tipoEntrega">Canal</label>
+                    <select className="form-select" id="tipoEntrega" {...register("tipoEntrega")}>
                       <option value="mostrador">Mostrador</option>
                       <option value="delivery">Delivery</option>
-                      <option value="salon">Salón</option>
+                      <option value="salon">Salon</option>
                     </select>
                   </div>
                   <div className="col-md-4">
-                    <label className="form-label">Cliente</label>
-                    <select className="form-select" {...register("idCliente")}>
+                    <label className="form-label" htmlFor="idCliente">Cliente</label>
+                    <select className="form-select" id="idCliente" {...register("idCliente")}>
                       <option value="">Consumidor final</option>
                       {clientes.map((cliente) => <option key={cliente.id} value={cliente.id}>{cliente.nombre} {cliente.apellido}</option>)}
                     </select>
                   </div>
                   <div className="col-md-4">
-                    <label className="form-label">Mesa</label>
-                    <input className="form-control" readOnly {...register("idMesa")} />
+                    <label className="form-label" htmlFor="idMesa">Mesa</label>
+                    <input className="form-control" id="idMesa" readOnly {...register("idMesa")} />
                   </div>
                   {tipoEntrega === "delivery" && (
                     <>
                       <div className="col-md-6">
-                        <label className="form-label">Dirección</label>
-                        <input className="form-control" {...register("direccionEntrega")} />
+                        <label className="form-label" htmlFor="direccionEntrega">Direccion</label>
+                        <input className="form-control" id="direccionEntrega" {...register("direccionEntrega")} />
                       </div>
                       <div className="col-md-6">
-                        <label className="form-label">Repartidor</label>
-                        <select className="form-select" {...register("idRepartidor")}>
+                        <label className="form-label" htmlFor="idRepartidor">Repartidor</label>
+                        <select className="form-select" id="idRepartidor" {...register("idRepartidor")}>
                           <option value="">Sin asignar</option>
                           {repartidores.map((repartidor) => <option key={repartidor.id} value={repartidor.id}>{repartidor.nombre} {repartidor.apellido}</option>)}
                         </select>
@@ -131,7 +189,7 @@ const FormularioPedido = () => {
             </div>
 
             <div className="card">
-              <div className="card-header">Menú rápido</div>
+              <div className="card-header">Menu rapido</div>
               <div className="card-body">
                 <div className="product-grid">
                   {productos.map((producto) => (
@@ -140,7 +198,9 @@ const FormularioPedido = () => {
                       <div className="product-card-price">
                         ${Number(tipoEntrega === "salon" ? producto.precioSalon : producto.precioMostrador).toFixed(2)}
                       </div>
-                      <div style={{ fontSize: 11, color: "var(--text-3)" }}>{tipoEntrega === "salon" ? "Precio salón" : "Precio mostrador/delivery"}</div>
+                      <div style={{ fontSize: 11, color: "var(--text-3)" }}>
+                        {tipoEntrega === "salon" ? "Precio salon" : "Precio mostrador/delivery"}
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -169,7 +229,9 @@ const FormularioPedido = () => {
               <div className="ticket-footer">
                 <div className="ticket-total-label">Total</div>
                 <div className="ticket-total">${total.toFixed(2)}</div>
-                <button type="submit" className="btn btn-primary w-100 mt-3" disabled={carrito.length === 0}>Confirmar pedido</button>
+                <button type="submit" className="btn btn-primary w-100 mt-3" disabled={carrito.length === 0 || guardando}>
+                  {guardando ? "Guardando..." : "Confirmar pedido"}
+                </button>
               </div>
             </div>
           </div>
