@@ -48,6 +48,11 @@ const actualizarEstado = async (id, estado) => {
   return response.data;
 };
 
+const pedirCuenta = async (id) => {
+  const response = await axios.patch(`/pedidos/${id}/pedir-cuenta`);
+  return response.data;
+};
+
 const eliminar = async (id) => {
   await axios.delete(`/pedidos/${id}`);
 };
@@ -60,5 +65,6 @@ export default {
   crear,
   actualizar,
   actualizarEstado,
+  pedirCuenta,
   eliminar
 };

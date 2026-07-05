@@ -34,6 +34,11 @@ const obtenerDesempenoRepartidores = async (fecha) => {
   return response.data;
 };
 
+const obtenerDashboardSupervivencia = async () => {
+  const response = await axios.get("/reportes/dashboard/supervivencia");
+  return response.data;
+};
+
 const generarPDF = async (tipo, parametros) => {
   const response = await axios.post("/reportes/pdf", { tipo, parametros }, { responseType: 'blob' });
   return response.data;
@@ -45,5 +50,6 @@ export default {
   obtenerProductosMasVendidos,
   obtenerClientesFrecuentes,
   obtenerDesempenoRepartidores,
+  obtenerDashboardSupervivencia,
   generarPDF
 };

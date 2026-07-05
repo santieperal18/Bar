@@ -1,22 +1,23 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import Breadcrumbs from './components/Breadcrumbs';
-import ProtectedRoute from './components/ProtectedRoute';
-import { ThemeProvider, useTheme } from './context/ThemeContext';
-
-import Landing from './pages/Landing';
-import Login from './pages/Login';
-import SolicitudContratacion from './pages/SolicitudContratacion';
-import Pedidos from './pages/Pedidos';
-import FormularioPedido from './pages/FormularioPedido';
-import Clientes from './pages/Clientes';
-import FormularioCliente from './pages/FormularioCliente';
-import Productos from './pages/Productos';
-import FormularioProducto from './pages/FormularioProducto';
-import Repartidores from './pages/Repartidores';
-import FormularioRepartidor from './pages/FormularioRepartidor';
-import Reportes from './pages/Reportes';
+import React, { useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
+import Breadcrumbs from "./components/Breadcrumbs";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { ThemeProvider, useTheme } from "./context/ThemeContext";
+import Landing from "./pages/Landing";
+import Login from "./pages/Login";
+import SolicitudContratacion from "./pages/SolicitudContratacion";
+import Pedidos from "./pages/Pedidos";
+import FormularioPedido from "./pages/FormularioPedido";
+import Clientes from "./pages/Clientes";
+import FormularioCliente from "./pages/FormularioCliente";
+import Productos from "./pages/Productos";
+import FormularioProducto from "./pages/FormularioProducto";
+import Repartidores from "./pages/Repartidores";
+import FormularioRepartidor from "./pages/FormularioRepartidor";
+import Reportes from "./pages/Reportes";
+import SalonCaja from "./pages/SalonCaja";
+import Cocina from "./pages/Cocina";
 
 const MobileTopbar = ({ onMenuOpen }) => {
   const { theme, toggleTheme } = useTheme();
@@ -27,7 +28,7 @@ const MobileTopbar = ({ onMenuOpen }) => {
       </button>
       <span className="mobile-brand">La Esquina</span>
       <button className="mobile-theme-btn" onClick={toggleTheme} aria-label="Cambiar tema">
-        <i className={`fas ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`}></i>
+        <i className={`fas ${theme === "dark" ? "fa-sun" : "fa-moon"}`}></i>
       </button>
     </div>
   );
@@ -35,21 +36,11 @@ const MobileTopbar = ({ onMenuOpen }) => {
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(
-    () => localStorage.getItem('sidebarCollapsed') === 'true'
-  );
-
-  const toggleCollapsed = () => {
-    setSidebarCollapsed(v => {
-      const next = !v;
-      localStorage.setItem('sidebarCollapsed', String(next));
-      return next;
-    });
-  };
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => localStorage.getItem("sidebarCollapsed") === "true");
 
   return (
     <ThemeProvider>
-      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
@@ -59,38 +50,43 @@ function App() {
             element={
               <ProtectedRoute>
                 <a href="#contenido" className="skip-link">Saltar al contenido</a>
-                <div
-                  className="app-layout"
-                  style={{ '--sidebar-current-w': sidebarCollapsed ? '64px' : 'var(--sidebar-w)' }}
-                >
+                <div className="app-layout" style={{ "--sidebar-current-w": sidebarCollapsed ? "64px" : "var(--sidebar-w)" }}>
                   <Sidebar
                     isOpen={sidebarOpen}
                     onClose={() => setSidebarOpen(false)}
                     collapsed={sidebarCollapsed}
-                    onToggleCollapse={toggleCollapsed}
+                    onToggleCollapse={() => {
+                      setSidebarCollapsed((value) => {
+                        const next = !value;
+                        localStorage.setItem("sidebarCollapsed", String(next));
+                        return next;
+                      });
+                    }}
                   />
                   <main className="app-main" id="contenido">
                     <MobileTopbar onMenuOpen={() => setSidebarOpen(true)} />
                     <div className="page-wrap fade-in">
                       <Breadcrumbs />
                       <Routes>
-                        <Route path="/"                          element={<Pedidos />} />
-                        <Route path="/pedidos"                   element={<Pedidos />} />
-                        <Route path="/pedidos/nuevo"             element={<FormularioPedido />} />
-                        <Route path="/pedidos/editar/:id"        element={<FormularioPedido />} />
-                        <Route path="/pedidos/duplicar/:id"      element={<FormularioPedido duplicar={true} />} />
-                        <Route path="/clientes"                  element={<Clientes />} />
-                        <Route path="/clientes/nuevo"            element={<FormularioCliente />} />
-                        <Route path="/clientes/editar/:id"       element={<FormularioCliente />} />
-                        <Route path="/productos"                 element={<Productos />} />
-                        <Route path="/productos/nuevo"           element={<FormularioProducto />} />
-                        <Route path="/productos/editar/:id"      element={<FormularioProducto />} />
-                        <Route path="/repartidores"              element={<Repartidores />} />
-                        <Route path="/repartidores/nuevo"        element={<FormularioRepartidor />} />
-                        <Route path="/repartidores/editar/:id"   element={<FormularioRepartidor />} />
-                        <Route path="/reportes"                  element={<Reportes />} />
-                        <Route path="/reportes/cliente/:id"      element={<Reportes clienteId={true} />} />
-                        <Route path="/reportes/:tipo"            element={<Reportes />} />
+                        <Route path="/" element={<SalonCaja />} />
+                        <Route path="/salon" element={<SalonCaja />} />
+                        <Route path="/cocina" element={<Cocina />} />
+                        <Route path="/pedidos" element={<Pedidos />} />
+                        <Route path="/pedidos/nuevo" element={<FormularioPedido />} />
+                        <Route path="/pedidos/editar/:id" element={<FormularioPedido />} />
+                        <Route path="/pedidos/duplicar/:id" element={<FormularioPedido duplicar={true} />} />
+                        <Route path="/clientes" element={<Clientes />} />
+                        <Route path="/clientes/nuevo" element={<FormularioCliente />} />
+                        <Route path="/clientes/editar/:id" element={<FormularioCliente />} />
+                        <Route path="/productos" element={<Productos />} />
+                        <Route path="/productos/nuevo" element={<FormularioProducto />} />
+                        <Route path="/productos/editar/:id" element={<FormularioProducto />} />
+                        <Route path="/repartidores" element={<Repartidores />} />
+                        <Route path="/repartidores/nuevo" element={<FormularioRepartidor />} />
+                        <Route path="/repartidores/editar/:id" element={<FormularioRepartidor />} />
+                        <Route path="/reportes" element={<Reportes />} />
+                        <Route path="/reportes/cliente/:id" element={<Reportes clienteId={true} />} />
+                        <Route path="/reportes/:tipo" element={<Reportes />} />
                       </Routes>
                     </div>
                   </main>
