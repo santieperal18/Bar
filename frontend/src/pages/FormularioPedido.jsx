@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import pedidosService from "../services/pedidos.service";
 import clientesService from "../services/clientes.service";
 import productosService from "../services/productos.service";
+import categoriasService from "../services/categorias.service";
 import repartidoresService from "../services/repartidores.service";
 
 const FormularioPedido = () => {
@@ -11,6 +12,7 @@ const FormularioPedido = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [clientes, setClientes] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [productos, setProductos] = useState([]);
   const [repartidores, setRepartidores] = useState([]);
   const [carrito, setCarrito] = useState([]);
@@ -28,6 +30,7 @@ const FormularioPedido = () => {
 
   const tipoEntrega = watch("tipoEntrega");
   const total = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
 
   useEffect(() => {
     const cargar = async () => {
@@ -35,16 +38,21 @@ const FormularioPedido = () => {
       setError("");
 
       try {
-        const [clis, prods, reps, pedido] = await Promise.all([
+        const [clis, cats, prods, reps, pedido] = await Promise.all([
           clientesService.obtenerTodos(),
+          categoriasService.obtenerTodos(),
           productosService.obtenerTodos(),
           repartidoresService.obtenerTodos(),
           id ? pedidosService.obtenerPorId(id) : Promise.resolve(null)
         ]);
 
         setClientes(clis);
+        setCategorias(cats);
         setProductos(prods);
         setRepartidores(reps);
+        if (!categoriaSeleccionada && cats.length > 0) {
+          setCategoriaSeleccionada(String(cats[0].id));
+        }
 
         if (pedido) {
           setValue("tipoEntrega", pedido.tipoEntrega || "mostrador");
@@ -107,6 +115,19 @@ const FormularioPedido = () => {
     setBusquedaCliente(`${cliente.nombre} ${cliente.apellido}`);
     setMostrarSugerenciasCliente(false);
   };
+
+  const categoriasConProductos = categorias
+    .map((categoria) => ({
+      ...categoria,
+      productos: productos.filter((producto) => String(producto.idCategoria) === String(categoria.id))
+    }))
+    .filter((categoria) => categoria.productos.length > 0);
+
+  const productosFiltrados = categoriaSeleccionada
+    ? productos.filter((producto) => String(producto.idCategoria) === String(categoriaSeleccionada))
+    : productos;
+
+  const categoriaActiva = categorias.find((categoria) => String(categoria.id) === String(categoriaSeleccionada));
 
   const limpiarCliente = () => {
     setValue("idCliente", "");
@@ -252,8 +273,25 @@ const FormularioPedido = () => {
             <div className="card">
               <div className="card-header">Menu rapido</div>
               <div className="card-body">
+                <div className="category-grid mb-3">
+                  {categoriasConProductos.map((categoria) => (
+                    <button
+                      key={categoria.id}
+                      type="button"
+                      className={`category-card ${String(categoriaSeleccionada) === String(categoria.id) ? "active" : ""}`}
+                      onClick={() => setCategoriaSeleccionada(String(categoria.id))}
+                    >
+                      <span>{categoria.nombre}</span>
+                      <small>{categoria.productos.length} productos</small>
+                    </button>
+                  ))}
+                </div>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <strong>{categoriaActiva?.nombre || "Todos los productos"}</strong>
+                  <span style={{ color: "var(--text-2)", fontSize: 13 }}>{productosFiltrados.length} disponibles</span>
+                </div>
                 <div className="product-grid">
-                  {productos.map((producto) => (
+                  {productosFiltrados.map((producto) => (
                     <button key={producto.id} type="button" className="product-card" onClick={() => agregar(producto)}>
                       <div className="product-card-name">{producto.nombre}</div>
                       <div className="product-card-price">
@@ -264,6 +302,9 @@ const FormularioPedido = () => {
                       </div>
                     </button>
                   ))}
+                  {productosFiltrados.length === 0 && (
+                    <div style={{ color: "var(--text-2)", fontSize: 13 }}>No hay productos en esta categoria.</div>
+                  )}
                 </div>
               </div>
             </div>

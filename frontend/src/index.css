@@ -996,6 +996,49 @@ a:hover { color: var(--accent-dark); }
 .spinner-border { border-color: var(--surface-3) !important; border-top-color: var(--accent) !important; }
 
 /* ── POS FORM ── */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.category-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 12px 14px;
+  color: var(--text-1);
+  cursor: pointer;
+  transition: all 0.14s;
+  text-align: left;
+  min-height: 68px;
+}
+
+.category-card:hover {
+  background: var(--surface-3);
+  border-color: var(--accent-glow);
+}
+
+.category-card.active {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  box-shadow: 0 0 0 1px var(--accent-glow);
+}
+
+.category-card span {
+  display: block;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.category-card small {
+  display: block;
+  margin-top: 6px;
+  color: var(--text-2);
+  font-size: 12px;
+}
+
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
