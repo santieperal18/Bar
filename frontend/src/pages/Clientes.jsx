@@ -6,6 +6,8 @@ const Clientes = () => {
   const [clientes, setClientes] = useState([]);
   const [filtro, setFiltro] = useState("");
   const [cargando, setCargando] = useState(true);
+  const [importando, setImportando] = useState(false);
+  const [mensajeImportacion, setMensajeImportacion] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => { cargarClientes(); }, []);
@@ -38,6 +40,27 @@ const Clientes = () => {
     } catch { alert("Error al eliminar el cliente"); }
   };
 
+  const importarContactos = async (event) => {
+    const archivo = event.target.files?.[0];
+    event.target.value = "";
+    if (!archivo) return;
+
+    try {
+      setImportando(true);
+      setMensajeImportacion("");
+      const csv = await archivo.text();
+      const resultado = await clientesService.importarContactos(csv);
+      setMensajeImportacion(
+        `Importados: ${resultado.importados}. Duplicados: ${resultado.duplicados}. Invalidos: ${resultado.invalidos}.`
+      );
+      await cargarClientes();
+    } catch (error) {
+      setMensajeImportacion(error.response?.data?.error || "No se pudieron importar los contactos");
+    } finally {
+      setImportando(false);
+    }
+  };
+
   const formatFecha = (f) => {
     if (!f) return '—';
     try {
@@ -64,10 +87,28 @@ const Clientes = () => {
           <div className="page-title">Clientes</div>
           <div className="page-subtitle">Base de datos de clientes registrados</div>
         </div>
-        <button className="btn btn-primary" onClick={() => navigate("/clientes/nuevo")}>
-          <i className="fas fa-plus"></i> Nuevo Cliente
-        </button>
+        <div className="d-flex flex-wrap gap-2">
+          <label className={`btn btn-outline-primary mb-0 ${importando ? "disabled" : ""}`}>
+            <i className="fas fa-file-import"></i> {importando ? "Importando..." : "Importar CSV"}
+            <input
+              type="file"
+              accept=".csv,text/csv"
+              className="d-none"
+              onChange={importarContactos}
+              disabled={importando}
+            />
+          </label>
+          <button className="btn btn-primary" onClick={() => navigate("/clientes/nuevo")}>
+            <i className="fas fa-plus"></i> Nuevo Cliente
+          </button>
+        </div>
       </div>
+
+      {mensajeImportacion && (
+        <div className={`alert ${mensajeImportacion.startsWith("Importados") ? "alert-success" : "alert-danger"} mb-4`} role="alert">
+          {mensajeImportacion}
+        </div>
+      )}
 
       {/* Stats */}
       <div className="row g-3 mb-4">

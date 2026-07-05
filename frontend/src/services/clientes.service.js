@@ -29,11 +29,17 @@ const eliminar = async (id) => {
   await axios.delete(`/clientes/${id}`);
 };
 
+const importarContactos = async (csv) => {
+  const response = await axios.post("/clientes/importar-contactos", { csv });
+  return response.data;
+};
+
 export default {
   obtenerTodos,
   obtenerPorId,
   buscarPorNombre,
   crear,
   actualizar,
-  eliminar
+  eliminar,
+  importarContactos
 };
