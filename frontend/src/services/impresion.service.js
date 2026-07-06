@@ -63,13 +63,21 @@ const imprimirTicketPedido = (pedido) => {
           </tr>
         </thead>
         <tbody>
-          ${productos.map(p => `
+          ${productos.map(p => {
+            const pivot = p.PedidoProducto || {};
+            const cantidad = p.cantidad || pivot.cantidad || 1;
+            const subtotal = p.subtotal || pivot.subtotal || (Number(p.precio || pivot.precioUnitario || 0) * Number(cantidad));
+            const guarnicion = p.guarnicion || pivot.guarnicion;
+            return `
             <tr>
-              <td class="item-cant">${p.cantidad}</td>
-              <td>${p.nombre || (p.Producto ? p.Producto.nombre : 'Articulo')}</td>
-              <td class="text-right item-precio">$${parseFloat(p.subtotal).toFixed(2)}</td>
+              <td class="item-cant">${cantidad}</td>
+              <td>
+                ${p.nombre || (p.Producto ? p.Producto.nombre : 'Articulo')}
+                ${guarnicion ? `<div class="bold">Guarnicion: ${guarnicion}</div>` : ''}
+              </td>
+              <td class="text-right item-precio">$${parseFloat(subtotal).toFixed(2)}</td>
             </tr>
-          `).join('')}
+          `}).join('')}
         </tbody>
       </table>
 

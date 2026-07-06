@@ -43,8 +43,13 @@ const Cocina = () => {
                     {pedido.mesa ? `Mesa ${pedido.mesa.numero}` : pedido.cliente ? `${pedido.cliente.nombre} ${pedido.cliente.apellido}` : "Mostrador"}
                   </div>
                   <div className="kds-items">
-                    {pedido.productos?.map((producto) => (
-                      <div key={producto.id}>{producto.PedidoProducto?.cantidad || producto.cantidad}x {producto.nombre}</div>
+                    {pedido.productos?.map((producto, index) => (
+                      <div key={`${producto.id}-${producto.PedidoProducto?.guarnicion || "sin"}-${index}`}>
+                        {producto.PedidoProducto?.cantidad || producto.cantidad}x {producto.nombre}
+                        {producto.PedidoProducto?.guarnicion && (
+                          <span style={{ color: "var(--accent)", fontWeight: 700 }}> - {producto.PedidoProducto.guarnicion}</span>
+                        )}
+                      </div>
                     ))}
                   </div>
                 </button>

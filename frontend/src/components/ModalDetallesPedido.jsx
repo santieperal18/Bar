@@ -77,13 +77,21 @@ const ModalDetallesPedido = ({ pedido, abierto, onCerrar }) => {
                 </tr>
               </thead>
               <tbody>
-                {Array.isArray(pedido.productos) && pedido.productos.map(prod => {
+                {Array.isArray(pedido.productos) && pedido.productos.map((prod, index) => {
                   const cant = prod.PedidoProducto?.cantidad || prod.cantidad || 1;
                   const precio = parseFloat(prod.PedidoProducto?.precioUnitario || prod.precio || 0);
+                  const guarnicion = prod.PedidoProducto?.guarnicion;
                   return (
-                    <tr key={prod.id}>
+                    <tr key={`${prod.id}-${guarnicion || 'sin'}-${index}`}>
                       <td style={{ padding: '10px 14px', color: 'var(--accent)', fontWeight: 700 }}>{cant}×</td>
-                      <td style={{ padding: '10px 14px', color: 'var(--text-1)', fontWeight: 500 }}>{prod.nombre}</td>
+                      <td style={{ padding: '10px 14px', color: 'var(--text-1)', fontWeight: 500 }}>
+                        {prod.nombre}
+                        {guarnicion && (
+                          <div style={{ color: 'var(--accent)', fontSize: 12, fontWeight: 700, marginTop: 2 }}>
+                            Guarnicion: {guarnicion}
+                          </div>
+                        )}
+                      </td>
                       <td style={{ padding: '10px 14px', color: 'var(--text-2)', textAlign: 'right', fontSize: 13 }}>${precio.toFixed(2)}</td>
                       <td style={{ padding: '10px 14px', color: 'var(--text-1)', fontWeight: 700, textAlign: 'right' }}>${(cant * precio).toFixed(2)}</td>
                     </tr>

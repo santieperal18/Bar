@@ -7,6 +7,25 @@ import productosService from "../services/productos.service";
 import categoriasService from "../services/categorias.service";
 import repartidoresService from "../services/repartidores.service";
 
+const GUARNICIONES = [
+  { value: "arroz", label: "Arroz" },
+  { value: "pure", label: "Pure" },
+  { value: "ensalada", label: "Ensalada" },
+  { value: "fritas", label: "Fritas" },
+  { value: "fideos", label: "Fideos" }
+];
+
+const requiereGuarnicion = (nombre = "") => /c\s*\/\s*(n\s*)?guarnici[oó]n/i.test(nombre);
+
+const crearLineaCarrito = (producto, precio, extra = {}) => ({
+  lineId: extra.lineId || `${producto.id}-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+  id: producto.id,
+  nombre: producto.nombre,
+  precio,
+  cantidad: extra.cantidad || 1,
+  guarnicion: extra.guarnicion || ""
+});
+
 const FormularioPedido = () => {
   const { id } = useParams();
   const location = useLocation();
@@ -63,10 +82,12 @@ const FormularioPedido = () => {
           setValue("idRepartidor", pedido.idRepartidor || "");
           setCarrito(
             (pedido.productos || []).map((producto) => ({
+              lineId: `${producto.id}-${producto.PedidoProducto?.guarnicion || "sin"}-${Math.random().toString(36).slice(2)}`,
               id: producto.id,
               nombre: producto.nombre,
               precio: Number(producto.PedidoProducto?.precioUnitario ?? producto.precio ?? 0),
-              cantidad: Number(producto.PedidoProducto?.cantidad ?? 1)
+              cantidad: Number(producto.PedidoProducto?.cantidad ?? 1),
+              guarnicion: producto.PedidoProducto?.guarnicion || ""
             }))
           );
         }
@@ -88,20 +109,36 @@ const FormularioPedido = () => {
     );
 
     setCarrito((prev) => {
+      if (requiereGuarnicion(producto.nombre)) {
+        return [...prev, crearLineaCarrito(producto, precio)];
+      }
+
       const existe = prev.find((item) => item.id === producto.id);
       if (existe) {
         return prev.map((item) => item.id === producto.id ? { ...item, cantidad: item.cantidad + 1, precio } : item);
       }
-      return [...prev, { id: producto.id, nombre: producto.nombre, precio, cantidad: 1 }];
+      return [...prev, crearLineaCarrito(producto, precio)];
     });
   };
 
-  const restar = (idProducto) => {
+  const restar = (lineId) => {
     setCarrito((prev) => prev.flatMap((item) => {
-      if (item.id !== idProducto) return [item];
+      if (item.lineId !== lineId) return [item];
       if (item.cantidad === 1) return [];
       return [{ ...item, cantidad: item.cantidad - 1 }];
     }));
+  };
+
+  const sumarLinea = (lineId) => {
+    setCarrito((prev) => prev.map((item) => (
+      item.lineId === lineId ? { ...item, cantidad: item.cantidad + 1 } : item
+    )));
+  };
+
+  const actualizarGuarnicion = (lineId, guarnicion) => {
+    setCarrito((prev) => prev.map((item) => (
+      item.lineId === lineId ? { ...item, guarnicion } : item
+    )));
   };
 
   const clientesFiltrados = busquedaCliente.trim()
@@ -140,9 +177,16 @@ const FormularioPedido = () => {
     setError("");
 
     try {
+      const itemSinGuarnicion = carrito.find((item) => requiereGuarnicion(item.nombre) && !item.guarnicion);
+      if (itemSinGuarnicion) {
+        setError(`Selecciona una guarnicion para ${itemSinGuarnicion.nombre}`);
+        setGuardando(false);
+        return;
+      }
+
       const payload = {
         ...data,
-        productos: carrito.map((item) => ({ id: item.id, cantidad: item.cantidad }))
+        productos: carrito.map((item) => ({ id: item.id, cantidad: item.cantidad, guarnicion: item.guarnicion || null }))
       };
 
       if (id) {
@@ -315,15 +359,31 @@ const FormularioPedido = () => {
               <div className="card-header">Ticket</div>
               <div className="ticket-body">
                 {carrito.map((item) => (
-                  <div key={item.id} className="ticket-item">
+                  <div key={item.lineId} className="ticket-item" style={{ alignItems: "flex-start" }}>
                     <div>
                       <div style={{ fontWeight: 600 }}>{item.nombre}</div>
                       <div style={{ color: "var(--text-2)", fontSize: 12 }}>${item.precio.toFixed(2)} x {item.cantidad}</div>
+                      {requiereGuarnicion(item.nombre) && (
+                        <div className="mt-2" style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                          {GUARNICIONES.map((guarnicion) => (
+                            <button
+                              key={guarnicion.value}
+                              type="button"
+                              className={`btn btn-sm ${item.guarnicion === guarnicion.value ? "btn-primary" : "btn-outline-secondary"}`}
+                              onClick={() => actualizarGuarnicion(item.lineId, guarnicion.value)}
+                              style={{ padding: "3px 8px", fontSize: 12 }}
+                            >
+                              {item.guarnicion === guarnicion.value && <i className="fas fa-check me-1"></i>}
+                              {guarnicion.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
                     <div className="qty-wrap">
-                      <button type="button" className="qty-btn del" onClick={() => restar(item.id)}><i className="fas fa-minus"></i></button>
+                      <button type="button" className="qty-btn del" onClick={() => restar(item.lineId)}><i className="fas fa-minus"></i></button>
                       <span className="qty-num">{item.cantidad}</span>
-                      <button type="button" className="qty-btn" onClick={() => agregar(item)}><i className="fas fa-plus"></i></button>
+                      <button type="button" className="qty-btn" onClick={() => sumarLinea(item.lineId)}><i className="fas fa-plus"></i></button>
                     </div>
                   </div>
                 ))}

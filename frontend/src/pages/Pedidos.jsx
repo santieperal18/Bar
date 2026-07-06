@@ -239,7 +239,7 @@ const Pedidos = () => {
                       )}
                     </td>
                     <td className="d-none d-lg-table-cell" style={{ maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-2)', fontSize: 13 }}>
-                      {p.productos?.map(pr => `${pr.PedidoProducto?.cantidad || pr.cantidad}x ${pr.nombre}`).join(', ')}
+                      {p.productos?.map(pr => `${pr.PedidoProducto?.cantidad || pr.cantidad}x ${pr.nombre}${pr.PedidoProducto?.guarnicion ? ` (${pr.PedidoProducto.guarnicion})` : ''}`).join(', ')}
                     </td>
                     <td className="text-center">
                       {p.tipoEntrega === 'delivery'
@@ -322,7 +322,7 @@ const Pedidos = () => {
             {pedidos.map(p => {
               const ec = ESTADO_CONFIG[p.estado] || { label: p.estado, cls: 'sb-default', icon: 'fa-circle' };
               const hora = new Date(p.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-              const resumen = p.productos?.map(pr => `${pr.PedidoProducto?.cantidad || pr.cantidad}x ${pr.nombre}`).join(', ');
+              const resumen = p.productos?.map(pr => `${pr.PedidoProducto?.cantidad || pr.cantidad}x ${pr.nombre}${pr.PedidoProducto?.guarnicion ? ` (${pr.PedidoProducto.guarnicion})` : ''}`).join(', ');
               
               // --- LÓGICA WHATSAPP EL PANAL (Móvil) ---
               const nombreCompleto = p.cliente ? `${p.cliente.nombre} ${p.cliente.apellido}`.toLowerCase() : '';
