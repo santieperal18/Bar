@@ -58,6 +58,26 @@ const Pedidos = () => {
     } catch { alert("Error al actualizar estado"); }
   };
 
+  const cancelarPedido = async (pedido) => {
+    if (!window.confirm(`Cancelar el pedido #${pedido.id}? Esta accion repone stock y libera la mesa si corresponde.`)) return;
+    try {
+      await pedidosService.actualizarEstado(pedido.id, 'cancelado');
+      setPedidos(peds => peds.map(p => p.id === pedido.id ? { ...p, estado: 'cancelado' } : p));
+    } catch (error) {
+      alert(error.response?.data?.error || "Error al cancelar pedido");
+    }
+  };
+
+  const eliminarPedido = async (pedido) => {
+    if (!window.confirm(`Eliminar definitivamente el pedido #${pedido.id}?`)) return;
+    try {
+      await pedidosService.eliminar(pedido.id);
+      setPedidos(peds => peds.filter(p => p.id !== pedido.id));
+    } catch (error) {
+      alert(error.response?.data?.error || "Error al eliminar pedido");
+    }
+  };
+
   const filtrosActivos = [filtros.cliente, filtros.estado, filtros.tipoEntrega].filter(Boolean).length;
 
   const stats = [
@@ -263,6 +283,16 @@ const Pedidos = () => {
                         <button className="btn btn-icon-sm text-secondary" onClick={() => imprimirTicket(p)} title="Imprimir Ticket">
                           <i className="fas fa-print"></i>
                         </button>
+                        {p.estado !== 'cancelado' && p.estado !== 'cobrado' && (
+                          <button className="btn btn-icon-sm text-warning" onClick={() => cancelarPedido(p)} title="Cancelar">
+                            <i className="fas fa-ban"></i>
+                          </button>
+                        )}
+                        {p.estado !== 'cobrado' && p.estadoPago !== 'pagado' && (
+                          <button className="btn btn-icon-sm text-danger" onClick={() => eliminarPedido(p)} title="Eliminar">
+                            <i className="fas fa-trash"></i>
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -359,6 +389,16 @@ const Pedidos = () => {
                         className="btn btn-sm btn-outline-dark me-1" onClick={() => imprimirTicket(p)} title="Imprimir Ticket">
                         <i className="fas fa-print"></i>
                       </button>
+                      {p.estado !== 'cancelado' && p.estado !== 'cobrado' && (
+                        <button className="btn btn-icon-sm text-warning" onClick={() => cancelarPedido(p)} title="Cancelar">
+                          <i className="fas fa-ban"></i>
+                        </button>
+                      )}
+                      {p.estado !== 'cobrado' && p.estadoPago !== 'pagado' && (
+                        <button className="btn btn-icon-sm text-danger" onClick={() => eliminarPedido(p)} title="Eliminar">
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
