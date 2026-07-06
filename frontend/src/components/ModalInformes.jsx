@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
 import reportesService from '../services/reportes.service';
 
+const obtenerFechaLocal = () => {
+  const fecha = new Date();
+  const year = fecha.getFullYear();
+  const month = String(fecha.getMonth() + 1).padStart(2, '0');
+  const day = String(fecha.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const ModalInformes = ({ abierto, onCerrar, tipoReporte, parametrosIniciales }) => {
   const [cargando, setCargando] = useState(false);
-  const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
+  const [fecha, setFecha] = useState(obtenerFechaLocal());
   const [mes, setMes] = useState(new Date().getMonth() + 1);
   const [anio, setAnio] = useState(new Date().getFullYear());
 

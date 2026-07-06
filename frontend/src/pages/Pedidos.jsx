@@ -4,10 +4,12 @@ import pedidosService from "../services/pedidos.service";
 import ModalDetallesPedido from "../components/ModalDetallesPedido";
 import impresionService from '../services/impresion.service';
 
-const obtenerFechaLocal = () => new Date().toISOString().split('T')[0];
-const obtenerFechaManana = () => {
-  const d = new Date(); d.setDate(d.getDate() + 1);
-  return d.toISOString().split('T')[0];
+const obtenerFechaLocal = () => {
+  const fecha = new Date();
+  const year = fecha.getFullYear();
+  const month = String(fecha.getMonth() + 1).padStart(2, '0');
+  const day = String(fecha.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 const ESTADO_CONFIG = {
@@ -27,7 +29,7 @@ const Pedidos = () => {
 
   const [filtros, setFiltros] = useState({
     cliente: "", estado: "", tipoEntrega: "",
-    fechaDesde: obtenerFechaLocal(), fechaHasta: obtenerFechaManana()
+    fechaDesde: obtenerFechaLocal(), fechaHasta: obtenerFechaLocal()
   });
 
   const navigate = useNavigate();
@@ -47,7 +49,7 @@ const Pedidos = () => {
   };
 
   const resetFiltros = () => {
-    setFiltros({ cliente: "", estado: "", tipoEntrega: "", fechaDesde: obtenerFechaLocal(), fechaHasta: obtenerFechaManana() });
+    setFiltros({ cliente: "", estado: "", tipoEntrega: "", fechaDesde: obtenerFechaLocal(), fechaHasta: obtenerFechaLocal() });
   };
 
   const marcarEntregado = async (id) => {
