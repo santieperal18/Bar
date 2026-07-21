@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { to: "/productos", icon: "fa-utensils", label: "Productos" },
   { to: "/repartidores", icon: "fa-motorcycle", label: "Repartidores" },
   { to: "/reportes", icon: "fa-chart-bar", label: "Backoffice", permiso: "reportes.ver" },
+  { to: "/onboarding", icon: "fa-rocket", label: "Puesta en marcha", permiso: "usuarios.gestionar" },
   { to: "/usuarios", icon: "fa-user-shield", label: "Usuarios", permiso: "usuarios.gestionar" }
 ];
 

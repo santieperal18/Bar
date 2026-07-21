@@ -10,6 +10,7 @@ import Registro from "./pages/Registro";
 import RecuperarContrasena from "./pages/RecuperarContrasena";
 import VerificarEmail from "./pages/VerificarEmail";
 import Usuarios from "./pages/Usuarios";
+import Onboarding from "./pages/Onboarding";
 import SolicitudContratacion from "./pages/SolicitudContratacion";
 import Pedidos from "./pages/Pedidos";
 import FormularioPedido from "./pages/FormularioPedido";
@@ -97,6 +98,7 @@ function App() {
                         <Route path="/reportes/cliente/:id" element={<Reportes clienteId={true} />} />
                         <Route path="/reportes/:tipo" element={<Reportes />} />
                         <Route path="/usuarios" element={<Usuarios />} />
+                        <Route path="/onboarding" element={<Onboarding />} />
                       </Routes>
                     </div>
                   </main>
