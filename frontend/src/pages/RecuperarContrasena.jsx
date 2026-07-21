@@ -1,0 +1,10 @@
+import React, { useState } from "react";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
+import axios from "../services/axios.config.js";
+import "./Login.css";
+
+export default function RecuperarContrasena() {
+  const [params] = useSearchParams(); const { pathname } = useLocation(); const token = params.get("token"); const esInvitacion = pathname === "/aceptar-invitacion"; const [email, setEmail] = useState(""); const [contrasena, setContrasena] = useState(""); const [mensaje, setMensaje] = useState(""); const [error, setError] = useState("");
+  const enviar = async (e) => { e.preventDefault(); setError(""); try { const ruta = token ? (esInvitacion ? "/auth/aceptar-invitacion" : "/auth/restablecer-contrasena") : "/auth/recuperar-contrasena"; const body = token ? { token, contrasena } : { email }; const respuesta = await axios.post(ruta, body); setMensaje(respuesta.data.mensaje); } catch (err) { setError(err.response?.data?.error || "No se pudo completar la operación"); } };
+  return <div className="login-page"><div className="login-grid" /><div className="login-card"><div className="login-header"><h1>{token ? (esInvitacion ? "Activar invitación" : "Nueva contraseña") : "Recuperar acceso"}</h1><p>{token ? "Elegí una contraseña segura para tu cuenta" : "Te enviaremos un enlace para restablecerla"}</p></div><form onSubmit={enviar}><div className="login-field"><label>{token ? "Nueva contraseña" : "Email"}</label><input type={token ? "password" : "email"} value={token ? contrasena : email} onChange={(e) => token ? setContrasena(e.target.value) : setEmail(e.target.value)} minLength={token ? 12 : undefined} required /></div>{error && <div className="login-error">{error}</div>}{mensaje && <div className="login-note">{mensaje}</div>}<button className="login-btn">{token ? (esInvitacion ? "Activar cuenta" : "Actualizar contraseña") : "Enviar enlace"}</button><div className="login-note"><Link to="/login">Volver al inicio de sesión</Link></div></form></div></div>;
+}

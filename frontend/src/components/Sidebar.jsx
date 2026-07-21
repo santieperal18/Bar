@@ -9,17 +9,21 @@ const NAV_ITEMS = [
   { to: "/clientes", icon: "fa-users", label: "Clientes" },
   { to: "/productos", icon: "fa-utensils", label: "Productos" },
   { to: "/repartidores", icon: "fa-motorcycle", label: "Repartidores" },
-  { to: "/reportes", icon: "fa-chart-bar", label: "Backoffice" }
+  { to: "/reportes", icon: "fa-chart-bar", label: "Backoffice", permiso: "reportes.ver" },
+  { to: "/usuarios", icon: "fa-user-shield", label: "Usuarios", permiso: "usuarios.gestionar" }
 ];
 
 const Sidebar = ({ isOpen, onClose, collapsed, onToggleCollapse }) => {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const usuario = localStorage.getItem("usuario") || "Admin";
+  const permisos = JSON.parse(localStorage.getItem("permisos") || "[]");
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try { await fetch(`${import.meta.env.VITE_APP_API_URL || "http://localhost:3000/api"}/auth/logout`, { method: "POST", credentials: "include", headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }); } catch { /* La limpieza local debe ocurrir incluso sin red. */ }
     localStorage.removeItem("token");
     localStorage.removeItem("usuario");
+    localStorage.removeItem("permisos");
     navigate("/login");
   };
 
@@ -38,7 +42,7 @@ const Sidebar = ({ isOpen, onClose, collapsed, onToggleCollapse }) => {
         </NavLink>
 
         <nav className="sidebar-nav">
-          {NAV_ITEMS.map((item) => (
+          {NAV_ITEMS.filter((item) => !item.permiso || permisos.includes("*") || permisos.includes(item.permiso)).map((item) => (
             <NavLink
               key={item.to}
               to={item.to}

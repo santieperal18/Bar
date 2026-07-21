@@ -1,29 +1,25 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "../services/axios.config.js";
 import "./Login.css";
 
 function Login() {
   const [usuario, setUsuario] = useState("");
   const [contrasena, setContrasena] = useState("");
+  const [codigoMfa, setCodigoMfa] = useState("");
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
   const navigate = useNavigate();
-
-  const ingresarLocal = (nombre) => {
-    localStorage.setItem("token", "demo");
-    localStorage.setItem("usuario", nombre || "Demo");
-    navigate("/salon");
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setCargando(true);
     try {
-      const response = await axios.post("/auth/login", { usuario, contrasena });
+      const response = await axios.post("/auth/login", { usuario, contrasena, ...(codigoMfa ? { codigoMfa } : {}) });
       localStorage.setItem("token", response.data.token);
-      localStorage.setItem("usuario", response.data.usuario);
+      localStorage.setItem("usuario", response.data.usuario.usuario);
+      localStorage.setItem("permisos", JSON.stringify(response.data.permisos || []));
       navigate("/salon");
     } catch (err) {
       setError(err.response?.data?.error || "No se pudo iniciar sesión contra el backend");
@@ -52,6 +48,11 @@ function Login() {
           </div>
 
           <div className="login-field">
+            <label htmlFor="codigoMfa">Código MFA <span>(si está activado)</span></label>
+            <input id="codigoMfa" inputMode="numeric" maxLength="6" value={codigoMfa} onChange={(e) => setCodigoMfa(e.target.value.replace(/\D/g, ""))} placeholder="000000" disabled={cargando} autoComplete="one-time-code" />
+          </div>
+
+          <div className="login-field">
             <label htmlFor="contrasena">Contraseña</label>
             <input id="contrasena" type="password" value={contrasena} onChange={(e) => setContrasena(e.target.value)} placeholder="Ingresá tu contraseña" disabled={cargando} autoComplete="current-password" />
           </div>
@@ -67,9 +68,7 @@ function Login() {
             {cargando ? <><div className="login-spinner"></div> Iniciando sesión...</> : <><i className="fas fa-sign-in-alt"></i> Ingresar</>}
           </button>
 
-          <button type="button" className="login-btn login-btn-demo" onClick={() => ingresarLocal("Demo")} disabled={cargando}>
-            <i className="fas fa-play"></i> Entrar en modo demo
-          </button>
+          <div className="login-note"><Link to="/recuperar-contrasena">¿Olvidaste tu contraseña?</Link> · <Link to="/registro">Crear mi restaurante</Link></div>
         </form>
       </div>
     </div>

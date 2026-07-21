@@ -6,6 +6,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
+import Registro from "./pages/Registro";
+import RecuperarContrasena from "./pages/RecuperarContrasena";
+import VerificarEmail from "./pages/VerificarEmail";
+import Usuarios from "./pages/Usuarios";
 import SolicitudContratacion from "./pages/SolicitudContratacion";
 import Pedidos from "./pages/Pedidos";
 import FormularioPedido from "./pages/FormularioPedido";
@@ -44,6 +48,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/registro" element={<Registro />} />
+          <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
+          <Route path="/restablecer-contrasena" element={<RecuperarContrasena />} />
+          <Route path="/aceptar-invitacion" element={<RecuperarContrasena />} />
+          <Route path="/verificar-email" element={<VerificarEmail />} />
           <Route path="/contratar" element={<SolicitudContratacion />} />
           <Route
             path="/*"
@@ -87,6 +96,7 @@ function App() {
                         <Route path="/reportes" element={<Reportes />} />
                         <Route path="/reportes/cliente/:id" element={<Reportes clienteId={true} />} />
                         <Route path="/reportes/:tipo" element={<Reportes />} />
+                        <Route path="/usuarios" element={<Usuarios />} />
                       </Routes>
                     </div>
                   </main>

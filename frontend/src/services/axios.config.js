@@ -4,6 +4,7 @@ const apiUrl = import.meta.env.VITE_APP_API_URL || "http://localhost:3000/api";
 
 const instancia = axios.create({
   baseURL: apiUrl,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json"
   },
