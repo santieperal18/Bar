@@ -1,0 +1,13 @@
+.onboarding-step-btn {
+  width: 100%;
+  min-height: 42px;
+  justify-content: flex-start !important;
+  text-align: left !important;
+  color: var(--text-1) !important;
+  background: var(--surface-2) !important;
+  border: 1px solid var(--border) !important;
+  font-weight: 600 !important;
+}
+
+.onboarding-step-btn:hover { color: var(--text-1) !important; background: var(--surface-3) !important; }
+.onboarding-step-btn.is-active { color: #fff !important; background: var(--accent) !important; border-color: var(--accent) !important; }
