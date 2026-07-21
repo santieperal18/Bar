@@ -5,9 +5,15 @@ const columnas = ["pendiente", "preparando", "listo"];
 
 const Cocina = () => {
   const [comandas, setComandas] = useState([]);
+  const [error, setError] = useState("");
 
   const cargar = async () => {
-    setComandas(await operacionesService.obtenerCocina());
+    try {
+      setComandas(await operacionesService.obtenerCocina());
+      setError("");
+    } catch (err) {
+      setError(err.response?.data?.error || "No se pudieron cargar las comandas.");
+    }
   };
 
   useEffect(() => {
@@ -15,8 +21,12 @@ const Cocina = () => {
   }, []);
 
   const avanzar = async (id) => {
-    await operacionesService.avanzarCocina(id);
-    await cargar();
+    try {
+      await operacionesService.avanzarCocina(id);
+      await cargar();
+    } catch (err) {
+      setError(err.response?.data?.error || "No se pudo actualizar la comanda.");
+    }
   };
 
   return (
@@ -27,6 +37,7 @@ const Cocina = () => {
           <div className="page-subtitle">KDS Lite unificado para reemplazar el papel</div>
         </div>
       </div>
+      {error && <div className="alert alert-danger">{error}</div>}
 
       <div className="kds-grid">
         {columnas.map((estado) => (

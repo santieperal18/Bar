@@ -37,6 +37,7 @@ instancia.interceptors.response.use(
       if (error.response.status === 401) {
         localStorage.removeItem('token');
         localStorage.removeItem('usuario');
+        localStorage.removeItem('permisos');
         window.location.href = `${import.meta.env.BASE_URL}login`;
       }
     } else if (error.request) {
